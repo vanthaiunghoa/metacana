@@ -1,0 +1,11 @@
+.vscode
+node_modules/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+*.js.map
+coverage
+coverage.json
