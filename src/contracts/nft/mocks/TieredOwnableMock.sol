@@ -2,7 +2,7 @@ pragma solidity 0.7.4;
 pragma experimental ABIEncoderV2;
 
 
-import "../utils/TieredOwnable.sol";
+import "../../utils/TieredOwnable.sol";
 
 contract TieredOwnableMock is TieredOwnable {
 

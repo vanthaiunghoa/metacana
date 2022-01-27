@@ -2,20 +2,20 @@
 
 const truffleAssert = require('truffle-assertions');
 
-const setup = require('../lib/setupCreatureAccessories.js');
-const testVals = require('../lib/testValuesCommon.js');
-const vals = require('../lib/valuesCommon.js');
+const setup = require('../../lib/setupCreatureAccessories.js');
+const testVals = require('../../lib/testValuesCommon.js');
+const vals = require('../../lib/valuesCommon.js');
 
 /* Contracts in this test */
 
 const MockProxyRegistry = artifacts.require(
   "../contracts/MockProxyRegistry.sol"
-);
+); //What?
 const LootBoxRandomness = artifacts.require(
   "../contracts/LootBoxRandomness.sol"
 );
-const CreatureAccessory = artifacts.require("../contracts/CreatureAccessory.sol");
-const CreatureAccessoryFactory = artifacts.require("../contracts/CreatureAccessoryFactory.sol");
+const CreatureAccessory = artifacts.require("../contracts/CreatureAccessory.sol");//MetacanaAssets
+const CreatureAccessoryFactory = artifacts.require("../contracts/CreatureAccessoryFactory.sol");//FreeMintFactory
 const CreatureAccessoryLootBox = artifacts.require(
   "../contracts/CreatureAccessoryLootBox.sol"
 );

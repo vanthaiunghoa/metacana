@@ -2,7 +2,6 @@ pragma solidity 0.7.4;
 pragma experimental ABIEncoderV2;
 
 interface IMetacanaAssets {
-
   /***********************************|
   |               Events              |
   |__________________________________*/
@@ -40,9 +39,15 @@ interface IMetacanaAssets {
    * @param _minRange  Minimum ID (inclusive) in id range that factory will be able to mint
    * @param _maxRange  Maximum ID (inclusive) in id range that factory will be able to mint
    * @param _startTime Timestamp when the range becomes valid
-   * @param _endTime   Timestamp after which the range is no longer valid 
+   * @param _endTime   Timestamp after which the range is no longer valid
    */
-  function addMintPermission(address _factory, uint64 _minRange, uint64 _maxRange, uint64 _startTime, uint64 _endTime) external;
+  function addMintPermission(
+    address _factory,
+    uint64 _minRange,
+    uint64 _maxRange,
+    uint64 _startTime,
+    uint64 _endTime
+  ) external;
 
   /**
    * @notice Will remove the permission a factory has to mint some token ids
@@ -70,7 +75,6 @@ interface IMetacanaAssets {
    */
   function lockRangeMintPermissions(AssetRange calldata _range) external;
 
-
   /***********************************|
   |         Getter Functions          |
   |__________________________________*/
@@ -83,7 +87,7 @@ interface IMetacanaAssets {
   /**
    * @return Returns whether the sale has ended or not
    */
-  function getFactoryAccessRanges(address _factory) external view returns ( AssetRange[] memory);
+  function getFactoryAccessRanges(address _factory) external view returns (AssetRange[] memory);
 
   /**
    * @notice Get the max issuance of multiple asset IDs
@@ -101,7 +105,7 @@ interface IMetacanaAssets {
    * @param _ids Array containing the assets IDs
    * @return The current issuance of each asset ID in _ids
    */
-  function getCurrentIssuances(uint256[] calldata _ids)external view returns (uint256[] memory);
+  function getCurrentIssuances(uint256[] calldata _ids) external view returns (uint256[] memory);
 
   /***************************************|
   |           Minting Functions           |
@@ -114,7 +118,12 @@ interface IMetacanaAssets {
    * @param _amount The amount to be minted
    * @param _data   Byte array of data to pass to recipient if it's a contract
    */
-  function mint(address _to, uint256 _id, uint256 _amount, bytes calldata _data) external;
+  function mint(
+    address _to,
+    uint256 _id,
+    uint256 _amount,
+    bytes calldata _data
+  ) external;
 
   /**
    * @dev Mint tokens for each ids in _ids
@@ -123,8 +132,12 @@ interface IMetacanaAssets {
    * @param _amounts Array of amount of tokens to mint per id
    * @param _data    Byte array of data to pass to recipient if it's a contract
    */
-  function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts, bytes calldata _data) external;
-
+  function batchMint(
+    address _to,
+    uint256[] calldata _ids,
+    uint256[] calldata _amounts,
+    bytes calldata _data
+  ) external;
 
   /***************************************|
   |           Burning Functions           |
@@ -143,4 +156,28 @@ interface IMetacanaAssets {
    * @param _amounts  Array of the amount to be burned
    */
   function batchBurn(uint256[] calldata _ids, uint256[] calldata _amounts) external;
+
+  /**
+   * Returns the symbol for this factory.
+   */
+  function symbol() external view returns (string memory);
+
+  /**
+   * Number of options the factory supports.
+   */
+  function numOptions() external view returns (uint256);
+
+  /**
+   * @dev Returns whether the option ID can be minted. Can return false if the developer wishes to
+   * restrict a total supply per option ID (or overall).
+   */
+  function canMint(uint256 _optionId, uint256 _amount) external view returns (bool);
+
+  /**
+   * @dev Returns a URL specifying some metadata about the option. This metadata can be of the
+   * same structure as the ERC1155 metadata.
+   */
+  function uri(uint256 _optionId) external view returns (string memory);
+
+  function balanceOf(address _owner, uint256 _optionId) external view returns (uint256);
 }

@@ -2,12 +2,17 @@
 
 pragma solidity ^0.7.4;
 
-import "./core/DeflationaryERC20.sol";
-import "./Pausable.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
+// import "./core/DeflationaryERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./interfaces/SocialProofable.sol";
-import "./interfaces/IPancakeFactory.sol"
-import "./interfaces/IPancakePair.sol"
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+// import "./interfaces/SocialProofable.sol";
+import "./interfaces/IPancakeFactory.sol";
+import "./interfaces/IPancakePair.sol";
+
+import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 // interface IUniswapV2Pair {
 //     function sync() external;
@@ -36,7 +41,7 @@ import "./interfaces/IPancakePair.sol"
  * @author develop.iglobal@gmail.com ($TEND)
  * @author @Onchained ($METACANA)
  */
-contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
+contract MetacanaToken is ERC20, ERC20Burnable, Ownable, Pausable {
     using SafeMath for uint256;
 
     //===============================================//
@@ -44,10 +49,10 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
     //===============================================//
 
     // SOCIAL PROOF //
-    string public constant override getTwitter = "Metacananomics101";
-    string public constant override getTelegram = "MetacanaGram";
-    string public constant override getWebsite = "metacananomics.io";
-    string public constant override getGithub = "metacananomics";
+    // string public constant override getTwitter = "Metacananomics101";
+    // string public constant override getTelegram = "Metacana";
+    // string public constant override getWebsite = "metacana.io";
+    // string public constant override getGithub = "metacananomics";
     uint256 public twitterProof;
     bytes public githubProof;
 
@@ -57,6 +62,12 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
 
     // crunchRate is defined as a percentage (e.g. 1 = 1%, 5 = 5%, 27 = 27%)
     uint256 public crunchRate;
+
+    uint8 private _decimals;
+
+    // Marked as `internal` instead of `private` to have access to them from super.
+    mapping (address => uint256) internal _balances;
+    uint256 internal _totalSupply;
 
     /**
      * rewardForMetacana is defined as a percentage (e.g. 1 = 1%, 5 = 5%, 27 = 27%)
@@ -96,11 +107,10 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
     // address constant internal _wbnb = address(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
     // address constant internal _busd = address(0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56);
     //===============================================//
-    constructor(uint256 initialSupply, uint8 decimals_, address _pancakeswapFactoryAddress, address _wbnbToken)
-        public
-        Pausable()
-        DeflationaryERC20("Metacanas", "CANA", decimals_, initialSupply)
-    {        
+    constructor(uint256 initialSupply, 
+        uint8 decimals_, 
+        address _pancakeswapFactoryAddress, 
+        address _wbnbToken) ERC20("Metacanas", "CANA") public {        
         // Initialize PancakeswapFactory
         pancakeFactory = IPancakeFactory(_pancakeswapFactoryAddress);
         WBNB = IERC20(_wbnbToken);
@@ -109,6 +119,9 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
         crunchRate = 4; // Initial crunch rate set at 4%
         rewardForMetacana = 1; // Initial reward percentage set at 1% (1% of 4%)
         metacanaTuesdayRewardMultiplier = 20; // Initial metacanaTuesday multiplier set at 2x
+
+        _setupDecimals(decimals_);
+        _mint(msg.sender, initialSupply* 10** decimals_);
 
     }
 
@@ -125,11 +138,15 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
         uint256 totalMetacanasCrunched
     );
 
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+
     //===============================================//
     //                   Methods                     //
     //===============================================//
 
-    // UNISWAP POOL //
+    // UNISWAP POOL //Relevant source part starts here and spans across multiple lines
     function setPancakeswapPool() external onlyOwner {
         require(pancakeswapPool == address(0), "MetacanaToken: pool already created");
         pancakeswapPool = pancakeFactory.createPair(address(WBNB), address(this));
@@ -140,20 +157,20 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
         address from,
         address to,
         uint256 amount
-    ) internal virtual override {
+    ) internal whenNotPaused virtual override {
         super._beforeTokenTransfer(from, to, amount);
         require(
-            !paused || msg.sender == pauser,
-            "MetacanaToken: Cannot transfer tokens while game is paused and sender is not the Pauser."
+            !paused() || msg.sender == owner(),
+            "MetacanaToken: Cannot transfer tokens while game is paused and sender is not the Owner."
         );
     }
 
     // PAUSABLE OVERRIDE //
-    function unpause() external onlyPauser {
+    function unpause() external onlyOwner {
         super._unpause();
 
         // Start crunching
-        lastCrunchTime = now;
+        lastCrunchTime = block.timestamp;
     }
 
     // CRUNCH VARIABLES SETTERS //
@@ -227,7 +244,7 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
         );
 
         // Reset last crunch time
-        lastCrunchTime = now;
+        lastCrunchTime = block.timestamp;
 
         uint256 toPayMetacana = toRemoveFromPancakeswap
             .mul(rewardForMetacana)
@@ -277,9 +294,9 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
     // Calculates the Amount of tokens available for Crunching given the delta in time since
     // last Crunch.
     function getCrunchAmount() public view returns (uint256) {
-        if (paused) return 0;
+        if (paused() == true) return 0;
 
-        uint256 timeBetweenLastCrunch = now - lastCrunchTime;
+        uint256 timeBetweenLastCrunch = block.timestamp - lastCrunchTime;
         uint256 tokensInPancakeswapPool = balanceOf(pancakeswapPool);
         uint256 dayInSeconds = 1 days;
         uint256 crunchAmount = (tokensInPancakeswapPool.mul(crunchRate).mul(timeBetweenLastCrunch))
@@ -303,7 +320,7 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
     // Thank you @nanexcool
     // https://twitter.com/nanexcool/status/1259623747339849729
     function isMetacanaTuesday() public view returns (bool) {
-        uint256 day = (now / 1 days + 3) % 7;
+        uint256 day = (block.timestamp / 1 days + 3) % 7;
         return day == 1;
     }
 
@@ -327,15 +344,15 @@ contract MetacanaToken is DeflationaryERC20, Pausable, SocialProofable {
         twitterProof = _twitterProof;
     }
 
-    function getTwitterProof() external override view returns(uint256) {
-        return twitterProof;
-    }
+    // function getTwitterProof() external override view returns(uint256) {
+    //     return twitterProof;
+    // }
 
-    function setGithubProof(bytes calldata _githubProof) external onlyOwner {
-        githubProof = _githubProof;
-    }
+    // function setGithubProof(bytes calldata _githubProof) external onlyOwner {
+    //     githubProof = _githubProof;
+    // }
 
-    function getGithubProof() external override view returns(bytes memory) {
-        return githubProof;
-    }
+    // function getGithubProof() external override view returns(bytes memory) {
+    //     return githubProof;
+    // }
 }

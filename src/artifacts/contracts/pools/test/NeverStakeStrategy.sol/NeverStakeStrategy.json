@@ -1,0 +1,30 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "NeverStakeStrategy",
+  "sourceName": "contracts/pools/test/NeverStakeStrategy.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "canStake",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5060ad8061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c806336d8bf9314602d575b600080fd5b605d60048036036020811015604157600080fd5b503573ffffffffffffffffffffffffffffffffffffffff166071565b604080519115158252519081900360200190f35b5060009056fea2646970667358221220eec0a2a8e449cdffceb0441b366d728382b35ba5f564eefb6aa608233a4fcbcc64736f6c63430007040033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c806336d8bf9314602d575b600080fd5b605d60048036036020811015604157600080fd5b503573ffffffffffffffffffffffffffffffffffffffff166071565b604080519115158252519081900360200190f35b5060009056fea2646970667358221220eec0a2a8e449cdffceb0441b366d728382b35ba5f564eefb6aa608233a4fcbcc64736f6c63430007040033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.7.4;
+pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "../tokens/MetacanaAssets.sol";
 import "./LootBoxRandomness.sol";
 
@@ -11,9 +12,9 @@ import "./LootBoxRandomness.sol";
 /**
  * @title CreatureAccessoryLootBox
  * CreatureAccessoryLootBox - a randomized and openable lootbox of Creature
- * Accessories.
+ * Accessories. We may need to set range for minting tokens
  */
-contract CreatureAccessoryLootBox is ERC1155Tradable, ReentrancyGuard {
+contract CreatureAccessoryLootBox is MetacanaAssets, ReentrancyGuard {
   using LootBoxRandomness for LootBoxRandomness.LootBoxRandomnessState;
   using SafeMath for uint256;
 
@@ -21,20 +22,15 @@ contract CreatureAccessoryLootBox is ERC1155Tradable, ReentrancyGuard {
 
   /**
    * @dev Example constructor. Sets minimal configuration.
-   * @param _proxyRegistryAddress The address of the OpenSea/Wyvern proxy registry
-   *                              On Rinkeby: "0xf57b2c51ded3a29e6891aba85459d600256cf317"
-   *                              On mainnet: "0xa5409ec958c83c3f309868babaca7c86dcb077c1"
+   * @param _firstOwner The address of the Metacana owner
    */
-  constructor(address _proxyRegistryAddress)
-  ERC1155Tradable(
-    "OpenSea Creature Accessory Loot Box",
-    "OSCALOOT",
-    "",
-    _proxyRegistryAddress
+  constructor(address _firstOwner)
+  MetacanaAssets(
+    _firstOwner
   ) {}
 
   function setState(
-    address _factoryAddress,
+    address _factoryAddress, 
     uint256 _numOptions,
     uint256 _numClasses,
     uint256 _seed
@@ -81,30 +77,17 @@ contract CreatureAccessoryLootBox is ERC1155Tradable, ReentrancyGuard {
     uint256 _optionId,
     uint256 _amount,
     bytes memory _data
-  ) override public nonReentrant {
+  ) override external nonReentrant {
     require(_isOwnerOrProxy(_msgSender()), "Lootbox: owner or proxy only");
     require(_optionId < state.numOptions, "Lootbox: Invalid Option");
     // Option ID is used as a token ID here
-    _mint(_to, _optionId, _amount, _data);
-  }
-
-  /**
-   *  @dev track the number of tokens minted.
-   */
-  function _mint(
-    address _to,
-    uint256 _id,
-    uint256 _quantity,
-    bytes memory _data
-  ) override internal  {
-    tokenSupply[_id] = tokenSupply[_id].add(_quantity);
-    super._mint(_to, _id, _quantity, _data);
+    tokenSupply[_optionId] = tokenSupply[_optionId].add(_amount);
+    super._mint(_to, _optionId, _amount, _data);
   }
 
   function _isOwnerOrProxy(
     address _address
-  ) internal view returns (bool) {
-    ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
-    return owner() == _address || address(proxyRegistry.proxies(owner())) == _address;
+  ) internal view returns (bool) {    
+    return ((getOwner() == _address) || (isFactoryActive[_address] == true));
   }
 }

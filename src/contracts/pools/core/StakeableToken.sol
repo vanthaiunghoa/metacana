@@ -3,10 +3,10 @@
 pragma solidity ^0.7.4;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "../interfaces/token/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IStakeableStrategy.sol";
 
-contract StakeableToken {
+abstract contract StakeableToken {
   using SafeMath for uint256;
   IERC20 public underlying;
 
@@ -31,7 +31,7 @@ contract StakeableToken {
 
   modifier updateLastUpdateTime(address account) {
     if (account != address(0)) {
-      _lastUpdateTime[account] = now;
+      _lastUpdateTime[account] = block.timestamp;
     }
     _;
   }
@@ -56,7 +56,7 @@ contract StakeableToken {
 
     if (_firstStakeTime[msg.sender] == 0) {
       stakers.push(msg.sender);
-      _firstStakeTime[msg.sender] = now;
+      _firstStakeTime[msg.sender] = block.timestamp;
     }
 
     _totalSupply = _totalSupply.add(amount);

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.7.4;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@0xsequence/erc-1155/contracts/utils/SafeMath.sol";
 
 /*
   DESIGN NOTES:
@@ -199,7 +199,7 @@ library LootBoxRandomness {
    * @dev Main minting logic for lootboxes
    * This is called via safeTransferFrom when CreatureAccessoryLootBox extends
    * CreatureAccessoryFactory.
-   * NOTE: prices and fees are determined by the sell order on OpenSea.
+   * NOTE: prices and fees are determined by the sell order on the marketplace.
    * WARNING: Make sure msg.sender can mint!
    */
   function _mint(

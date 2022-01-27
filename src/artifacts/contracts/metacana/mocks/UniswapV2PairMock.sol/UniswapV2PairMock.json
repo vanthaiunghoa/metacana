@@ -1,0 +1,18 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "UniswapV2PairMock",
+  "sourceName": "contracts/metacana/mocks/UniswapV2PairMock.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "sync",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b50606d80601d6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063fff6cae914602d575b600080fd5b60336035565b005b56fea264697066735822122054d5769fefcd0e6561d0c37f37b08f083d58253cb980f7f8647dbfbb0b29c4b064736f6c63430007040033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c8063fff6cae914602d575b600080fd5b60336035565b005b56fea264697066735822122054d5769fefcd0e6561d0c37f37b08f083d58253cb980f7f8647dbfbb0b29c4b064736f6c63430007040033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

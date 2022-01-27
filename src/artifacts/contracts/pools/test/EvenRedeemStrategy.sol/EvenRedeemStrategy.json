@@ -1,0 +1,35 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "EvenRedeemStrategy",
+  "sourceName": "contracts/pools/test/EvenRedeemStrategy.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "nftId",
+          "type": "uint256"
+        }
+      ],
+      "name": "canRedeem",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5060b68061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063cc1f8ffa14602d575b600080fd5b606360048036036040811015604157600080fd5b5073ffffffffffffffffffffffffffffffffffffffff81351690602001356077565b604080519115158252519081900360200190f35b6001161591905056fea2646970667358221220814b0c5e9cd99dd1bfaa4022a18395b353cb5ab186b176e263aaeb7ac1eb841364736f6c63430007040033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c8063cc1f8ffa14602d575b600080fd5b606360048036036040811015604157600080fd5b5073ffffffffffffffffffffffffffffffffffffffff81351690602001356077565b604080519115158252519081900360200190f35b6001161591905056fea2646970667358221220814b0c5e9cd99dd1bfaa4022a18395b353cb5ab186b176e263aaeb7ac1eb841364736f6c63430007040033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -3,12 +3,14 @@
 pragma solidity ^0.7.4;
 
 import "@openzeppelin/contracts/math/Math.sol";
-import "../../util/TokenRecover.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
+import "../../utils/TokenRecover.sol";
 import "./StakeableToken.sol";
 import "./RedeemableNFT.sol";
 import "../interfaces/IRedeemableStrategy.sol";
 
 contract NFTStakeablePool is StakeableToken, RedeemableNFT, TokenRecover {
+  using SafeMath for uint256;
   uint256 public maximumStake = 10000;
   string public poolName;
 
@@ -64,7 +66,8 @@ contract NFTStakeablePool is StakeableToken, RedeemableNFT, TokenRecover {
 
   function _newlyEarnedPoints(address account) private view returns (uint256) {
     // 1 point per day per staked token
-    return now.sub(lastUpdateTime(account)) // Time since last update
+    uint256 ts = block.timestamp;
+    return ts.sub(lastUpdateTime(account)) // Time since last update
       .mul(1e18) // how many points 
       .mul(balanceOf(account)) // per balance
       .div(86400) // per day

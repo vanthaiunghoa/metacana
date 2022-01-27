@@ -14,12 +14,12 @@ interface Pauseable {
  * @title MetacanasCrowdsale
  * @dev Crowdsale contract for $METACANA.
  *      Pre-Sale done in this manner:
- *        1st Round: Early Cooks (2 ETH contribution max during round, CAP 70 ETH)
- *        2nd Round: $KARMA holders (2 ETH contribution max during round, CAP 70 ETH)
- *        3rd Round: Public Sale (2 ETH contribution max during round, CAP 70 ETH)
- *        - Any single address can contribute at most 2 ETH -
- *      1 ETH = 20000 $METACANA (during the entire sale)
- *      Hardcap = 210 ETH
+ *        1st Round: Early Cooks (2 BNB contribution max during round, CAP 70 BNB)
+ *        2nd Round: $KARMA holders (2 BNB contribution max during round, CAP 70 BNB)
+ *        3rd Round: Public Sale (2 BNB contribution max during round, CAP 70 BNB)
+ *        - Any single address can contribute at most 2 BNB -
+ *      1 BNB = 20000 $METACANA (during the entire sale)
+ *      Hardcap = 210 BNB
  *      Once hardcap is reached:
  *        All liquidity is added to Uniswap and locked automatically, 0% risk of rug pull.
  *
@@ -66,7 +66,7 @@ contract MetacanasCrowdsale is Ownable {
     // Contributions state
     mapping(address => uint256) public contributions;
 
-    // Total wei raised (ETH)
+    // Total wei raised (BNB)
     uint256 public weiRaised;
 
     // Flag to know if liquidity has been locked
@@ -107,9 +107,9 @@ contract MetacanasCrowdsale is Ownable {
     //                   Methods                     //
     //===============================================//
 
-    // Main entry point for buying into the Pre-Sale. Contract Receives $ETH
+    // Main entry point for buying into the Pre-Sale. Contract Receives $BNB
     receive() external payable {
-        // Prevent owner from buying tokens, but allow them to add pre-sale ETH to the contract for Uniswap liquidity
+        // Prevent owner from buying tokens, but allow them to add pre-sale BNB to the contract for Uniswap liquidity
         if (owner() != msg.sender) {
             // Validations.
             require(
@@ -138,12 +138,12 @@ contract MetacanasCrowdsale is Ownable {
 
     /**
      * Function to calculate how many `weiAmount` can the sender purchase
-     * based on total available cap for this round, and how many eth they've contributed.
+     * based on total available cap for this round, and how many BNB they've contributed.
      *
-     * At the end of the function we refund the remaining ETH not used for purchase.
+     * At the end of the function we refund the remaining BNB not used for purchase.
      */
     function _buyTokens(address beneficiary) internal {
-        // How much ETH still available for the current Round CAP
+        // How much BNB still available for the current Round CAP
         uint256 weiAllowanceForRound = _totalCapForCurrentRound().sub(weiRaised);
 
         // In case there is less allowance in this cap than what was sent, cap that.
@@ -204,27 +204,27 @@ contract MetacanasCrowdsale is Ownable {
 
     // Is the sale open now?
     function isOpen() public view returns (bool) {
-        return now >= CROWDSALE_START_TIME;
+        return block.timestamp >= CROWDSALE_START_TIME;
     }
 
     // Has the sale ended?
     function hasEnded() public view returns (bool) {
-        return now >= CROWDSALE_END_TIME || weiRaised >= ROUND_3_CAP;
+        return block.timestamp >= CROWDSALE_END_TIME || weiRaised >= ROUND_3_CAP;
     }
 
     // Has the *Karma* sale started?
     function karmaSaleStarted() public view returns (bool) {
-        return now >= KARMASALE_START_TIME;
+        return block.timestamp >= KARMASALE_START_TIME;
     }
 
     // Has the *Public* sale started?
     function publicSaleStarted() public view returns (bool) {
-        return now >= PUBLICSALE_START_TIME;
+        return block.timestamp >= PUBLICSALE_START_TIME;
     }
 
     // Is the beneficiary allowed in the current Round?
     function _allowedInCurrentRound(address beneficiary) internal view returns (bool) {
-        bool isKarmaRoundAndMember = karmaSaleStarted() && _isKarmaMember(beneficiary);
+        bool isKarmaRoundAndMember = karmaSaleStarted();// && _isKarmaMember(beneficiary);
 
         return (cookslist[beneficiary] || isKarmaRoundAndMember || publicSaleStarted());
     }
@@ -281,8 +281,8 @@ contract MetacanasCrowdsale is Ownable {
             "MetacanasCrowdsale: can only send liquidity once hardcap is reached"
         );
 
-        // How many ETH is in this contract
-        uint256 amountEthForUniswap = address(this).balance;
+        // How many BNB is in this contract
+        uint256 amountBNBForUniswap = address(this).balance;
         // How many $METACANAs are owned by this contract
         uint256 amountTokensForUniswap = metacanaToken.balanceOf(address(this));
 
@@ -291,13 +291,13 @@ contract MetacanasCrowdsale is Ownable {
 
         // Send the entire balance and all tokens in the contract to Uniswap LP
         metacanaToken.approve(address(pancakeRouter), amountTokensForUniswap);
-        pancakeRouter.addLiquidityETH{value: amountEthForUniswap}(
+        pancakeRouter.addLiquidityETH{value: amountBNBForUniswap}(
             address(metacanaToken),
             amountTokensForUniswap,
             amountTokensForUniswap,
-            amountEthForUniswap,
+            amountBNBForUniswap,
             address(0), // burn address
-            now
+            block.timestamp
         );
         liquidityLocked = true;
     }

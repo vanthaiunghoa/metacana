@@ -3,10 +3,10 @@
 pragma solidity ^0.7.4;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "../../nfts/core/interfaces/IERC1155Tradable.sol";
+import "../../nft/interfaces/IMetacanaAssets.sol";
 import "../interfaces/IRedeemableStrategy.sol";
 
-contract RedeemableNFT {
+abstract contract RedeemableNFT {
   using SafeMath for uint256;
 
   struct NFT {
@@ -15,12 +15,12 @@ contract RedeemableNFT {
     address creator;
   }
 
-  IERC1155Tradable public nftsContract;
+  IMetacanaAssets public nftsContract;
   mapping(uint256 => NFT) public nfts;
   mapping(address => uint256) public points;
 
   constructor(address _nftsAddress) internal {
-    nftsContract = IERC1155Tradable(_nftsAddress);
+    nftsContract = IMetacanaAssets(_nftsAddress);
   }
 
   event NFTAdded(
@@ -43,7 +43,7 @@ contract RedeemableNFT {
     uint256 pointsToRedeem,
     address strategy
   ) internal {
-    require(nftsContract.exists(nftId), "RedeemableNFT#_addNFT: NFT doesn't exist");
+    // require(nftsContract.exists(nftId), "RedeemableNFT#_addNFT: NFT doesn't exist"); //TODO: need to check more
     nfts[nftId] = NFT(IRedeemableStrategy(strategy), pointsToRedeem, msg.sender);
     emit NFTAdded(nftId, pointsToRedeem, strategy, msg.sender);
   }
@@ -71,14 +71,14 @@ contract RedeemableNFT {
 
     require(nft.pointsToRedeem != 0, "RedeemableNFT#_redeem: NFT not found");
     require(points[msg.sender] >= nft.pointsToRedeem, "RedeemableNFT#_redeem: Not enough points to redeem for NFT");
-    require(nftsContract.mintable(nftId), "RedeemableNFT#_redeem: Max NFTs minted");
+    // require(nftsContract.mintable(nftId), "RedeemableNFT#_redeem: Max NFTs minted"); //TODO: need to check
     require(
       address(nft.strategy) == address(0) || nft.strategy.canRedeem(msg.sender, nftId),
       "RedeemableNFT#_redeem: Sender doesn't meet the requirements to mint."
     );
 
     points[msg.sender] = points[msg.sender].sub(nft.pointsToRedeem);
-    nftsContract.mint(msg.sender, nftId, 1, "");
+    // nftsContract.mint(msg.sender, nftId, 1, ""); //TODO: need to check
 
     emit NFTRedeemed(msg.sender, nft.pointsToRedeem);
   }

@@ -2,7 +2,7 @@ pragma solidity 0.7.4;
 pragma experimental ABIEncoderV2;
 
 
-import "../utils/Ownable.sol";
+import "../../utils/Ownable.sol";
 
 contract OwnableMock is Ownable {
 
