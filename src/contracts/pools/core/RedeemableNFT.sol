@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.7.4;
+pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "../../nft/interfaces/IMetacanaAssets.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "../../nft/interfaces/IMetacanaNFT.sol";
 import "../interfaces/IRedeemableStrategy.sol";
 
 abstract contract RedeemableNFT {
@@ -15,12 +15,12 @@ abstract contract RedeemableNFT {
     address creator;
   }
 
-  IMetacanaAssets public nftsContract;
+  IMetacanaNFT public nftsContract;
   mapping(uint256 => NFT) public nfts;
   mapping(address => uint256) public points;
 
   constructor(address _nftsAddress) internal {
-    nftsContract = IMetacanaAssets(_nftsAddress);
+    nftsContract = IMetacanaNFT(_nftsAddress);
   }
 
   event NFTAdded(

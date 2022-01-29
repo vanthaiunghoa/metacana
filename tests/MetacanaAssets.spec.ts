@@ -10,7 +10,7 @@ import {
 import * as utils from './utils'
 
 import { 
-  MetacanaAssets,
+  MetacanaNFT,
   ERC1155Mock,
   FactoryMock
 } from 'src/gen/typechain'
@@ -45,7 +45,7 @@ const {
   signer: randomSigner
 } = utils.createTestWallet(web3, 5)
 
-describe('MetacanaAssets', () => {
+describe('MetacanaNFT', () => {
 
   let ownerAddress: string
   let userAddress: string
@@ -56,8 +56,8 @@ describe('MetacanaAssets', () => {
 
   // Metacana Assets
   let wDaiContract: ERC1155Mock
-  let SWAssetsContract: MetacanaAssets
-  let userSWAssetsContract: MetacanaAssets
+  let SWAssetsContract: MetacanaNFT
+  let userSWAssetsContract: MetacanaNFT
   let factoryContract: FactoryMock
 
   // Wrapped DAI
@@ -88,7 +88,7 @@ describe('MetacanaAssets', () => {
     ownerAddress = await ownerWallet.getAddress()
     userAddress = await userWallet.getAddress()
     randomAddress = await randomWallet.getAddress()
-    MetacanaAssetsAbstract = await AbstractContract.fromArtifactName('MetacanaAssets')
+    MetacanaAssetsAbstract = await AbstractContract.fromArtifactName('MetacanaNFT')
     wDaiCoinAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
     factoryAbstract = await AbstractContract.fromArtifactName('FactoryMock')
   })
@@ -100,8 +100,8 @@ describe('MetacanaAssets', () => {
     userWDaiContract = await wDaiContract.connect(userSigner) as ERC1155Mock
 
     // Deploy SWFactory manager
-    SWAssetsContract = await MetacanaAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as MetacanaAssets
-    userSWAssetsContract = await SWAssetsContract.connect(userSigner) as MetacanaAssets
+    SWAssetsContract = await MetacanaAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as MetacanaNFT
+    userSWAssetsContract = await SWAssetsContract.connect(userSigner) as MetacanaNFT
 
     // Deploy mock factory
     factoryContract = await factoryAbstract.deploy(ownerWallet, [SWAssetsContract.address]) as FactoryMock
@@ -134,7 +134,7 @@ describe('MetacanaAssets', () => {
         await SWAssetsContract.setMaxIssuances([id], [maxIssuance])
         await SWAssetsContract.activateFactory(factory)
         await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
-        await factoryContract.batchMint(userAddress, [id], [expected_issuance], [])
+        await factoryContract.mintBatch(userAddress, [id], [expected_issuance], [])
         const value = await SWAssetsContract.getCurrentIssuances([id])
         expect(value[0]).to.be.eql(expected_issuance)
       })
@@ -166,17 +166,17 @@ describe('MetacanaAssets', () => {
 
     it('should REVERT if maxRange is 0', async () => {
       let tx = SWAssetsContract.addMintPermission(factory, minRange, 0, startTime, endTime);
-      await expect(tx).to.be.rejectedWith( RevertError("MetacanaAssets#addMintPermission: NULL_RANGE") )
+      await expect(tx).to.be.rejectedWith( RevertError("MetacanaNFT#addMintPermission: NULL_RANGE") )
     })
 
     it('should REVERT if minRange is lower than maxRange', async () => {
       let tx = SWAssetsContract.addMintPermission(factory, maxRange.add(1), maxRange, startTime, endTime);
-      await expect(tx).to.be.rejectedWith( RevertError("MetacanaAssets#addMintPermission: INVALID_RANGE") )
+      await expect(tx).to.be.rejectedWith( RevertError("MetacanaNFT#addMintPermission: INVALID_RANGE") )
     })
 
     it('should REVERT if startTime is higher or equal to endTime', async () => {
       let tx = SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, startTime);
-      await expect(tx).to.be.rejectedWith( RevertError("MetacanaAssets#addMintPermission: START_TIME_IS_NOT_LESSER_THEN_END_TIME") )
+      await expect(tx).to.be.rejectedWith( RevertError("MetacanaNFT#addMintPermission: START_TIME_IS_NOT_LESSER_THEN_END_TIME") )
     })
 
     it('should PASS if range is valid', async () => {
@@ -255,16 +255,16 @@ describe('MetacanaAssets', () => {
       await SWAssetsContract.lockRangeMintPermissions(range)
 
       let tx = SWAssetsContract.addMintPermission(factory, maxRange, maxRange.add(100), startTime, endTime)
-      await expect(tx).to.be.rejectedWith( RevertError("MetacanaAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
+      await expect(tx).to.be.rejectedWith( RevertError("MetacanaNFT#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
 
       let tx2 = SWAssetsContract.addMintPermission(factory, 0, minRange, startTime, endTime)
-      await expect(tx2).to.be.rejectedWith( RevertError("MetacanaAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
+      await expect(tx2).to.be.rejectedWith( RevertError("MetacanaNFT#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
 
       let tx3 = SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
-      await expect(tx3).to.be.rejectedWith( RevertError("MetacanaAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
+      await expect(tx3).to.be.rejectedWith( RevertError("MetacanaNFT#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
 
       let tx4 = SWAssetsContract.addMintPermission(factory, 0, minRange.add(10), startTime, endTime)
-      await expect(tx4).to.be.rejectedWith( RevertError("MetacanaAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
+      await expect(tx4).to.be.rejectedWith( RevertError("MetacanaNFT#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
     })
 
     it('should pass if range does not overlap with locked range', async () => {
@@ -619,7 +619,7 @@ describe('MetacanaAssets', () => {
 
     it('should REVERT if arrays are not the same length', async () => {
       const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance, maxIssuance])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#setMaxIssuances: INVALID_ARRAYS_LENGTH"))
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_ARRAYS_LENGTH"))
     })
 
     context('Wen max issuance is already set', () => {
@@ -635,22 +635,22 @@ describe('MetacanaAssets', () => {
 
       it('should REVERT if new max issuance is same', async () => {
         const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance])
-        await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
+        await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
       })
 
       it('should REVERT if new max issuance is higher', async () => {
         const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance.add(1)])
-        await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
+        await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
       })
 
       it('should REVERT if new max issuance is 0', async () => {
         const tx = SWAssetsContract.setMaxIssuances([id], [0])
-        await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
+        await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
       })
     })
   })
 
-  describe('batchMint() function', () => {
+  describe('mintBatch() function', () => {
     const minRange2 = maxRange.add(9)
     const maxRange2 = minRange2.add(333)
     const ids2 = new Array(nTokenTypes).fill('').map((a, i) => minRange2.add(i))
@@ -666,48 +666,48 @@ describe('MetacanaAssets', () => {
 
     it('should REVERT if called by inactive factory, but authorized IDs', async () => {
       await SWAssetsContract.shutdownFactory(factory)
-      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: FACTORY_NOT_ACTIVE"))
+      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: FACTORY_NOT_ACTIVE"))
     })
 
     it('should REVERT if IDs to mint are not authorized', async () => {
       let invalid_ids = new Array(nTokenTypes).fill('').map((a, i) => maxRange.add(a+1))
-      const tx = factoryContract.batchMint(userAddress, invalid_ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx = factoryContract.mintBatch(userAddress, invalid_ids, amounts, [])
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
       
       let invalid_ids_low = new Array(nTokenTypes).fill('').map((a, i) => minRange.add(a-1))
-      const tx_2 = factoryContract.batchMint(userAddress, invalid_ids_low, amounts, [])
-      await expect(tx_2).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx_2 = factoryContract.mintBatch(userAddress, invalid_ids_low, amounts, [])
+      await expect(tx_2).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
 
       // With mltiple ranges
       await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
       await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
 
       let invalid_ids_high_2 = new Array(nTokenTypes).fill('').map((a, i) => maxRange2.add(a+1))
-      const tx3 = factoryContract.batchMint(userAddress, invalid_ids_high_2, amounts, [])
-      await expect(tx3).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx3 = factoryContract.mintBatch(userAddress, invalid_ids_high_2, amounts, [])
+      await expect(tx3).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
       
       let invalid_ids_low_3 = new Array(nTokenTypes).fill('').map((a, i) => minRange3.add(a-1))
-      const tx4 = factoryContract.batchMint(userAddress, invalid_ids_low_3, amounts, [])
-      await expect(tx4).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx4 = factoryContract.mintBatch(userAddress, invalid_ids_low_3, amounts, [])
+      await expect(tx4).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     it('should REVERT if NO id ranges are authorized for factory', async () => {
       await SWAssetsContract.removeMintPermission(factory, 0)
-      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
+      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
       await expect(tx).to.be.rejected;
     })
 
     it('should REVERT if only 1 ID to mint is not authorized', async () => {
       let invalid_ids = ids.slice()
       invalid_ids[invalid_ids.length - 1] = maxRange.add(1)
-      const tx = factoryContract.batchMint(userAddress, invalid_ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx = factoryContract.mintBatch(userAddress, invalid_ids, amounts, [])
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     it('should REVERT if id ranges are not authorized for factory', async () => {
       await SWAssetsContract.removeMintPermission(factory, 0)
-      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
+      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
       await expect(tx).to.be.rejected;
     })
 
@@ -715,29 +715,29 @@ describe('MetacanaAssets', () => {
       const max_issuance = nTokensPerType - 1
       const id = nTokenTypes - 1
       await SWAssetsContract.setMaxIssuances([id], [max_issuance])
-      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: MAX_ISSUANCE_EXCEEDED"))
+      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: MAX_ISSUANCE_EXCEEDED"))
     })
 
     it('should REVERT if startTime of range has not started', async () => {
       await SWAssetsContract.removeMintPermission(factory, 0)
       await SWAssetsContract.addMintPermission(factory, minRange, maxRange, endTime, endTime.add(1))
-      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     it('should REVERT if endTime of range is passed', async () => {
       await SWAssetsContract.removeMintPermission(factory, 0)
       await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime.sub(100), startTime.sub(99))
-      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     it('should PASS if reach exact max issuance', async () => {
       const max_issuance = nTokensPerType
       const id = nTokenTypes - 1
       await SWAssetsContract.setMaxIssuances([id], [max_issuance])
-      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
+      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
       await expect(tx).to.be.fulfilled
     })
 
@@ -745,7 +745,7 @@ describe('MetacanaAssets', () => {
       const max_issuance = nTokensPerType
       const id = nTokenTypes - 1
       await SWAssetsContract.setMaxIssuances([id], [max_issuance])
-      await factoryContract.batchMint(userAddress, ids, amounts, [])
+      await factoryContract.mintBatch(userAddress, ids, amounts, [])
       const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
       const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
       expect(current_issuance[0]).to.be.eql(BigNumber.from(max_issuance))
@@ -754,7 +754,7 @@ describe('MetacanaAssets', () => {
 
     it('should NOT update current issuance if max issuance is NOT set', async () => {
       const id = nTokenTypes - 1
-      await factoryContract.batchMint(userAddress, ids, amounts, [])
+      await factoryContract.mintBatch(userAddress, ids, amounts, [])
       const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
       const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
       expect(current_issuance[0]).to.be.eql(BigNumber.from(0))
@@ -762,63 +762,63 @@ describe('MetacanaAssets', () => {
     })
 
     it('should PASS if caller is activated and authorized factory', async () => {
-      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
+      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
       await expect(tx).to.be.fulfilled
     })
 
     it('should PASS if id is in a later range', async () => {
       await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
-      const tx = factoryContract.batchMint(userAddress, ids2, amounts, [])
+      const tx = factoryContract.mintBatch(userAddress, ids2, amounts, [])
       await expect(tx).to.be.fulfilled
 
       await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
-      const tx2 = factoryContract.batchMint(userAddress, ids3, amounts, [])
+      const tx2 = factoryContract.mintBatch(userAddress, ids3, amounts, [])
       await expect(tx2).to.be.fulfilled
     })
 
     it('should PASS if some ids are in different ranges', async () => {
       await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
-      const tx = factoryContract.batchMint(userAddress, ids.concat(ids2), amounts.concat(amounts), [])
+      const tx = factoryContract.mintBatch(userAddress, ids.concat(ids2), amounts.concat(amounts), [])
       await expect(tx).to.be.fulfilled
 
       await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
-      const tx2 = factoryContract.batchMint(userAddress, ids.concat(ids3), amounts.concat(amounts), [])
+      const tx2 = factoryContract.mintBatch(userAddress, ids.concat(ids3), amounts.concat(amounts), [])
       await expect(tx2).to.be.fulfilled
 
       await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
-      const tx3 = factoryContract.batchMint(userAddress, [maxRange, maxRange2, maxRange3], [2,2,2], [])
+      const tx3 = factoryContract.mintBatch(userAddress, [maxRange, maxRange2, maxRange3], [2,2,2], [])
       await expect(tx3).to.be.fulfilled
 
       await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
-      const tx4 = factoryContract.batchMint(userAddress, [minRange, minRange2, minRange3], [2,2,2], [])
+      const tx4 = factoryContract.mintBatch(userAddress, [minRange, minRange2, minRange3], [2,2,2], [])
       await expect(tx4).to.be.fulfilled
 
       await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
-      const tx5 = factoryContract.batchMint(userAddress, [maxRange, maxRange3], [2,2], [])
+      const tx5 = factoryContract.mintBatch(userAddress, [maxRange, maxRange3], [2,2], [])
       await expect(tx5).to.be.fulfilled
     })
 
     it('should REVERT if some ids in different ranges are not sorted', async () => {
       await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
-      const tx = factoryContract.batchMint(userAddress, ids2.concat(ids), amounts.concat(amounts), [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx = factoryContract.mintBatch(userAddress, ids2.concat(ids), amounts.concat(amounts), [])
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
 
       await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
-      const tx2 = factoryContract.batchMint(userAddress, ids.concat(ids3).concat(ids2), amounts.concat(amounts).concat(amounts), [])
-      await expect(tx2).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx2 = factoryContract.mintBatch(userAddress, ids.concat(ids3).concat(ids2), amounts.concat(amounts).concat(amounts), [])
+      await expect(tx2).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
 
       await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
-      const tx3 = factoryContract.batchMint(userAddress, [maxRange, maxRange3, maxRange2], [2,2,2], [])
-      await expect(tx3).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx3 = factoryContract.mintBatch(userAddress, [maxRange, maxRange3, maxRange2], [2,2,2], [])
+      await expect(tx3).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
 
       await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
-      const tx4 = factoryContract.batchMint(userAddress, [minRange, minRange3, minRange2], [2,2,2], [])
-      await expect(tx4).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      const tx4 = factoryContract.mintBatch(userAddress, [minRange, minRange3, minRange2], [2,2,2], [])
+      await expect(tx4).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     context('When tokens were minted', () => {
       beforeEach(async () => {
-        await factoryContract.batchMint(userAddress, ids, amounts, [])
+        await factoryContract.mintBatch(userAddress, ids, amounts, [])
       })
 
       it('should mint tokens to recipient', async () => {
@@ -851,17 +851,17 @@ describe('MetacanaAssets', () => {
     it('should REVERT if called by inactive factory, but authorized IDs', async () => {
       await SWAssetsContract.shutdownFactory(factory)
       const tx = factoryContract.mint(userAddress, id, amount, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: FACTORY_NOT_ACTIVE"))
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: FACTORY_NOT_ACTIVE"))
     })
 
     it('should REVERT if IDs to mint are not authorized', async () => {
       let invalid_id_high = maxRange.add(1)
       const tx = factoryContract.mint(userAddress, invalid_id_high, amount, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
 
       let invalid_id_low = minRange.sub(1)
       const tx1 = factoryContract.mint(userAddress, invalid_id_low, amount, [])
-      await expect(tx1).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx1).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
 
       // With mltiple ranges
       await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
@@ -869,11 +869,11 @@ describe('MetacanaAssets', () => {
 
       let invalid_ids_high_2 = maxRange2.add(1)
       const tx2 = factoryContract.mint(userAddress, invalid_ids_high_2, amount, [])
-      await expect(tx2).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx2).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
       
       let invalid_id_low_2 = minRange3.sub(1)
       const tx3 = factoryContract.mint(userAddress, invalid_id_low_2, amount, [])
-      await expect(tx3).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx3).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     it('should REVERT if exceeds max issuance', async () => {
@@ -881,7 +881,7 @@ describe('MetacanaAssets', () => {
       const id = nTokenTypes - 1
       await SWAssetsContract.setMaxIssuances([id], [max_issuance])
       const tx = factoryContract.mint(userAddress, id, amount, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaAssets#_validateMints: MAX_ISSUANCE_EXCEEDED"))
+      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: MAX_ISSUANCE_EXCEEDED"))
     })
 
     it('should PASS if reach exact max issuance', async () => {
@@ -929,7 +929,7 @@ describe('MetacanaAssets', () => {
 
     context('When tokens were minted', () => {
       beforeEach(async () => {
-        await factoryContract.batchMint(userAddress, ids, amounts, [])
+        await factoryContract.mintBatch(userAddress, ids, amounts, [])
       })
 
       it('should mint tokens to recipient', async () => {

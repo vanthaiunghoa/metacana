@@ -21,17 +21,13 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IRewardFactoryInterface extends ethers.utils.Interface {
   functions: {
-    "batchMint(address,uint256[],uint256[],bytes)": FunctionFragment;
     "getAvailableSupply()": FunctionFragment;
     "livePeriod()": FunctionFragment;
+    "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "updatePeriodMintLimit(uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "batchMint",
-    values: [string, BigNumberish[], BigNumberish[], BytesLike]
-  ): string;
   encodeFunctionData(
     functionFragment: "getAvailableSupply",
     values?: undefined
@@ -39,6 +35,10 @@ interface IRewardFactoryInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "livePeriod",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintBatch",
+    values: [string, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -49,12 +49,12 @@ interface IRewardFactoryInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getAvailableSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "livePeriod", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -115,22 +115,6 @@ export class IRewardFactory extends Contract {
   interface: IRewardFactoryInterface;
 
   functions: {
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     getAvailableSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "getAvailableSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -138,6 +122,22 @@ export class IRewardFactory extends Contract {
     livePeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "livePeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     supportsInterface(
       interfaceID: BytesLike,
@@ -160,22 +160,6 @@ export class IRewardFactory extends Contract {
     ): Promise<ContractTransaction>;
   };
 
-  batchMint(
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "batchMint(address,uint256[],uint256[],bytes)"(
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   getAvailableSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   "getAvailableSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -183,6 +167,22 @@ export class IRewardFactory extends Contract {
   livePeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
   "livePeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  mintBatch(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "mintBatch(address,uint256[],uint256[],bytes)"(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   supportsInterface(
     interfaceID: BytesLike,
@@ -205,22 +205,6 @@ export class IRewardFactory extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     getAvailableSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getAvailableSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -228,6 +212,22 @@ export class IRewardFactory extends Contract {
     livePeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     "livePeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     supportsInterface(
       interfaceID: BytesLike,
@@ -261,22 +261,6 @@ export class IRewardFactory extends Contract {
   };
 
   estimateGas: {
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     getAvailableSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getAvailableSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -284,6 +268,22 @@ export class IRewardFactory extends Contract {
     livePeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     "livePeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     supportsInterface(
       interfaceID: BytesLike,
@@ -307,22 +307,6 @@ export class IRewardFactory extends Contract {
   };
 
   populateTransaction: {
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     getAvailableSupply(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -334,6 +318,22 @@ export class IRewardFactory extends Contract {
     livePeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "livePeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     supportsInterface(
       interfaceID: BytesLike,

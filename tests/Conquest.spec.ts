@@ -10,7 +10,7 @@ import {
 import * as utils from './utils'
 
 import { 
-  MetacanaAssets,
+  MetacanaNFT,
   RewardFactory,
   ERC1155Mock,
   Conquest
@@ -56,9 +56,9 @@ describe('Conquest', () => {
   let factoryAbstract: AbstractContract
   let rewardFactoryAbstract: AbstractContract
 
-  // MetacanaAssets Assets
-  let MetacanaAssetsContract: MetacanaAssets
-  let userMetacanaAssetsContract: MetacanaAssets
+  // MetacanaNFT Assets
+  let MetacanaAssetsContract: MetacanaNFT
+  let userMetacanaAssetsContract: MetacanaNFT
   let factoryContract: Conquest
   let silverFactory: RewardFactory
   let goldFactory: RewardFactory
@@ -108,7 +108,7 @@ describe('Conquest', () => {
     ownerAddress = await ownerWallet.getAddress()
     userAddress = await userWallet.getAddress()
     randomAddress = await randomWallet.getAddress()
-    MetacanaAssetsAbstract = await AbstractContract.fromArtifactName('MetacanaAssets')
+    MetacanaAssetsAbstract = await AbstractContract.fromArtifactName('MetacanaNFT')
     ticketAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
     factoryAbstract = await AbstractContract.fromArtifactName('Conquest')
     rewardFactoryAbstract = await AbstractContract.fromArtifactName('RewardFactory')
@@ -117,8 +117,8 @@ describe('Conquest', () => {
   // deploy before each test, to reset state of contract
   beforeEach(async () => {
 
-    // Deploy MetacanaAssets Assets Contract
-    MetacanaAssetsContract = await MetacanaAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as MetacanaAssets
+    // Deploy MetacanaNFT Assets Contract
+    MetacanaAssetsContract = await MetacanaAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as MetacanaNFT
     userMetacanaAssetsContract = await MetacanaAssetsContract.connect(userSigner)
 
     // Deploy Silver and Gold cards factories
@@ -166,8 +166,8 @@ describe('Conquest', () => {
     await MetacanaAssetsContract.addMintPermission(ownerAddress, ticketID, ticketID, startTime, endTime);
 
     // Mint Ticket tokens to owner and user
-    await MetacanaAssetsContract.batchMint(ownerAddress, [ticketID], [ticketAmount] , [])
-    await MetacanaAssetsContract.batchMint(userAddress, [ticketID], [ticketAmount] , [])
+    await MetacanaAssetsContract.mintBatch(ownerAddress, [ticketID], [ticketAmount] , [])
+    await MetacanaAssetsContract.mintBatch(userAddress, [ticketID], [ticketAmount] , [])
 
     // Remove owner as factory
     await MetacanaAssetsContract.shutdownFactory(ownerAddress);
@@ -228,7 +228,7 @@ describe('Conquest', () => {
         await MetacanaAssetsContract.activateFactory(ownerAddress);
         await MetacanaAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id, startTime, endTime);
         
-        await MetacanaAssetsContract.batchMint(userAddress, [invalid_id], [amount], [])
+        await MetacanaAssetsContract.mintBatch(userAddress, [invalid_id], [amount], [])
 
         const tx = userMetacanaAssetsContract.safeBatchTransferFrom(userAddress, factory, [invalid_id], [amount], [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: INVALID_ENTRY_TOKEN_ID"))
@@ -277,7 +277,7 @@ describe('Conquest', () => {
         await MetacanaAssetsContract.activateFactory(ownerAddress);
         await MetacanaAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id, startTime, endTime);
 
-        await MetacanaAssetsContract.batchMint(userAddress, [invalid_id], [amount], [])
+        await MetacanaAssetsContract.mintBatch(userAddress, [invalid_id], [amount], [])
 
         const tx = userMetacanaAssetsContract.safeTransferFrom(userAddress, factory, invalid_id, amount, [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: INVALID_ENTRY_TOKEN_ID"))
@@ -414,12 +414,12 @@ describe('Conquest', () => {
 
           it('should REVERT if silver reward is not silver', async () => {
             const tx = factoryContract.exitConquest(userAddress, [GOLD_SPACE], [])
-            await expect(tx).to.be.rejectedWith(RevertError('MetacanaAssets#_validateMints: ID_OUT_OF_RANGE'))
+            await expect(tx).to.be.rejectedWith(RevertError('MetacanaNFT#_validateMints: ID_OUT_OF_RANGE'))
           })
 
           it('should REVERT if gold reward is not gold', async () => {
             const tx = factoryContract.exitConquest(userAddress, [1], [GOLD_SPACE.sub(1)])
-            await expect(tx).to.be.rejectedWith(RevertError('MetacanaAssets#_validateMints: ID_OUT_OF_RANGE'))
+            await expect(tx).to.be.rejectedWith(RevertError('MetacanaNFT#_validateMints: ID_OUT_OF_RANGE'))
           })
 
           it('should PASS if rewards are unsorted', async () => {

@@ -14,7 +14,7 @@ const MockProxyRegistry = artifacts.require(
 const LootBoxRandomness = artifacts.require(
   "../contracts/LootBoxRandomness.sol"
 );
-const CreatureAccessory = artifacts.require("../contracts/CreatureAccessory.sol");//MetacanaAssets
+const CreatureAccessory = artifacts.require("../contracts/CreatureAccessory.sol");//MetacanaNFT
 const CreatureAccessoryFactory = artifacts.require("../contracts/CreatureAccessoryFactory.sol");//FreeMintFactory
 const CreatureAccessoryLootBox = artifacts.require(
   "../contracts/CreatureAccessoryLootBox.sol"

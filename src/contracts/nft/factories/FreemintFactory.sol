@@ -1,8 +1,8 @@
-pragma solidity 0.7.4;
+pragma solidity 0.8.0;
 
 import "../../utils/TieredOwnable.sol";
-import "../interfaces/IMetacanaAssets.sol";
-import "@0xsequence/erc-1155/contracts/interfaces/IERC165.sol";
+import "../interfaces/IMetacanaNFT.sol";
+import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /**
  * This is a contract allowing owner to mint any tokens within a given
@@ -12,7 +12,7 @@ import "@0xsequence/erc-1155/contracts/interfaces/IERC165.sol";
 contract FreemintFactory is TieredOwnable {
 
   // ERC-1155 Metacana assets contract
-  IMetacanaAssets internal metacanaAssets;
+  IMetacanaNFT internal metacanaAssets;
 
   /***********************************|
   |            Constructor            |
@@ -28,7 +28,7 @@ contract FreemintFactory is TieredOwnable {
       _assetsAddr != address(0),
       "FreemintFactory#constructor: INVALID_INPUT"
     );
-    metacanaAssets = IMetacanaAssets(_assetsAddr);
+    metacanaAssets = IMetacanaNFT(_assetsAddr);
   }
 
 
@@ -42,11 +42,11 @@ contract FreemintFactory is TieredOwnable {
    * @param _ids        Array of Tokens ID that are minted
    * @param _amounts    Amount of Tokens id minted for each corresponding Token id in _ids
    */
-  function batchMint(address[] calldata _recipients, uint256[] calldata _ids, uint256[] calldata _amounts)
+  function mintBatch(address[] calldata _recipients, uint256[] calldata _ids, uint256[] calldata _amounts)
     external onlyOwnerTier(1)
   {
     for (uint256 i = 0 ; i < _recipients.length; i++) {
-      metacanaAssets.batchMint(_recipients[i], _ids, _amounts, "");
+      metacanaAssets.mintBatch(_recipients[i], _ids, _amounts, "");
     }
   }
 

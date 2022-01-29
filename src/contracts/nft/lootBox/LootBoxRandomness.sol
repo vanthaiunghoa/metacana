@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.7.4;
+pragma solidity ^0.8.0;
 
-import "@0xsequence/erc-1155/contracts/utils/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /*
   DESIGN NOTES:
@@ -199,7 +199,7 @@ library LootBoxRandomness {
    * @dev Main minting logic for lootboxes
    * This is called via safeTransferFrom when CreatureAccessoryLootBox extends
    * CreatureAccessoryFactory.
-   * NOTE: prices and fees are determined by the sell order on the marketplace.
+   * NOTE: prices and fees are determined by the sell order on OpenSea.
    * WARNING: Make sure msg.sender can mint!
    */
   function _mint(

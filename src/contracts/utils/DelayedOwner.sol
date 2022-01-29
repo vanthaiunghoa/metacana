@@ -1,8 +1,7 @@
-pragma solidity 0.7.4;
-pragma experimental ABIEncoderV2;
+pragma solidity 0.8.0;
 
-import "./Ownable.sol";
-import "@0xsequence/erc-1155/contracts/utils/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @dev This contract allows an owner to execute registered calls after an expiration
@@ -41,11 +40,10 @@ contract DelayedOwner is Ownable {
   }
 
   /**
-   * @dev Registers the execution delay for this contract 
-   * @param _firstOwner Address of the first owner
+   * @dev Registers the execution delay for this contract    
    * @param _delay Amount of time in seconds the delay will be
    */
-  constructor (address _firstOwner, uint256 _delay) Ownable(_firstOwner) {
+  constructor (uint256 _delay) {
     EXECUTION_DELAY = _delay;
   }
 

@@ -26,14 +26,35 @@ interface CreatureAccessoryFactoryInterface extends ethers.utils.Interface {
     "NUM_LOOTBOX_OPTIONS()": FunctionFragment;
     "NUM_OPTIONS()": FunctionFragment;
     "PREMIUM_LOOTBOX()": FunctionFragment;
-    "assignOwnership(address,uint256)": FunctionFragment;
+    "activateFactory(address)": FunctionFragment;
+    "addMintPermission(address,uint64,uint64,uint64,uint64)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
+    "burn(uint256,uint256)": FunctionFragment;
+    "burnBatch(uint256[],uint256[])": FunctionFragment;
     "canMint(uint256,uint256)": FunctionFragment;
-    "getOwnerTier(address)": FunctionFragment;
+    "factorySchemaName()": FunctionFragment;
+    "getCurrentIssuances(uint256[])": FunctionFragment;
+    "getFactoryAccessRanges(address)": FunctionFragment;
+    "getFactoryStatus(address)": FunctionFragment;
+    "getMaxIssuances(uint256[])": FunctionFragment;
+    "lockRangeMintPermissions(tuple)": FunctionFragment;
     "lootBoxAddress()": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
+    "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
+    "name()": FunctionFragment;
     "nftAddress()": FunctionFragment;
     "numOptions()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "proxyRegistryAddress()": FunctionFragment;
+    "removeMintPermission(address,uint256)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "setGlobalRoyaltyInfo(address,uint96)": FunctionFragment;
+    "setMaxIssuances(uint256[],uint256[])": FunctionFragment;
+    "shutdownFactory(address)": FunctionFragment;
+    "supportsFactoryInterface()": FunctionFragment;
+    "symbol()": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "uri(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -57,20 +78,59 @@ interface CreatureAccessoryFactoryInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "assignOwnership",
-    values: [string, BigNumberish]
+    functionFragment: "activateFactory",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addMintPermission",
+    values: [string, BigNumberish, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "burn",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnBatch",
+    values: [BigNumberish[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "canMint",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getOwnerTier",
+    functionFragment: "factorySchemaName",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCurrentIssuances",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFactoryAccessRanges",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFactoryStatus",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMaxIssuances",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lockRangeMintPermissions",
+    values: [
+      {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      }
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "lootBoxAddress",
@@ -81,6 +141,11 @@ interface CreatureAccessoryFactoryInterface extends ethers.utils.Interface {
     values: [string, BigNumberish, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "mintBatch",
+    values: [string, BigNumberish[], BigNumberish[], BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
     functionFragment: "nftAddress",
     values?: undefined
   ): string;
@@ -88,6 +153,41 @@ interface CreatureAccessoryFactoryInterface extends ethers.utils.Interface {
     functionFragment: "numOptions",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "proxyRegistryAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeMintPermission",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setGlobalRoyaltyInfo",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxIssuances",
+    values: [BigNumberish[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "shutdownFactory",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsFactoryInterface",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
   decodeFunctionResult(
     functionFragment: "BASIC_LOOTBOX",
@@ -110,13 +210,39 @@ interface CreatureAccessoryFactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "assignOwnership",
+    functionFragment: "activateFactory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addMintPermission",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "canMint", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getOwnerTier",
+    functionFragment: "factorySchemaName",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCurrentIssuances",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getFactoryAccessRanges",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getFactoryStatus",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxIssuances",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "lockRangeMintPermissions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -124,14 +250,59 @@ interface CreatureAccessoryFactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nftAddress", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "numOptions", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "proxyRegistryAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeMintPermission",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setGlobalRoyaltyInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxIssuances",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "shutdownFactory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsFactoryInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 
   events: {
-    "OwnershipGranted(address,uint256,uint256)": EventFragment;
+    "FactoryActivation(address)": EventFragment;
+    "FactoryShutdown(address)": EventFragment;
+    "MintPermissionAdded(address,tuple)": EventFragment;
+    "MintPermissionRemoved(address,tuple)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FactoryActivation"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FactoryShutdown"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MintPermissionAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MintPermissionRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
 export class CreatureAccessoryFactory extends Contract {
@@ -198,15 +369,31 @@ export class CreatureAccessoryFactory extends Contract {
 
     "PREMIUM_LOOTBOX()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    assignOwnership(
-      _address: string,
-      _tier: BigNumberish,
+    activateFactory(
+      _factory: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "assignOwnership(address,uint256)"(
-      _address: string,
-      _tier: BigNumberish,
+    "activateFactory(address)"(
+      _factory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    addMintPermission(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -222,6 +409,30 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    burn(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "burn(uint256,uint256)"(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    burnBatch(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "burnBatch(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     canMint(
       _optionId: BigNumberish,
       _amount: BigNumberish,
@@ -234,15 +445,87 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    getOwnerTier(
-      _owner: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    factorySchemaName(overrides?: CallOverrides): Promise<[string]>;
 
-    "getOwnerTier(address)"(
-      _owner: string,
+    "factorySchemaName()"(overrides?: CallOverrides): Promise<[string]>;
+
+    getCurrentIssuances(
+      _ids: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber[]]>;
+
+    "getCurrentIssuances(uint256[])"(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    getFactoryAccessRanges(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        })[]
+      ]
+    >;
+
+    "getFactoryAccessRanges(address)"(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        })[]
+      ]
+    >;
+
+    getFactoryStatus(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "getFactoryStatus(address)"(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    getMaxIssuances(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    "getMaxIssuances(uint256[])"(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    lockRangeMintPermissions(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     lootBoxAddress(overrides?: CallOverrides): Promise<[string]>;
 
@@ -264,6 +547,26 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    name(overrides?: CallOverrides): Promise<[string]>;
+
+    "name()"(overrides?: CallOverrides): Promise<[string]>;
+
     nftAddress(overrides?: CallOverrides): Promise<[string]>;
 
     "nftAddress()"(overrides?: CallOverrides): Promise<[string]>;
@@ -271,6 +574,93 @@ export class CreatureAccessoryFactory extends Contract {
     numOptions(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "numOptions()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    "owner()"(overrides?: CallOverrides): Promise<[string]>;
+
+    proxyRegistryAddress(overrides?: CallOverrides): Promise<[string]>;
+
+    "proxyRegistryAddress()"(overrides?: CallOverrides): Promise<[string]>;
+
+    removeMintPermission(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "removeMintPermission(address,uint256)"(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setGlobalRoyaltyInfo(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setGlobalRoyaltyInfo(address,uint96)"(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxIssuances(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setMaxIssuances(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    shutdownFactory(
+      _factory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "shutdownFactory(address)"(
+      _factory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    supportsFactoryInterface(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "supportsFactoryInterface()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    symbol(overrides?: CallOverrides): Promise<[string]>;
+
+    "symbol()"(overrides?: CallOverrides): Promise<[string]>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "transferOwnership(address)"(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    uri(_optionId: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
+    "uri(uint256)"(
+      _optionId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
   };
 
   BASIC_LOOTBOX(overrides?: CallOverrides): Promise<BigNumber>;
@@ -293,15 +683,31 @@ export class CreatureAccessoryFactory extends Contract {
 
   "PREMIUM_LOOTBOX()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  assignOwnership(
-    _address: string,
-    _tier: BigNumberish,
+  activateFactory(
+    _factory: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "assignOwnership(address,uint256)"(
-    _address: string,
-    _tier: BigNumberish,
+  "activateFactory(address)"(
+    _factory: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  addMintPermission(
+    _factory: string,
+    _minRange: BigNumberish,
+    _maxRange: BigNumberish,
+    _startTime: BigNumberish,
+    _endTime: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "addMintPermission(address,uint64,uint64,uint64,uint64)"(
+    _factory: string,
+    _minRange: BigNumberish,
+    _maxRange: BigNumberish,
+    _startTime: BigNumberish,
+    _endTime: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -317,6 +723,30 @@ export class CreatureAccessoryFactory extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  burn(
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "burn(uint256,uint256)"(
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  burnBatch(
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "burnBatch(uint256[],uint256[])"(
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   canMint(
     _optionId: BigNumberish,
     _amount: BigNumberish,
@@ -329,12 +759,83 @@ export class CreatureAccessoryFactory extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  getOwnerTier(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+  factorySchemaName(overrides?: CallOverrides): Promise<string>;
 
-  "getOwnerTier(address)"(
-    _owner: string,
+  "factorySchemaName()"(overrides?: CallOverrides): Promise<string>;
+
+  getCurrentIssuances(
+    _ids: BigNumberish[],
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<BigNumber[]>;
+
+  "getCurrentIssuances(uint256[])"(
+    _ids: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  getFactoryAccessRanges(
+    _factory: string,
+    overrides?: CallOverrides
+  ): Promise<
+    ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+      minID: BigNumber;
+      maxID: BigNumber;
+      startTime: BigNumber;
+      endTime: BigNumber;
+    })[]
+  >;
+
+  "getFactoryAccessRanges(address)"(
+    _factory: string,
+    overrides?: CallOverrides
+  ): Promise<
+    ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+      minID: BigNumber;
+      maxID: BigNumber;
+      startTime: BigNumber;
+      endTime: BigNumber;
+    })[]
+  >;
+
+  getFactoryStatus(
+    _factory: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "getFactoryStatus(address)"(
+    _factory: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  getMaxIssuances(
+    _ids: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  "getMaxIssuances(uint256[])"(
+    _ids: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  lockRangeMintPermissions(
+    _range: {
+      minID: BigNumberish;
+      maxID: BigNumberish;
+      startTime: BigNumberish;
+      endTime: BigNumberish;
+    },
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+    _range: {
+      minID: BigNumberish;
+      maxID: BigNumberish;
+      startTime: BigNumberish;
+      endTime: BigNumberish;
+    },
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   lootBoxAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -356,6 +857,26 @@ export class CreatureAccessoryFactory extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  mintBatch(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "mintBatch(address,uint256[],uint256[],bytes)"(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  name(overrides?: CallOverrides): Promise<string>;
+
+  "name()"(overrides?: CallOverrides): Promise<string>;
+
   nftAddress(overrides?: CallOverrides): Promise<string>;
 
   "nftAddress()"(overrides?: CallOverrides): Promise<string>;
@@ -363,6 +884,93 @@ export class CreatureAccessoryFactory extends Contract {
   numOptions(overrides?: CallOverrides): Promise<BigNumber>;
 
   "numOptions()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  "owner()"(overrides?: CallOverrides): Promise<string>;
+
+  proxyRegistryAddress(overrides?: CallOverrides): Promise<string>;
+
+  "proxyRegistryAddress()"(overrides?: CallOverrides): Promise<string>;
+
+  removeMintPermission(
+    _factory: string,
+    _rangeIndex: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "removeMintPermission(address,uint256)"(
+    _factory: string,
+    _rangeIndex: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "renounceOwnership()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setGlobalRoyaltyInfo(
+    _receiver: string,
+    _royaltyBasisPoints: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setGlobalRoyaltyInfo(address,uint96)"(
+    _receiver: string,
+    _royaltyBasisPoints: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxIssuances(
+    _ids: BigNumberish[],
+    _newMaxIssuances: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setMaxIssuances(uint256[],uint256[])"(
+    _ids: BigNumberish[],
+    _newMaxIssuances: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  shutdownFactory(
+    _factory: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "shutdownFactory(address)"(
+    _factory: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  supportsFactoryInterface(overrides?: CallOverrides): Promise<boolean>;
+
+  "supportsFactoryInterface()"(overrides?: CallOverrides): Promise<boolean>;
+
+  symbol(overrides?: CallOverrides): Promise<string>;
+
+  "symbol()"(overrides?: CallOverrides): Promise<string>;
+
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "transferOwnership(address)"(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  uri(_optionId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  "uri(uint256)"(
+    _optionId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   callStatic: {
     BASIC_LOOTBOX(overrides?: CallOverrides): Promise<BigNumber>;
@@ -385,15 +993,28 @@ export class CreatureAccessoryFactory extends Contract {
 
     "PREMIUM_LOOTBOX()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    assignOwnership(
-      _address: string,
-      _tier: BigNumberish,
+    activateFactory(_factory: string, overrides?: CallOverrides): Promise<void>;
+
+    "activateFactory(address)"(
+      _factory: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "assignOwnership(address,uint256)"(
-      _address: string,
-      _tier: BigNumberish,
+    addMintPermission(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -409,6 +1030,30 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    burn(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "burn(uint256,uint256)"(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    burnBatch(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "burnBatch(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     canMint(
       _optionId: BigNumberish,
       _amount: BigNumberish,
@@ -421,12 +1066,83 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    getOwnerTier(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    factorySchemaName(overrides?: CallOverrides): Promise<string>;
 
-    "getOwnerTier(address)"(
-      _owner: string,
+    "factorySchemaName()"(overrides?: CallOverrides): Promise<string>;
+
+    getCurrentIssuances(
+      _ids: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<BigNumber[]>;
+
+    "getCurrentIssuances(uint256[])"(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getFactoryAccessRanges(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<
+      ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+        minID: BigNumber;
+        maxID: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
+      })[]
+    >;
+
+    "getFactoryAccessRanges(address)"(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<
+      ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+        minID: BigNumber;
+        maxID: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
+      })[]
+    >;
+
+    getFactoryStatus(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "getFactoryStatus(address)"(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    getMaxIssuances(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "getMaxIssuances(uint256[])"(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    lockRangeMintPermissions(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     lootBoxAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -448,6 +1164,26 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    name(overrides?: CallOverrides): Promise<string>;
+
+    "name()"(overrides?: CallOverrides): Promise<string>;
+
     nftAddress(overrides?: CallOverrides): Promise<string>;
 
     "nftAddress()"(overrides?: CallOverrides): Promise<string>;
@@ -455,16 +1191,151 @@ export class CreatureAccessoryFactory extends Contract {
     numOptions(overrides?: CallOverrides): Promise<BigNumber>;
 
     "numOptions()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    "owner()"(overrides?: CallOverrides): Promise<string>;
+
+    proxyRegistryAddress(overrides?: CallOverrides): Promise<string>;
+
+    "proxyRegistryAddress()"(overrides?: CallOverrides): Promise<string>;
+
+    removeMintPermission(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "removeMintPermission(address,uint256)"(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
+
+    setGlobalRoyaltyInfo(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setGlobalRoyaltyInfo(address,uint96)"(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxIssuances(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setMaxIssuances(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    shutdownFactory(_factory: string, overrides?: CallOverrides): Promise<void>;
+
+    "shutdownFactory(address)"(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    supportsFactoryInterface(overrides?: CallOverrides): Promise<boolean>;
+
+    "supportsFactoryInterface()"(overrides?: CallOverrides): Promise<boolean>;
+
+    symbol(overrides?: CallOverrides): Promise<string>;
+
+    "symbol()"(overrides?: CallOverrides): Promise<string>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "transferOwnership(address)"(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    uri(_optionId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    "uri(uint256)"(
+      _optionId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {
-    OwnershipGranted(
-      owner: string | null,
-      previousTier: BigNumberish | null,
-      newTier: BigNumberish | null
+    FactoryActivation(
+      factory: string | null
+    ): TypedEventFilter<[string], { factory: string }>;
+
+    FactoryShutdown(
+      factory: string | null
+    ): TypedEventFilter<[string], { factory: string }>;
+
+    MintPermissionAdded(
+      factory: string | null,
+      new_range: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { owner: string; previousTier: BigNumber; newTier: BigNumber }
+      [
+        string,
+        [BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        }
+      ],
+      {
+        factory: string;
+        new_range: [BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        };
+      }
+    >;
+
+    MintPermissionRemoved(
+      factory: string | null,
+      deleted_range: null
+    ): TypedEventFilter<
+      [
+        string,
+        [BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        }
+      ],
+      {
+        factory: string;
+        deleted_range: [BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        };
+      }
+    >;
+
+    OwnershipTransferred(
+      previousOwner: string | null,
+      newOwner: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
     >;
   };
 
@@ -489,15 +1360,31 @@ export class CreatureAccessoryFactory extends Contract {
 
     "PREMIUM_LOOTBOX()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    assignOwnership(
-      _address: string,
-      _tier: BigNumberish,
+    activateFactory(
+      _factory: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "assignOwnership(address,uint256)"(
-      _address: string,
-      _tier: BigNumberish,
+    "activateFactory(address)"(
+      _factory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    addMintPermission(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -513,6 +1400,30 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    burn(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "burn(uint256,uint256)"(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    burnBatch(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "burnBatch(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     canMint(
       _optionId: BigNumberish,
       _amount: BigNumberish,
@@ -525,11 +1436,68 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getOwnerTier(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+    factorySchemaName(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getOwnerTier(address)"(
-      _owner: string,
+    "factorySchemaName()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getCurrentIssuances(
+      _ids: BigNumberish[],
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getCurrentIssuances(uint256[])"(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getFactoryAccessRanges(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getFactoryAccessRanges(address)"(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getFactoryStatus(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getFactoryStatus(address)"(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMaxIssuances(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getMaxIssuances(uint256[])"(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    lockRangeMintPermissions(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     lootBoxAddress(overrides?: CallOverrides): Promise<BigNumber>;
@@ -552,6 +1520,26 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "name()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     nftAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     "nftAddress()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -559,6 +1547,93 @@ export class CreatureAccessoryFactory extends Contract {
     numOptions(overrides?: CallOverrides): Promise<BigNumber>;
 
     "numOptions()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    proxyRegistryAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "proxyRegistryAddress()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    removeMintPermission(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "removeMintPermission(address,uint256)"(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setGlobalRoyaltyInfo(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setGlobalRoyaltyInfo(address,uint96)"(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMaxIssuances(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setMaxIssuances(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    shutdownFactory(
+      _factory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "shutdownFactory(address)"(
+      _factory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    supportsFactoryInterface(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "supportsFactoryInterface()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    symbol(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "transferOwnership(address)"(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    uri(_optionId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "uri(uint256)"(
+      _optionId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -588,15 +1663,31 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    assignOwnership(
-      _address: string,
-      _tier: BigNumberish,
+    activateFactory(
+      _factory: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "assignOwnership(address,uint256)"(
-      _address: string,
-      _tier: BigNumberish,
+    "activateFactory(address)"(
+      _factory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addMintPermission(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -612,6 +1703,30 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    burn(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "burn(uint256,uint256)"(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    burnBatch(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "burnBatch(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     canMint(
       _optionId: BigNumberish,
       _amount: BigNumberish,
@@ -624,14 +1739,70 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getOwnerTier(
-      _owner: string,
+    factorySchemaName(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "factorySchemaName()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getOwnerTier(address)"(
-      _owner: string,
+    getCurrentIssuances(
+      _ids: BigNumberish[],
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getCurrentIssuances(uint256[])"(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFactoryAccessRanges(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getFactoryAccessRanges(address)"(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFactoryStatus(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getFactoryStatus(address)"(
+      _factory: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMaxIssuances(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getMaxIssuances(uint256[])"(
+      _ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lockRangeMintPermissions(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     lootBoxAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -656,6 +1827,26 @@ export class CreatureAccessoryFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     nftAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "nftAddress()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -663,5 +1854,103 @@ export class CreatureAccessoryFactory extends Contract {
     numOptions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "numOptions()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    proxyRegistryAddress(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "proxyRegistryAddress()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    removeMintPermission(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "removeMintPermission(address,uint256)"(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setGlobalRoyaltyInfo(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setGlobalRoyaltyInfo(address,uint96)"(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxIssuances(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setMaxIssuances(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    shutdownFactory(
+      _factory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "shutdownFactory(address)"(
+      _factory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supportsFactoryInterface(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "supportsFactoryInterface()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "transferOwnership(address)"(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    uri(
+      _optionId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "uri(uint256)"(
+      _optionId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

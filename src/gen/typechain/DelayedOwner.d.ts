@@ -23,9 +23,10 @@ interface DelayedOwnerInterface extends ethers.utils.Interface {
   functions: {
     "cancel(tuple)": FunctionFragment;
     "execute(tuple)": FunctionFragment;
-    "getOwner()": FunctionFragment;
     "isValidWitness(tuple)": FunctionFragment;
+    "owner()": FunctionFragment;
     "register(tuple)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "txHashes(uint256)": FunctionFragment;
   };
@@ -54,7 +55,6 @@ interface DelayedOwnerInterface extends ethers.utils.Interface {
       }
     ]
   ): string;
-  encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isValidWitness",
     values: [
@@ -67,6 +67,7 @@ interface DelayedOwnerInterface extends ethers.utils.Interface {
       }
     ]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "register",
     values: [
@@ -80,6 +81,10 @@ interface DelayedOwnerInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
@@ -90,12 +95,16 @@ interface DelayedOwnerInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isValidWitness",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -203,10 +212,6 @@ export class DelayedOwner extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getOwner(overrides?: CallOverrides): Promise<[string]>;
-
-    "getOwner()"(overrides?: CallOverrides): Promise<[string]>;
-
     isValidWitness(
       _tx: {
         status: BigNumberish;
@@ -228,6 +233,10 @@ export class DelayedOwner extends Contract {
       },
       overrides?: CallOverrides
     ): Promise<[boolean] & { isValid: boolean }>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    "owner()"(overrides?: CallOverrides): Promise<[string]>;
 
     register(
       _tx: {
@@ -251,13 +260,21 @@ export class DelayedOwner extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "transferOwnership(address)"(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -313,10 +330,6 @@ export class DelayedOwner extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getOwner(overrides?: CallOverrides): Promise<string>;
-
-  "getOwner()"(overrides?: CallOverrides): Promise<string>;
-
   isValidWitness(
     _tx: {
       status: BigNumberish;
@@ -338,6 +351,10 @@ export class DelayedOwner extends Contract {
     },
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  "owner()"(overrides?: CallOverrides): Promise<string>;
 
   register(
     _tx: {
@@ -361,13 +378,21 @@ export class DelayedOwner extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "renounceOwnership()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
-    _newOwner: string,
+    newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "transferOwnership(address)"(
-    _newOwner: string,
+    newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -423,10 +448,6 @@ export class DelayedOwner extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    getOwner(overrides?: CallOverrides): Promise<string>;
-
-    "getOwner()"(overrides?: CallOverrides): Promise<string>;
-
     isValidWitness(
       _tx: {
         status: BigNumberish;
@@ -448,6 +469,10 @@ export class DelayedOwner extends Contract {
       },
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    "owner()"(overrides?: CallOverrides): Promise<string>;
 
     register(
       _tx: {
@@ -471,13 +496,17 @@ export class DelayedOwner extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
+
     transferOwnership(
-      _newOwner: string,
+      newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "transferOwnership(address)"(
-      _newOwner: string,
+      newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -613,10 +642,6 @@ export class DelayedOwner extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getOwner()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     isValidWitness(
       _tx: {
         status: BigNumberish;
@@ -638,6 +663,10 @@ export class DelayedOwner extends Contract {
       },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     register(
       _tx: {
@@ -661,13 +690,21 @@ export class DelayedOwner extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "transferOwnership(address)"(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -724,10 +761,6 @@ export class DelayedOwner extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getOwner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     isValidWitness(
       _tx: {
         status: BigNumberish;
@@ -749,6 +782,10 @@ export class DelayedOwner extends Contract {
       },
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     register(
       _tx: {
@@ -772,13 +809,21 @@ export class DelayedOwner extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     transferOwnership(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "transferOwnership(address)"(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

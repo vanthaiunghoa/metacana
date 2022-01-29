@@ -12,6 +12,7 @@ import {
   Contract,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -25,46 +26,48 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     "addMintPermission(address,uint64,uint64,uint64,uint64)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "baseURI()": FunctionFragment;
-    "batchBurn(uint256[],uint256[])": FunctionFragment;
-    "batchMint(address,uint256[],uint256[],bytes)": FunctionFragment;
     "burn(uint256,uint256)": FunctionFragment;
+    "burnBatch(address,uint256[],uint256[])": FunctionFragment;
     "create(address,uint256,uint256,bytes)": FunctionFragment;
     "creators(uint256)": FunctionFragment;
+    "execute(tuple,bytes)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "getCurrentIssuances(uint256[])": FunctionFragment;
     "getFactoryAccessRanges(address)": FunctionFragment;
     "getFactoryStatus(address)": FunctionFragment;
-    "getIDBinIndex(uint256)": FunctionFragment;
     "getLockedRanges()": FunctionFragment;
     "getMaxIssuances(uint256[])": FunctionFragment;
-    "getOwner()": FunctionFragment;
-    "getValueInBin(uint256,uint256)": FunctionFragment;
-    "globalRoyaltyInfo()": FunctionFragment;
+    "getNonce(address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "lockRangeMintPermissions(tuple)": FunctionFragment;
-    "logURIs(uint256[])": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
+    "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
     "name()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
     "removeMintPermission(address,uint256)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
-    "setBaseMetadataURI(string)": FunctionFragment;
     "setCreator(address,uint256[])": FunctionFragment;
-    "setGlobalRoyaltyInfo(address,uint256)": FunctionFragment;
+    "setGlobalRoyaltyInfo(address,uint96)": FunctionFragment;
     "setMaxIssuances(uint256[],uint256[])": FunctionFragment;
     "setOptionSettings(uint256,uint256,uint16[],uint16[])": FunctionFragment;
     "setState(address,uint256,uint256,uint256)": FunctionFragment;
     "setTokenIdsForClass(uint256,uint256[])": FunctionFragment;
+    "setURI(string)": FunctionFragment;
     "shutdownFactory(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "tokenSupply(uint256)": FunctionFragment;
+    "symbol()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpack(uint256,address,uint256)": FunctionFragment;
+    "unpause()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
+    "verify(tuple,bytes)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -83,18 +86,13 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "balanceOfBatch",
     values: [string[], BigNumberish[]]
   ): string;
-  encodeFunctionData(functionFragment: "baseURI", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "batchBurn",
-    values: [BigNumberish[], BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "batchMint",
-    values: [string, BigNumberish[], BigNumberish[], BytesLike]
-  ): string;
   encodeFunctionData(
     functionFragment: "burn",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnBatch",
+    values: [string, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "create",
@@ -103,6 +101,20 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "creators",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "execute",
+    values: [
+      {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      BytesLike
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "exists",
@@ -121,10 +133,6 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "getIDBinIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getLockedRanges",
     values?: undefined
   ): string;
@@ -132,15 +140,7 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "getMaxIssuances",
     values: [BigNumberish[]]
   ): string;
-  encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getValueInBin",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "globalRoyaltyInfo",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "getNonce", values: [string]): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
@@ -157,17 +157,24 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "logURIs",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "mint",
     values: [string, BigNumberish, BigNumberish, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "mintBatch",
+    values: [string, BigNumberish[], BigNumberish[], BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "removeMintPermission",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
@@ -184,10 +191,6 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setBaseMetadataURI",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setCreator",
@@ -213,6 +216,7 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "setTokenIdsForClass",
     values: [BigNumberish, BigNumberish[]]
   ): string;
+  encodeFunctionData(functionFragment: "setURI", values: [string]): string;
   encodeFunctionData(
     functionFragment: "shutdownFactory",
     values: [string]
@@ -221,10 +225,7 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "tokenSupply",
-    values: [BigNumberish]
-  ): string;
+  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values: [BigNumberish]
@@ -237,7 +238,22 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "unpack",
     values: [BigNumberish, string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "verify",
+    values: [
+      {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      BytesLike
+    ]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "activateFactory",
@@ -252,12 +268,11 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "batchBurn", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "creators", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentIssuances",
@@ -272,10 +287,6 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getIDBinIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getLockedRanges",
     data: BytesLike
   ): Result;
@@ -283,15 +294,7 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "getMaxIssuances",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getValueInBin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "globalRoyaltyInfo",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "getNonce", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -300,11 +303,18 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "lockRangeMintPermissions",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "logURIs", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeMintPermission",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -321,10 +331,6 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setApprovalForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setBaseMetadataURI",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setCreator", data: BytesLike): Result;
@@ -345,6 +351,7 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "setTokenIdsForClass",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "shutdownFactory",
     data: BytesLike
@@ -353,10 +360,7 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenSupply",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -366,7 +370,9 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpack", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
@@ -376,10 +382,12 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
     "MintPermissionAdded(address,tuple)": EventFragment;
     "MintPermissionRemoved(address,tuple)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "Paused(address)": EventFragment;
     "RangeLocked(tuple)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
+    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
@@ -389,10 +397,12 @@ interface CreatureAccessoryLootBoxInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "MintPermissionAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MintPermissionRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RangeLocked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export class CreatureAccessoryLootBox extends Contract {
@@ -468,70 +478,52 @@ export class CreatureAccessoryLootBox extends Contract {
     ): Promise<ContractTransaction>;
 
     balanceOf(
-      _owner: string,
-      _id: BigNumberish,
+      account: string,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     "balanceOf(address,uint256)"(
-      _owner: string,
-      _id: BigNumberish,
+      account: string,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     balanceOfBatch(
-      _owners: string[],
-      _ids: BigNumberish[],
+      accounts: string[],
+      ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
     "balanceOfBatch(address[],uint256[])"(
-      _owners: string[],
-      _ids: BigNumberish[],
+      accounts: string[],
+      ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
-
-    baseURI(overrides?: CallOverrides): Promise<[string]>;
-
-    "baseURI()"(overrides?: CallOverrides): Promise<[string]>;
-
-    batchBurn(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "batchBurn(uint256[],uint256[])"(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    burn(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     "burn(uint256,uint256)"(
       _id: BigNumberish,
       _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "burn(address,uint256,uint256)"(
+      account: string,
+      id: BigNumberish,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "burnBatch(address,uint256[],uint256[])"(
+      account: string,
+      ids: BigNumberish[],
+      values: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "burnBatch(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -558,10 +550,36 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    exists(_id: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+    execute(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "execute((address,address,uint256,uint256,uint256,bytes),bytes)"(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    exists(id: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
 
     "exists(uint256)"(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -613,16 +631,6 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    getIDBinIndex(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { bin: BigNumber; index: BigNumber }>;
-
-    "getIDBinIndex(uint256)"(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { bin: BigNumber; index: BigNumber }>;
-
     getLockedRanges(
       overrides?: CallOverrides
     ): Promise<
@@ -659,33 +667,12 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    getOwner(overrides?: CallOverrides): Promise<[string]>;
+    getNonce(from: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "getOwner()"(overrides?: CallOverrides): Promise<[string]>;
-
-    getValueInBin(
-      _binValues: BigNumberish,
-      _index: BigNumberish,
+    "getNonce(address)"(
+      from: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    "getValueInBin(uint256,uint256)"(
-      _binValues: BigNumberish,
-      _index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    globalRoyaltyInfo(
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
-    >;
-
-    "globalRoyaltyInfo()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
-    >;
 
     isApprovedForAll(
       _owner: string,
@@ -719,16 +706,6 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    logURIs(
-      _tokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "logURIs(uint256[])"(
-      _tokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     mint(
       _to: string,
       _optionId: BigNumberish,
@@ -745,9 +722,41 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     "name()"(overrides?: CallOverrides): Promise<[string]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    "owner()"(overrides?: CallOverrides): Promise<[string]>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "pause()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "paused()"(overrides?: CallOverrides): Promise<[boolean]>;
 
     removeMintPermission(
       _factory: string,
@@ -761,77 +770,71 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     royaltyInfo(
-      arg0: BigNumberish,
-      _saleCost: BigNumberish,
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
+    ): Promise<[string, BigNumber]>;
 
     "royaltyInfo(uint256,uint256)"(
-      arg0: BigNumberish,
-      _saleCost: BigNumberish,
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
+    ): Promise<[string, BigNumber]>;
 
     safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: BytesLike,
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: BytesLike,
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     setApprovalForAll(
-      _operator: string,
-      _approved: boolean,
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "setApprovalForAll(address,bool)"(
-      _operator: string,
-      _approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setBaseMetadataURI(
-      _newBaseMetadataURI: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setBaseMetadataURI(string)"(
-      _newBaseMetadataURI: string,
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -853,7 +856,7 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setGlobalRoyaltyInfo(address,uint256)"(
+    "setGlobalRoyaltyInfo(address,uint96)"(
       _receiver: string,
       _royaltyBasisPoints: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -915,6 +918,16 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setURI(
+      newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setURI(string)"(
+      newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     shutdownFactory(
       _factory: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -935,33 +948,27 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    tokenSupply(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    symbol(overrides?: CallOverrides): Promise<[string]>;
 
-    "tokenSupply(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "symbol()"(overrides?: CallOverrides): Promise<[string]>;
 
     totalSupply(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     "totalSupply(uint256)"(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     transferOwnership(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "transferOwnership(address)"(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -979,12 +986,46 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    uri(_id: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "unpause()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     "uri(uint256)"(
-      _id: BigNumberish,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    verify(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "verify((address,address,uint256,uint256,uint256,bytes),bytes)"(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
   activateFactory(
@@ -1016,70 +1057,52 @@ export class CreatureAccessoryLootBox extends Contract {
   ): Promise<ContractTransaction>;
 
   balanceOf(
-    _owner: string,
-    _id: BigNumberish,
+    account: string,
+    id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   "balanceOf(address,uint256)"(
-    _owner: string,
-    _id: BigNumberish,
+    account: string,
+    id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   balanceOfBatch(
-    _owners: string[],
-    _ids: BigNumberish[],
+    accounts: string[],
+    ids: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
   "balanceOfBatch(address[],uint256[])"(
-    _owners: string[],
-    _ids: BigNumberish[],
+    accounts: string[],
+    ids: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
-
-  baseURI(overrides?: CallOverrides): Promise<string>;
-
-  "baseURI()"(overrides?: CallOverrides): Promise<string>;
-
-  batchBurn(
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "batchBurn(uint256[],uint256[])"(
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  batchMint(
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "batchMint(address,uint256[],uint256[],bytes)"(
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  burn(
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   "burn(uint256,uint256)"(
     _id: BigNumberish,
     _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "burn(address,uint256,uint256)"(
+    account: string,
+    id: BigNumberish,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "burnBatch(address,uint256[],uint256[])"(
+    account: string,
+    ids: BigNumberish[],
+    values: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "burnBatch(uint256[],uint256[])"(
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1106,10 +1129,36 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  exists(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+  execute(
+    req: {
+      from: string;
+      to: string;
+      value: BigNumberish;
+      gas: BigNumberish;
+      nonce: BigNumberish;
+      data: BytesLike;
+    },
+    signature: BytesLike,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "execute((address,address,uint256,uint256,uint256,bytes),bytes)"(
+    req: {
+      from: string;
+      to: string;
+      value: BigNumberish;
+      gas: BigNumberish;
+      nonce: BigNumberish;
+      data: BytesLike;
+    },
+    signature: BytesLike,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   "exists(uint256)"(
-    _id: BigNumberish,
+    id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -1157,16 +1206,6 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  getIDBinIndex(
-    _id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { bin: BigNumber; index: BigNumber }>;
-
-  "getIDBinIndex(uint256)"(
-    _id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { bin: BigNumber; index: BigNumber }>;
-
   getLockedRanges(
     overrides?: CallOverrides
   ): Promise<
@@ -1199,33 +1238,12 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  getOwner(overrides?: CallOverrides): Promise<string>;
+  getNonce(from: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  "getOwner()"(overrides?: CallOverrides): Promise<string>;
-
-  getValueInBin(
-    _binValues: BigNumberish,
-    _index: BigNumberish,
+  "getNonce(address)"(
+    from: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  "getValueInBin(uint256,uint256)"(
-    _binValues: BigNumberish,
-    _index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  globalRoyaltyInfo(
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
-  >;
-
-  "globalRoyaltyInfo()"(
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
-  >;
 
   isApprovedForAll(
     _owner: string,
@@ -1259,16 +1277,6 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  logURIs(
-    _tokenIDs: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "logURIs(uint256[])"(
-    _tokenIDs: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   mint(
     _to: string,
     _optionId: BigNumberish,
@@ -1285,9 +1293,41 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  mintBatch(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "mintBatch(address,uint256[],uint256[],bytes)"(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   name(overrides?: CallOverrides): Promise<string>;
 
   "name()"(overrides?: CallOverrides): Promise<string>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  "owner()"(overrides?: CallOverrides): Promise<string>;
+
+  pause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "pause()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  "paused()"(overrides?: CallOverrides): Promise<boolean>;
 
   removeMintPermission(
     _factory: string,
@@ -1301,77 +1341,71 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "renounceOwnership()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   royaltyInfo(
-    arg0: BigNumberish,
-    _saleCost: BigNumberish,
+    _tokenId: BigNumberish,
+    _salePrice: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-  >;
+  ): Promise<[string, BigNumber]>;
 
   "royaltyInfo(uint256,uint256)"(
-    arg0: BigNumberish,
-    _saleCost: BigNumberish,
+    _tokenId: BigNumberish,
+    _salePrice: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-  >;
+  ): Promise<[string, BigNumber]>;
 
   safeBatchTransferFrom(
-    _from: string,
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: BytesLike,
+    from: string,
+    to: string,
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
+    data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-    _from: string,
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: BytesLike,
+    from: string,
+    to: string,
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
+    data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   safeTransferFrom(
-    _from: string,
-    _to: string,
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _data: BytesLike,
+    from: string,
+    to: string,
+    id: BigNumberish,
+    amount: BigNumberish,
+    data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-    _from: string,
-    _to: string,
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _data: BytesLike,
+    from: string,
+    to: string,
+    id: BigNumberish,
+    amount: BigNumberish,
+    data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   setApprovalForAll(
-    _operator: string,
-    _approved: boolean,
+    operator: string,
+    approved: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "setApprovalForAll(address,bool)"(
-    _operator: string,
-    _approved: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setBaseMetadataURI(
-    _newBaseMetadataURI: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setBaseMetadataURI(string)"(
-    _newBaseMetadataURI: string,
+    operator: string,
+    approved: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1393,7 +1427,7 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setGlobalRoyaltyInfo(address,uint256)"(
+  "setGlobalRoyaltyInfo(address,uint96)"(
     _receiver: string,
     _royaltyBasisPoints: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1455,6 +1489,16 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setURI(
+    newuri: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setURI(string)"(
+    newuri: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   shutdownFactory(
     _factory: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1475,30 +1519,24 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  tokenSupply(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  symbol(overrides?: CallOverrides): Promise<string>;
 
-  "tokenSupply(uint256)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  "symbol()"(overrides?: CallOverrides): Promise<string>;
 
-  totalSupply(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+  totalSupply(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
   "totalSupply(uint256)"(
-    _id: BigNumberish,
+    id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   transferOwnership(
-    _newOwner: string,
+    newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "transferOwnership(address)"(
-    _newOwner: string,
+    newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1516,9 +1554,46 @@ export class CreatureAccessoryLootBox extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  uri(_id: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  unpause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "uri(uint256)"(_id: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  "unpause()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  "uri(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  verify(
+    req: {
+      from: string;
+      to: string;
+      value: BigNumberish;
+      gas: BigNumberish;
+      nonce: BigNumberish;
+      data: BytesLike;
+    },
+    signature: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "verify((address,address,uint256,uint256,uint256,bytes),bytes)"(
+    req: {
+      from: string;
+      to: string;
+      value: BigNumberish;
+      gas: BigNumberish;
+      nonce: BigNumberish;
+      data: BytesLike;
+    },
+    signature: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
     activateFactory(_factory: string, overrides?: CallOverrides): Promise<void>;
@@ -1547,70 +1622,52 @@ export class CreatureAccessoryLootBox extends Contract {
     ): Promise<void>;
 
     balanceOf(
-      _owner: string,
-      _id: BigNumberish,
+      account: string,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "balanceOf(address,uint256)"(
-      _owner: string,
-      _id: BigNumberish,
+      account: string,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     balanceOfBatch(
-      _owners: string[],
-      _ids: BigNumberish[],
+      accounts: string[],
+      ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
     "balanceOfBatch(address[],uint256[])"(
-      _owners: string[],
-      _ids: BigNumberish[],
+      accounts: string[],
+      ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
-
-    baseURI(overrides?: CallOverrides): Promise<string>;
-
-    "baseURI()"(overrides?: CallOverrides): Promise<string>;
-
-    batchBurn(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "batchBurn(uint256[],uint256[])"(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    burn(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     "burn(uint256,uint256)"(
       _id: BigNumberish,
       _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "burn(address,uint256,uint256)"(
+      account: string,
+      id: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "burnBatch(address,uint256[],uint256[])"(
+      account: string,
+      ids: BigNumberish[],
+      values: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "burnBatch(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1637,10 +1694,36 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    exists(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+    execute(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string]>;
+
+    "execute((address,address,uint256,uint256,uint256,bytes),bytes)"(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string]>;
+
+    exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     "exists(uint256)"(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1688,16 +1771,6 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    getIDBinIndex(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { bin: BigNumber; index: BigNumber }>;
-
-    "getIDBinIndex(uint256)"(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { bin: BigNumber; index: BigNumber }>;
-
     getLockedRanges(
       overrides?: CallOverrides
     ): Promise<
@@ -1730,33 +1803,12 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    getOwner(overrides?: CallOverrides): Promise<string>;
+    getNonce(from: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getOwner()"(overrides?: CallOverrides): Promise<string>;
-
-    getValueInBin(
-      _binValues: BigNumberish,
-      _index: BigNumberish,
+    "getNonce(address)"(
+      from: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    "getValueInBin(uint256,uint256)"(
-      _binValues: BigNumberish,
-      _index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    globalRoyaltyInfo(
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
-    >;
-
-    "globalRoyaltyInfo()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
-    >;
 
     isApprovedForAll(
       _owner: string,
@@ -1790,16 +1842,6 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    logURIs(
-      _tokenIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "logURIs(uint256[])"(
-      _tokenIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     mint(
       _to: string,
       _optionId: BigNumberish,
@@ -1816,9 +1858,37 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     "name()"(overrides?: CallOverrides): Promise<string>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    "owner()"(overrides?: CallOverrides): Promise<string>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    "pause()"(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    "paused()"(overrides?: CallOverrides): Promise<boolean>;
 
     removeMintPermission(
       _factory: string,
@@ -1832,77 +1902,67 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
+
     royaltyInfo(
-      arg0: BigNumberish,
-      _saleCost: BigNumberish,
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
+    ): Promise<[string, BigNumber]>;
 
     "royaltyInfo(uint256,uint256)"(
-      arg0: BigNumberish,
-      _saleCost: BigNumberish,
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
+    ): Promise<[string, BigNumber]>;
 
     safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
     safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: BytesLike,
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: BytesLike,
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setApprovalForAll(
-      _operator: string,
-      _approved: boolean,
+      operator: string,
+      approved: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "setApprovalForAll(address,bool)"(
-      _operator: string,
-      _approved: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setBaseMetadataURI(
-      _newBaseMetadataURI: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setBaseMetadataURI(string)"(
-      _newBaseMetadataURI: string,
+      operator: string,
+      approved: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1924,7 +1984,7 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setGlobalRoyaltyInfo(address,uint256)"(
+    "setGlobalRoyaltyInfo(address,uint96)"(
       _receiver: string,
       _royaltyBasisPoints: BigNumberish,
       overrides?: CallOverrides
@@ -1986,6 +2046,10 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setURI(newuri: string, overrides?: CallOverrides): Promise<void>;
+
+    "setURI(string)"(newuri: string, overrides?: CallOverrides): Promise<void>;
+
     shutdownFactory(_factory: string, overrides?: CallOverrides): Promise<void>;
 
     "shutdownFactory(address)"(
@@ -2003,33 +2067,27 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    tokenSupply(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    symbol(overrides?: CallOverrides): Promise<string>;
 
-    "tokenSupply(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "symbol()"(overrides?: CallOverrides): Promise<string>;
 
     totalSupply(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "totalSupply(uint256)"(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     transferOwnership(
-      _newOwner: string,
+      newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "transferOwnership(address)"(
-      _newOwner: string,
+      newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2047,22 +2105,52 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    uri(_id: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    unpause(overrides?: CallOverrides): Promise<void>;
+
+    "unpause()"(overrides?: CallOverrides): Promise<void>;
+
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     "uri(uint256)"(
-      _id: BigNumberish,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    verify(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "verify((address,address,uint256,uint256,uint256,bytes),bytes)"(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
     ApprovalForAll(
-      _owner: string | null,
-      _operator: string | null,
-      _approved: null
+      account: string | null,
+      operator: string | null,
+      approved: null
     ): TypedEventFilter<
       [string, string, boolean],
-      { _owner: string; _operator: string; _approved: boolean }
+      { account: string; operator: string; approved: boolean }
     >;
 
     FactoryActivation(
@@ -2137,6 +2225,8 @@ export class CreatureAccessoryLootBox extends Contract {
       { previousOwner: string; newOwner: string }
     >;
 
+    Paused(account: null): TypedEventFilter<[string], { account: string }>;
+
     RangeLocked(
       locked_range: null
     ): TypedEventFilter<
@@ -2159,43 +2249,45 @@ export class CreatureAccessoryLootBox extends Contract {
     >;
 
     TransferBatch(
-      _operator: string | null,
-      _from: string | null,
-      _to: string | null,
-      _ids: null,
-      _amounts: null
+      operator: string | null,
+      from: string | null,
+      to: string | null,
+      ids: null,
+      values: null
     ): TypedEventFilter<
       [string, string, string, BigNumber[], BigNumber[]],
       {
-        _operator: string;
-        _from: string;
-        _to: string;
-        _ids: BigNumber[];
-        _amounts: BigNumber[];
+        operator: string;
+        from: string;
+        to: string;
+        ids: BigNumber[];
+        values: BigNumber[];
       }
     >;
 
     TransferSingle(
-      _operator: string | null,
-      _from: string | null,
-      _to: string | null,
-      _id: null,
-      _amount: null
+      operator: string | null,
+      from: string | null,
+      to: string | null,
+      id: null,
+      value: null
     ): TypedEventFilter<
       [string, string, string, BigNumber, BigNumber],
       {
-        _operator: string;
-        _from: string;
-        _to: string;
-        _id: BigNumber;
-        _amount: BigNumber;
+        operator: string;
+        from: string;
+        to: string;
+        id: BigNumber;
+        value: BigNumber;
       }
     >;
 
     URI(
-      _uri: null,
-      _id: BigNumberish | null
-    ): TypedEventFilter<[string, BigNumber], { _uri: string; _id: BigNumber }>;
+      value: null,
+      id: BigNumberish | null
+    ): TypedEventFilter<[string, BigNumber], { value: string; id: BigNumber }>;
+
+    Unpaused(account: null): TypedEventFilter<[string], { account: string }>;
   };
 
   estimateGas: {
@@ -2228,70 +2320,52 @@ export class CreatureAccessoryLootBox extends Contract {
     ): Promise<BigNumber>;
 
     balanceOf(
-      _owner: string,
-      _id: BigNumberish,
+      account: string,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "balanceOf(address,uint256)"(
-      _owner: string,
-      _id: BigNumberish,
+      account: string,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     balanceOfBatch(
-      _owners: string[],
-      _ids: BigNumberish[],
+      accounts: string[],
+      ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "balanceOfBatch(address[],uint256[])"(
-      _owners: string[],
-      _ids: BigNumberish[],
+      accounts: string[],
+      ids: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    baseURI(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "baseURI()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    batchBurn(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "batchBurn(uint256[],uint256[])"(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    burn(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "burn(uint256,uint256)"(
       _id: BigNumberish,
       _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "burn(address,uint256,uint256)"(
+      account: string,
+      id: BigNumberish,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "burnBatch(address,uint256[],uint256[])"(
+      account: string,
+      ids: BigNumberish[],
+      values: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "burnBatch(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2318,10 +2392,36 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    exists(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    execute(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "execute((address,address,uint256,uint256,uint256,bytes),bytes)"(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    exists(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     "exists(uint256)"(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2355,16 +2455,6 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getIDBinIndex(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getIDBinIndex(uint256)"(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getLockedRanges(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getLockedRanges()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2379,25 +2469,12 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getOwner(overrides?: CallOverrides): Promise<BigNumber>;
+    getNonce(from: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getOwner()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getValueInBin(
-      _binValues: BigNumberish,
-      _index: BigNumberish,
+    "getNonce(address)"(
+      from: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    "getValueInBin(uint256,uint256)"(
-      _binValues: BigNumberish,
-      _index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    globalRoyaltyInfo(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "globalRoyaltyInfo()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     isApprovedForAll(
       _owner: string,
@@ -2431,16 +2508,6 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    logURIs(
-      _tokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "logURIs(uint256[])"(
-      _tokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     mint(
       _to: string,
       _optionId: BigNumberish,
@@ -2457,9 +2524,41 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     "name()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "pause()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "paused()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     removeMintPermission(
       _factory: string,
@@ -2473,73 +2572,71 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     royaltyInfo(
-      arg0: BigNumberish,
-      _saleCost: BigNumberish,
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "royaltyInfo(uint256,uint256)"(
-      arg0: BigNumberish,
-      _saleCost: BigNumberish,
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: BytesLike,
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: BytesLike,
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setApprovalForAll(
-      _operator: string,
-      _approved: boolean,
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "setApprovalForAll(address,bool)"(
-      _operator: string,
-      _approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setBaseMetadataURI(
-      _newBaseMetadataURI: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setBaseMetadataURI(string)"(
-      _newBaseMetadataURI: string,
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2561,7 +2658,7 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setGlobalRoyaltyInfo(address,uint256)"(
+    "setGlobalRoyaltyInfo(address,uint96)"(
       _receiver: string,
       _royaltyBasisPoints: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2623,6 +2720,16 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setURI(
+      newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setURI(string)"(
+      newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     shutdownFactory(
       _factory: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2643,33 +2750,27 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    tokenSupply(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "tokenSupply(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "totalSupply(uint256)"(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     transferOwnership(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "transferOwnership(address)"(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2687,10 +2788,44 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    uri(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "unpause()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     "uri(uint256)"(
-      _id: BigNumberish,
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    verify(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "verify((address,address,uint256,uint256,uint256,bytes),bytes)"(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -2725,70 +2860,52 @@ export class CreatureAccessoryLootBox extends Contract {
     ): Promise<PopulatedTransaction>;
 
     balanceOf(
-      _owner: string,
-      _id: BigNumberish,
+      account: string,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "balanceOf(address,uint256)"(
-      _owner: string,
-      _id: BigNumberish,
+      account: string,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     balanceOfBatch(
-      _owners: string[],
-      _ids: BigNumberish[],
+      accounts: string[],
+      ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "balanceOfBatch(address[],uint256[])"(
-      _owners: string[],
-      _ids: BigNumberish[],
+      accounts: string[],
+      ids: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    baseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "baseURI()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    batchBurn(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "batchBurn(uint256[],uint256[])"(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    burn(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "burn(uint256,uint256)"(
       _id: BigNumberish,
       _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "burn(address,uint256,uint256)"(
+      account: string,
+      id: BigNumberish,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "burnBatch(address,uint256[],uint256[])"(
+      account: string,
+      ids: BigNumberish[],
+      values: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "burnBatch(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2818,13 +2935,39 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    execute(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "execute((address,address,uint256,uint256,uint256,bytes),bytes)"(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     exists(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "exists(uint256)"(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2858,16 +3001,6 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getIDBinIndex(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getIDBinIndex(uint256)"(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getLockedRanges(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getLockedRanges()"(
@@ -2884,25 +3017,13 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getOwner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getValueInBin(
-      _binValues: BigNumberish,
-      _index: BigNumberish,
+    getNonce(
+      from: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getValueInBin(uint256,uint256)"(
-      _binValues: BigNumberish,
-      _index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    globalRoyaltyInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "globalRoyaltyInfo()"(
+    "getNonce(address)"(
+      from: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2938,16 +3059,6 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    logURIs(
-      _tokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "logURIs(uint256[])"(
-      _tokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     mint(
       _to: string,
       _optionId: BigNumberish,
@@ -2964,9 +3075,41 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "pause()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "paused()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     removeMintPermission(
       _factory: string,
@@ -2980,73 +3123,71 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     royaltyInfo(
-      arg0: BigNumberish,
-      _saleCost: BigNumberish,
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "royaltyInfo(uint256,uint256)"(
-      arg0: BigNumberish,
-      _saleCost: BigNumberish,
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: BytesLike,
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: BytesLike,
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setApprovalForAll(
-      _operator: string,
-      _approved: boolean,
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "setApprovalForAll(address,bool)"(
-      _operator: string,
-      _approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setBaseMetadataURI(
-      _newBaseMetadataURI: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setBaseMetadataURI(string)"(
-      _newBaseMetadataURI: string,
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3068,7 +3209,7 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setGlobalRoyaltyInfo(address,uint256)"(
+    "setGlobalRoyaltyInfo(address,uint96)"(
       _receiver: string,
       _royaltyBasisPoints: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -3130,6 +3271,16 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setURI(
+      newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setURI(string)"(
+      newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     shutdownFactory(
       _factory: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -3150,33 +3301,27 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    tokenSupply(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "tokenSupply(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "totalSupply(uint256)"(
-      _id: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "transferOwnership(address)"(
-      _newOwner: string,
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3194,13 +3339,47 @@ export class CreatureAccessoryLootBox extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "unpause()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     uri(
-      _id: BigNumberish,
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "uri(uint256)"(
-      _id: BigNumberish,
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    verify(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "verify((address,address,uint256,uint256,uint256,bytes),bytes)"(
+      req: {
+        from: string;
+        to: string;
+        value: BigNumberish;
+        gas: BigNumberish;
+        nonce: BigNumberish;
+        data: BytesLike;
+      },
+      signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

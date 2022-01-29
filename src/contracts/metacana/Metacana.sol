@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.7.4;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 // import "./core/DeflationaryERC20.sol";
@@ -10,9 +10,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./interfaces/IPancakeFactory.sol";
 import "./interfaces/IPancakePair.sol";
 
-import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 // interface IUniswapV2Pair {
 //     function sync() external;
@@ -107,8 +108,7 @@ contract MetacanaToken is ERC20, ERC20Burnable, Ownable, Pausable {
     // address constant internal _wbnb = address(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
     // address constant internal _busd = address(0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56);
     //===============================================//
-    constructor(uint256 initialSupply, 
-        uint8 decimals_, 
+    constructor(uint256 initialSupply,         
         address _pancakeswapFactoryAddress, 
         address _wbnbToken) ERC20("Metacanas", "CANA") public {        
         // Initialize PancakeswapFactory
@@ -119,9 +119,8 @@ contract MetacanaToken is ERC20, ERC20Burnable, Ownable, Pausable {
         crunchRate = 4; // Initial crunch rate set at 4%
         rewardForMetacana = 1; // Initial reward percentage set at 1% (1% of 4%)
         metacanaTuesdayRewardMultiplier = 20; // Initial metacanaTuesday multiplier set at 2x
-
-        _setupDecimals(decimals_);
-        _mint(msg.sender, initialSupply* 10** decimals_);
+        
+        _mint(msg.sender, initialSupply* 10** decimals());
 
     }
 

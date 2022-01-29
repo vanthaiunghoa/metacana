@@ -10,7 +10,7 @@ import {
 import * as utils from './utils'
 
 import { 
-  MetacanaAssets,
+  MetacanaNFT,
   RewardFactory
 } from 'src/gen/typechain'
 
@@ -62,8 +62,8 @@ describe('RewardFactory', () => {
   let factoryAbstract: AbstractContract
 
   // Metacana Assets
-  let metacanaAssetsContract: MetacanaAssets
-  let userMetacanaAssetContract: MetacanaAssets
+  let metacanaAssetsContract: MetacanaNFT
+  let userMetacanaAssetContract: MetacanaNFT
   let factoryContract: RewardFactory
 
   // Factory manager
@@ -105,7 +105,7 @@ describe('RewardFactory', () => {
     subOwnerAddress = await subOwnerWallet.getAddress()
     userAddress = await userWallet.getAddress()
     randomAddress = await randomWallet.getAddress()
-    metacanaAssetsAbstract = await AbstractContract.fromArtifactName('MetacanaAssets')
+    metacanaAssetsAbstract = await AbstractContract.fromArtifactName('MetacanaNFT')
     factoryAbstract = await AbstractContract.fromArtifactName('RewardFactory')
   })
 
@@ -115,7 +115,7 @@ describe('RewardFactory', () => {
       // deploy before each test, to reset state of contract
       beforeEach(async () => {
         // Deploy Metacana Assets Contract
-        metacanaAssetsContract = await metacanaAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as MetacanaAssets
+        metacanaAssetsContract = await metacanaAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as MetacanaNFT
         userMetacanaAssetContract = await metacanaAssetsContract.connect(userSigner)
 
         // Deploy silver card factory
@@ -144,7 +144,7 @@ describe('RewardFactory', () => {
         await factoryContract.assignOwnership(subOwnerAddress, 1)
 
         // Mint silver cards to user
-        await metacanaAssetsContract.batchMint(userAddress, ids, amounts, [])
+        await metacanaAssetsContract.mintBatch(userAddress, ids, amounts, [])
 
         // Whitelist ids if whitelist is present
         if (condition[1] == 2) {
@@ -376,12 +376,12 @@ describe('RewardFactory', () => {
           })
 
           it('prevent minting of non-whitelisted asset', async () => {
-            const tx = subOwnerFactoryContract.batchMint(userAddress, [...enabledIds, ...nonEnabledIds], [1, 1, 1, 1], [])
-            await expect(tx).to.be.rejectedWith(RevertError("RewardFactory#batchMint: ID_IS_NOT_WHITELISTED"))
+            const tx = subOwnerFactoryContract.mintBatch(userAddress, [...enabledIds, ...nonEnabledIds], [1, 1, 1, 1], [])
+            await expect(tx).to.be.rejectedWith(RevertError("RewardFactory#mintBatch: ID_IS_NOT_WHITELISTED"))
           })
 
           it('ALLOWS minting of whitelisted asset', async () => {
-            const tx = subOwnerFactoryContract.batchMint(userAddress, [...enabledIds], [1, 1, 1], [])
+            const tx = subOwnerFactoryContract.mintBatch(userAddress, [...enabledIds], [1, 1, 1], [])
             await expect(tx).to.be.fulfilled
           })
         })
@@ -432,19 +432,19 @@ describe('RewardFactory', () => {
           })
 
           it('prevent minting of non-whitelisted asset', async () => {
-            const tx = subOwnerFactoryContract.batchMint(userAddress, [...enabledIds], [1, 1, 1], [])
-            await expect(tx).to.be.rejectedWith(RevertError("RewardFactory#batchMint: ID_IS_NOT_WHITELISTED"))
+            const tx = subOwnerFactoryContract.mintBatch(userAddress, [...enabledIds], [1, 1, 1], [])
+            await expect(tx).to.be.rejectedWith(RevertError("RewardFactory#mintBatch: ID_IS_NOT_WHITELISTED"))
           })
 
           it('ALLOWS minting of whitelisted asset', async () => {
-            const tx = subOwnerFactoryContract.batchMint(userAddress, [enabledIds[2]], [1], [])
+            const tx = subOwnerFactoryContract.mintBatch(userAddress, [enabledIds[2]], [1], [])
             await expect(tx).to.be.fulfilled
           })
         })
       })
 
 
-      describe('batchMint()', () => {
+      describe('mintBatch()', () => {
         let mintIds = [33, 66, 99, 133]
         let mintAmounts = [10000, 20000, 50000, 10000]
 
@@ -455,35 +455,35 @@ describe('RewardFactory', () => {
         })
 
         it('should PASS if caller is owner', async () => {
-          const tx = factoryContract.batchMint(userAddress, mintIds, mintAmounts, [])
+          const tx = factoryContract.mintBatch(userAddress, mintIds, mintAmounts, [])
           await expect(tx).to.be.fulfilled
         })
 
         it('should PASS if caller is subowner', async () => {
-          const tx = subOwnerFactoryContract.batchMint(userAddress, mintIds, mintAmounts, [])
+          const tx = subOwnerFactoryContract.mintBatch(userAddress, mintIds, mintAmounts, [])
           await expect(tx).to.be.fulfilled
         })
 
         it('should REVERT false if caller is not owner', async () => {
-          const tx = userFactoryContract.batchMint(userAddress, mintIds, mintAmounts, [])
+          const tx = userFactoryContract.mintBatch(userAddress, mintIds, mintAmounts, [])
           await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
         })
 
         it('should PASS if trying to mint exactly the available supply', async () => {
           let available_supply = await subOwnerFactoryContract.getAvailableSupply()
-          const tx = subOwnerFactoryContract.batchMint(userAddress, [1], [available_supply], [])
+          const tx = subOwnerFactoryContract.mintBatch(userAddress, [1], [available_supply], [])
           await expect(tx).to.be.fulfilled
         })
 
         it('should REVERT if trying to mint more than current supply', async () => {
           let available_supply = await factoryContract.getAvailableSupply()
-          const tx = subOwnerFactoryContract.batchMint(userAddress, [1], [available_supply.add(1)], [])
+          const tx = subOwnerFactoryContract.mintBatch(userAddress, [1], [available_supply.add(1)], [])
           await expect(tx).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
 
-          const tx2 = subOwnerFactoryContract.batchMint(userAddress, [1, 2], [1, available_supply], [])
+          const tx2 = subOwnerFactoryContract.mintBatch(userAddress, [1, 2], [1, available_supply], [])
           await expect(tx2).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
 
-          const tx3 = subOwnerFactoryContract.batchMint(userAddress, [1, 2, 66], [1, available_supply.sub(1), 1], [])
+          const tx3 = subOwnerFactoryContract.mintBatch(userAddress, [1, 2, 66], [1, available_supply.sub(1), 1], [])
           await expect(tx3).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
         })
 
@@ -492,7 +492,7 @@ describe('RewardFactory', () => {
           beforeEach(async () => {
             let available_supply = await factoryContract.getAvailableSupply()
             expected_supply = available_supply.sub(90000);
-            await subOwnerFactoryContract.batchMint(userAddress, mintIds, mintAmounts, [])
+            await subOwnerFactoryContract.mintBatch(userAddress, mintIds, mintAmounts, [])
           })
 
           it('should update user availableSupply', async () => {
@@ -501,12 +501,12 @@ describe('RewardFactory', () => {
           })
 
           it('should be able to mint more assets in the same period', async () => {
-            let tx = subOwnerFactoryContract.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(3)], [])
+            let tx = subOwnerFactoryContract.mintBatch(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(3)], [])
             await expect(tx).to.be.fulfilled
           })
 
           it('should not be able to exceed minting limit for this period with second mint tx', async () => {
-            let tx = subOwnerFactoryContract.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(2)], [])
+            let tx = subOwnerFactoryContract.mintBatch(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(2)], [])
             await expect(tx).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
           })
 
@@ -526,7 +526,7 @@ describe('RewardFactory', () => {
             expect(supply).to.be.eql(expected_supply)
             
             // Try to mint current period
-            const tx1 = subOwnerFactoryContract.batchMint(userAddress, mintIds, mintAmounts, [])
+            const tx1 = subOwnerFactoryContract.mintBatch(userAddress, mintIds, mintAmounts, [])
             await expect(tx1).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
 
             // Move forward by 6 hours
@@ -542,7 +542,7 @@ describe('RewardFactory', () => {
             expect(supply).to.be.eql(periodMintLimit)
 
             // Try mint during new period
-            const tx2 = subOwnerFactoryContract.batchMint(userAddress, mintIds, mintAmounts, [])
+            const tx2 = subOwnerFactoryContract.mintBatch(userAddress, mintIds, mintAmounts, [])
             await expect(tx2).to.be.fulfilled
 
             // Revert time to expected timestamp

@@ -1,9 +1,9 @@
-pragma solidity 0.7.4;
+pragma solidity 0.8.0;
 
 import "../../utils/TieredOwnable.sol";
-import "../interfaces/IMetacanaAssets.sol";
-import "@0xsequence/erc-1155/contracts/utils/SafeMath.sol";
-import "@0xsequence/erc-1155/contracts/interfaces/IERC165.sol";
+import "../interfaces/IMetacanaNFT.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /**
  * @notice This is a contract allowing contract owner to mint up to N 
@@ -18,7 +18,7 @@ contract RewardFactory is TieredOwnable {
   |__________________________________*/
 
   // Token information
-  IMetacanaAssets immutable public metacanaAssets; // ERC-1155 Metacana assets contract
+  IMetacanaNFT immutable public metacanaAssets; // ERC-1155 Metacana assets contract
 
   // Period variables
   uint256 internal period;                // Current period
@@ -62,7 +62,7 @@ contract RewardFactory is TieredOwnable {
     );
 
     // Assets
-    metacanaAssets = IMetacanaAssets(_assetsAddr);
+    metacanaAssets = IMetacanaNFT(_assetsAddr);
 
     // Set Period length
     PERIOD_LENGTH = _periodLength;
@@ -152,7 +152,7 @@ contract RewardFactory is TieredOwnable {
    * @param _amounts Amount of Tokens id minted for each corresponding Token id in _ids
    * @param _data    Byte array passed to recipient if recipient is a contract
    */
-  function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts, bytes calldata _data)
+  function mintBatch(address _to, uint256[] calldata _ids, uint256[] calldata _amounts, bytes calldata _data)
     external onlyOwnerTier(1)
   {
     uint256 live_period = livePeriod();
@@ -172,7 +172,7 @@ contract RewardFactory is TieredOwnable {
     for (uint256 i = 0; i < _ids.length; i++) {
       available_supply = available_supply.sub(_amounts[i]);
       if (MINT_WHITELIST_ONLY) {
-        require(mintWhitelist[_ids[i]], "RewardFactory#batchMint: ID_IS_NOT_WHITELISTED");
+        require(mintWhitelist[_ids[i]], "RewardFactory#mintBatch: ID_IS_NOT_WHITELISTED");
       }
     }
 
@@ -180,7 +180,7 @@ contract RewardFactory is TieredOwnable {
     availableSupply = available_supply;
     
     // Mint assets
-    metacanaAssets.batchMint(_to, _ids, _amounts, _data);
+    metacanaAssets.mintBatch(_to, _ids, _amounts, _data);
   }
 
 

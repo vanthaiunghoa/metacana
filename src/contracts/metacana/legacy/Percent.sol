@@ -1,5 +1,5 @@
-pragma solidity ^0.7.4;
-import "@openzeppelin/contracts/math/SafeMath.sol";
+pragma solidity ^0.8.0;
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 library Percent {
   using SafeMath for uint256;

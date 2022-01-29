@@ -126,7 +126,7 @@ const _abi = [
     name: "nftsContract",
     outputs: [
       {
-        internalType: "contract IMetacanaAssets",
+        internalType: "contract IMetacanaNFT",
         name: "",
         type: "address",
       },

@@ -23,7 +23,6 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
   functions: {
     "PERIOD_LENGTH()": FunctionFragment;
     "assignOwnership(address,uint256)": FunctionFragment;
-    "batchMint(address,uint256[],uint256[],bytes)": FunctionFragment;
     "disableMint(uint256[])": FunctionFragment;
     "enableMint(uint256[])": FunctionFragment;
     "getAvailableSupply()": FunctionFragment;
@@ -31,6 +30,7 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
     "getOwnerTier(address)": FunctionFragment;
     "livePeriod()": FunctionFragment;
     "metacanaAssets()": FunctionFragment;
+    "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
     "mintWhitelist(uint256)": FunctionFragment;
     "periodMintLimit()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -44,10 +44,6 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "assignOwnership",
     values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "batchMint",
-    values: [string, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "disableMint",
@@ -78,6 +74,10 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "mintBatch",
+    values: [string, BigNumberish[], BigNumberish[], BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "mintWhitelist",
     values: [BigNumberish]
   ): string;
@@ -102,7 +102,6 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
     functionFragment: "assignOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "disableMint",
     data: BytesLike
@@ -125,6 +124,7 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
     functionFragment: "metacanaAssets",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "mintWhitelist",
     data: BytesLike
@@ -215,22 +215,6 @@ export class RewardFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     disableMint(
       _disabledIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -276,6 +260,22 @@ export class RewardFactory extends Contract {
     metacanaAssets(overrides?: CallOverrides): Promise<[string]>;
 
     "metacanaAssets()"(overrides?: CallOverrides): Promise<[string]>;
+
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     mintWhitelist(
       arg0: BigNumberish,
@@ -328,22 +328,6 @@ export class RewardFactory extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  batchMint(
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "batchMint(address,uint256[],uint256[],bytes)"(
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   disableMint(
     _disabledIds: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -386,6 +370,22 @@ export class RewardFactory extends Contract {
   metacanaAssets(overrides?: CallOverrides): Promise<string>;
 
   "metacanaAssets()"(overrides?: CallOverrides): Promise<string>;
+
+  mintBatch(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "mintBatch(address,uint256[],uint256[],bytes)"(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   mintWhitelist(
     arg0: BigNumberish,
@@ -438,22 +438,6 @@ export class RewardFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     disableMint(
       _disabledIds: BigNumberish[],
       overrides?: CallOverrides
@@ -496,6 +480,22 @@ export class RewardFactory extends Contract {
     metacanaAssets(overrides?: CallOverrides): Promise<string>;
 
     "metacanaAssets()"(overrides?: CallOverrides): Promise<string>;
+
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     mintWhitelist(
       arg0: BigNumberish,
@@ -576,22 +576,6 @@ export class RewardFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     disableMint(
       _disabledIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -634,6 +618,22 @@ export class RewardFactory extends Contract {
     metacanaAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
     "metacanaAssets()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     mintWhitelist(
       arg0: BigNumberish,
@@ -684,22 +684,6 @@ export class RewardFactory extends Contract {
     "assignOwnership(address,uint256)"(
       _address: string,
       _tier: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "batchMint(address,uint256[],uint256[],bytes)"(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -755,6 +739,22 @@ export class RewardFactory extends Contract {
 
     "metacanaAssets()"(
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    mintBatch(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "mintBatch(address,uint256[],uint256[],bytes)"(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     mintWhitelist(

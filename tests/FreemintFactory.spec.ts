@@ -10,7 +10,7 @@ import {
 import * as utils from './utils'
 
 import { 
-  MetacanaAssets,
+  MetacanaNFT,
   FreemintFactory
 } from 'src/gen/typechain'
 
@@ -52,8 +52,8 @@ describe('FreemintFactory', () => {
   let factoryAbstract: AbstractContract
 
   // Metacana Assets
-  let metacanaAssetsContract: MetacanaAssets
-  let userMetacanaAssetContract: MetacanaAssets
+  let metacanaAssetsContract: MetacanaNFT
+  let userMetacanaAssetContract: MetacanaNFT
 
   // Factory
   let factoryContract: FreemintFactory
@@ -72,7 +72,7 @@ describe('FreemintFactory', () => {
     ownerAddress = await ownerWallet.getAddress()
     userAddress = await userWallet.getAddress()
     randomAddress = await randomWallet.getAddress()
-    metacanaAssetsAbstract = await AbstractContract.fromArtifactName('MetacanaAssets')
+    metacanaAssetsAbstract = await AbstractContract.fromArtifactName('MetacanaNFT')
     factoryAbstract = await AbstractContract.fromArtifactName('FreemintFactory')
   })
 
@@ -80,7 +80,7 @@ describe('FreemintFactory', () => {
   beforeEach(async () => {
 
     // Deploy Metacana Assets Contract
-    metacanaAssetsContract = await metacanaAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as MetacanaAssets
+    metacanaAssetsContract = await metacanaAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as MetacanaNFT
     userMetacanaAssetContract = await metacanaAssetsContract.connect(userSigner)
 
     // Deploy factory
@@ -118,7 +118,7 @@ describe('FreemintFactory', () => {
     })
   })
 
-  describe('batchMint()', () => {
+  describe('mintBatch()', () => {
     let mintIds = [1000000033, 1000000066, 1000000099, 1000000133]
     let mintAmounts = [100, 200, 500, 100]
     let recipients: string[]
@@ -128,18 +128,18 @@ describe('FreemintFactory', () => {
     })
 
     it('should PASS if caller is owner', async () => {
-      const tx = factoryContract.batchMint(recipients, mintIds, mintAmounts)
+      const tx = factoryContract.mintBatch(recipients, mintIds, mintAmounts)
       await expect(tx).to.be.fulfilled
     })
 
     it('should REVERT if caller is not owner', async () => {
-      const tx = userFactoryContract.batchMint(recipients, mintIds, mintAmounts)
+      const tx = userFactoryContract.mintBatch(recipients, mintIds, mintAmounts)
       await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
     })
 
     context('When assets were minted', () => {
       beforeEach(async () => {
-        await factoryContract.batchMint(recipients, mintIds, mintAmounts)
+        await factoryContract.mintBatch(recipients, mintIds, mintAmounts)
       })
 
       it('should update user silver cards balance', async () => {

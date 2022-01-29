@@ -22,19 +22,15 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface FreemintFactoryInterface extends ethers.utils.Interface {
   functions: {
     "assignOwnership(address,uint256)": FunctionFragment;
-    "batchMint(address[],uint256[],uint256[])": FunctionFragment;
     "getMetacanaAssets()": FunctionFragment;
     "getOwnerTier(address)": FunctionFragment;
+    "mintBatch(address[],uint256[],uint256[])": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "assignOwnership",
     values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "batchMint",
-    values: [string[], BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getMetacanaAssets",
@@ -45,6 +41,10 @@ interface FreemintFactoryInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "mintBatch",
+    values: [string[], BigNumberish[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
@@ -53,7 +53,6 @@ interface FreemintFactoryInterface extends ethers.utils.Interface {
     functionFragment: "assignOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMetacanaAssets",
     data: BytesLike
@@ -62,6 +61,7 @@ interface FreemintFactoryInterface extends ethers.utils.Interface {
     functionFragment: "getOwnerTier",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -130,20 +130,6 @@ export class FreemintFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    batchMint(
-      _recipients: string[],
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "batchMint(address[],uint256[],uint256[])"(
-      _recipients: string[],
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     getMetacanaAssets(overrides?: CallOverrides): Promise<[string]>;
 
     "getMetacanaAssets()"(overrides?: CallOverrides): Promise<[string]>;
@@ -157,6 +143,20 @@ export class FreemintFactory extends Contract {
       _owner: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    mintBatch(
+      _recipients: string[],
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "mintBatch(address[],uint256[],uint256[])"(
+      _recipients: string[],
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     supportsInterface(
       interfaceID: BytesLike,
@@ -181,20 +181,6 @@ export class FreemintFactory extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  batchMint(
-    _recipients: string[],
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "batchMint(address[],uint256[],uint256[])"(
-    _recipients: string[],
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   getMetacanaAssets(overrides?: CallOverrides): Promise<string>;
 
   "getMetacanaAssets()"(overrides?: CallOverrides): Promise<string>;
@@ -205,6 +191,20 @@ export class FreemintFactory extends Contract {
     _owner: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  mintBatch(
+    _recipients: string[],
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "mintBatch(address[],uint256[],uint256[])"(
+    _recipients: string[],
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   supportsInterface(
     interfaceID: BytesLike,
@@ -229,20 +229,6 @@ export class FreemintFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    batchMint(
-      _recipients: string[],
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "batchMint(address[],uint256[],uint256[])"(
-      _recipients: string[],
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     getMetacanaAssets(overrides?: CallOverrides): Promise<string>;
 
     "getMetacanaAssets()"(overrides?: CallOverrides): Promise<string>;
@@ -253,6 +239,20 @@ export class FreemintFactory extends Contract {
       _owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    mintBatch(
+      _recipients: string[],
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "mintBatch(address[],uint256[],uint256[])"(
+      _recipients: string[],
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     supportsInterface(
       interfaceID: BytesLike,
@@ -289,20 +289,6 @@ export class FreemintFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    batchMint(
-      _recipients: string[],
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "batchMint(address[],uint256[],uint256[])"(
-      _recipients: string[],
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     getMetacanaAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getMetacanaAssets()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -312,6 +298,20 @@ export class FreemintFactory extends Contract {
     "getOwnerTier(address)"(
       _owner: string,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    mintBatch(
+      _recipients: string[],
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "mintBatch(address[],uint256[],uint256[])"(
+      _recipients: string[],
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     supportsInterface(
@@ -338,20 +338,6 @@ export class FreemintFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    batchMint(
-      _recipients: string[],
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "batchMint(address[],uint256[],uint256[])"(
-      _recipients: string[],
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     getMetacanaAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getMetacanaAssets()"(
@@ -366,6 +352,20 @@ export class FreemintFactory extends Contract {
     "getOwnerTier(address)"(
       _owner: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    mintBatch(
+      _recipients: string[],
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "mintBatch(address[],uint256[],uint256[])"(
+      _recipients: string[],
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     supportsInterface(

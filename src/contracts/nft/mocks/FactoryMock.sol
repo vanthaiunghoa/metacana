@@ -1,21 +1,21 @@
-pragma solidity 0.7.4;
-import "../interfaces/IMetacanaAssets.sol";
+pragma solidity 0.8.0;
+import "../interfaces/IMetacanaNFT.sol";
 
 contract FactoryMock {
 
-  IMetacanaAssets internal metacanaAssets; //Metacana Curencies Factory Manager Contract
+  IMetacanaNFT internal metacanaAssets; //Metacana Curencies Factory Manager Contract
 
   constructor(address _factoryManagerAddr) public {
-    metacanaAssets = IMetacanaAssets(_factoryManagerAddr);
+    metacanaAssets = IMetacanaNFT(_factoryManagerAddr);
   }
 
-  function batchMint(
+  function mintBatch(
     address _to,
     uint256[] memory _ids,
     uint256[] memory _amounts,
     bytes memory _data) public
   {
-    metacanaAssets.batchMint(_to, _ids, _amounts, _data);
+    metacanaAssets.mintBatch(_to, _ids, _amounts, _data);
   }
 
   function mint(

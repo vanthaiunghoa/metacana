@@ -1,4 +1,4 @@
-pragma solidity 0.7.4;
+pragma solidity 0.8.0;
 
 /**
  * @notice This is a contract allowing contract owner to mint up to N
@@ -34,7 +34,7 @@ interface IRewardFactory {
    * @param _amounts Amount of Tokens id minted for each corresponding Token id in _tokenIds
    * @param _data    Byte array passed to recipient if recipient is a contract
    */
-  function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts, bytes calldata _data) external;
+  function mintBatch(address _to, uint256[] calldata _ids, uint256[] calldata _amounts, bytes calldata _data) external;
 
   /***********************************|
   |         Utility Functions         |
