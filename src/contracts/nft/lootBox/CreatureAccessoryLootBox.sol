@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.3;
+
+// import "@openzeppelin/contracts/metatx/MinimalForwarder.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -21,16 +23,17 @@ contract CreatureAccessoryLootBox is MetacanaNFT, ReentrancyGuard {
 
   /**
    * @dev Example constructor. Sets minimal configuration.
-   * @param _proxyRegistryAddress The address of the Metacana proxy registry
+   * param _proxyRegistryAddress The address of the Metacana proxy registry
    *                              On testnet: 
    *                              On mainnet: 
    */
-  constructor(address _proxyRegistryAddress)
+  constructor(/*address _proxyRegistryAddress,*/ address forwarder)
   MetacanaNFT(
-    "Metacana Creature Accessory Loot Box",
-    "MetacanaBox",
+    // "Metacana Creature Accessory Loot Box",
+    // "MetacanaBox",
     "",
-    _proxyRegistryAddress
+    // _proxyRegistryAddress,
+    forwarder
   ) {}
 
   function setState(
@@ -103,7 +106,7 @@ contract CreatureAccessoryLootBox is MetacanaNFT, ReentrancyGuard {
   function _isOwnerOrProxy(
     address _address
   ) internal view returns (bool) {
-    ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
-    return owner() == _address || address(proxyRegistry.proxies(owner())) == _address;
+    // ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
+    return owner() == _address/* || address(proxyRegistry.proxies(owner())) == _address*/;
   }
 }

@@ -1,4 +1,4 @@
-pragma solidity 0.8.0;
+pragma solidity 0.8.3;
 import "../common/AssetRange.sol";
 interface IMetacanaNFT {
   /***********************************|
@@ -52,10 +52,10 @@ interface IMetacanaNFT {
   function factorySchemaName() external view returns (string memory);
 
   ///////
-  // Get things to work on OpenSea with mock methods below
+  // Get things to work on Marketplace with mock methods below
   ///////
 
-  //function safeTransferFrom(address _from, address _to, uint256 _optionId, uint256 _amount, bytes calldata _data) external;
+  // function safeTransferFrom(address _from, address _to, uint256 _optionId, uint256 _amount, bytes calldata _data) external;
 
   function balanceOf(address _owner, uint256 _optionId) external view returns (uint256);
 
@@ -65,7 +65,7 @@ interface IMetacanaNFT {
    * @param _ids Array of token IDs to set the max issuance
    * @param _newMaxIssuances Array of max issuances for each corresponding ID
    */
-  function setMaxIssuances(uint256[] calldata _ids, uint256[] calldata _newMaxIssuances) external;
+  // function setMaxIssuances(uint256[] calldata _ids, uint256[] calldata _newMaxIssuances) external;
 
   /***********************************|
   |     Factory Management Methods    |
@@ -98,20 +98,20 @@ interface IMetacanaNFT {
    * @notice Will ALLOW factory to print some assets specified in `canPrint` mapping
    * @param _factory Address of the factory to activate
    */
-  function activateFactory(address _factory) external;
+  // function activateFactory(address _factory) external;
 
   /**
    * @notice Will DISALLOW factory to print any asset
    * @param _factory Address of the factory to shutdown
    */
-  function shutdownFactory(address _factory) external;
+  // function shutdownFactory(address _factory) external;
 
   /**
    * @notice Will forever prevent new mint permissions for provided ids
    * @param _range AssetRangeStruct.AssetRange struct for range of asset that can't be granted
    *               new mint permission to
    */
-  function lockRangeMintPermissions(AssetRangeStruct.AssetRange calldata _range) external;
+  // function lockRangeMintPermissions(AssetRangeStruct.AssetRange calldata _range) external;
 
   /***********************************|
   |         Getter Functions          |
@@ -120,12 +120,12 @@ interface IMetacanaNFT {
   /**
    * @return Returns whether a factory is active or not
    */
-  function getFactoryStatus(address _factory) external view returns (bool);
+  // function getFactoryStatus(address _factory) external view returns (bool);
 
   /**
    * @return Returns whether the sale has ended or not
    */
-  function getFactoryAccessRanges(address _factory) external view returns (AssetRangeStruct.AssetRange[] memory);
+  // function getFactoryAccessRanges(address _factory) external view returns (AssetRangeStruct.AssetRange[] memory);
 
   /**
    * @notice Get the max issuance of multiple asset IDs
@@ -134,7 +134,7 @@ interface IMetacanaNFT {
    * @param _ids Array containing the assets IDs
    * @return The current max issuance of each asset ID in _ids
    */
-  function getMaxIssuances(uint256[] calldata _ids) external view returns (uint256[] memory);
+  // function getMaxIssuances(uint256[] calldata _ids) external view returns (uint256[] memory);
 
   /**
    * @notice Get the current issuanc of multiple asset ID
@@ -143,7 +143,7 @@ interface IMetacanaNFT {
    * @param _ids Array containing the assets IDs
    * @return The current issuance of each asset ID in _ids
    */
-  function getCurrentIssuances(uint256[] calldata _ids) external view returns (uint256[] memory);
+  // function getCurrentIssuances(uint256[] calldata _ids) external view returns (uint256[] memory);
 
   /***************************************|
   |           Minting Functions           |

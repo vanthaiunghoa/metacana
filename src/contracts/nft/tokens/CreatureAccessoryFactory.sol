@@ -1,20 +1,24 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.3;
 
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/Multicall.sol";
+import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import '@openzeppelin/contracts/utils/Strings.sol';
 import '../interfaces/IMetacanaNFT.sol';
 import '../tokens/MetacanaNFT.sol';
 import '../../utils/TieredOwnable.sol';
 import "../common/AssetRange.sol";
+import "../../metacana/MetacanaToken.sol";
 
 /**
  * @title CreatureAccessoryFactory
  * CreatureAccessory - a factory contract for Creature Accessory semi-fungible
  * tokens.
  */
-contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard {
+contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard, AccessControlEnumerable, Multicall {
   using Strings for string;
   using SafeMath for uint256;
 
@@ -26,7 +30,7 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard {
 
   /*
    * Optionally set this to a small integer to enforce limited existence per option/token ID
-   * (Otherwise rely on sell orders on OpenSea, which can only be made by the factory owner.)
+   * (Otherwise rely on sell orders on Marketplace, which can only be made by the factory owner.)
    */
   uint256 constant SUPPLY_PER_TOKEN_ID = UINT256_MAX;
 
@@ -44,11 +48,11 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard {
   uint256 public constant NUM_OPTIONS = NUM_ITEM_OPTIONS + NUM_LOOTBOX_OPTIONS;
 
   constructor(
-    address _proxyRegistryAddress,
+    // address _proxyRegistryAddress,
     address _nftAddress,
     address _lootBoxAddress
   ) {
-    proxyRegistryAddress = _proxyRegistryAddress;
+    // proxyRegistryAddress = _proxyRegistryAddress;
     nftAddress = _nftAddress;
     lootBoxAddress = _lootBoxAddress;
   }
@@ -66,25 +70,23 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard {
    * @notice Will ALLOW factory to print some assets specified in `canPrint` mapping
    * @param _factory Address of the factory to activate
    */
-  function activateFactory(address _factory) external override onlyOwner {
-    MetacanaNFT items = MetacanaNFT(nftAddress);
-    MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
-    items.activateFactory(_factory);
-    lootBox.activateFactory(_factory);
-    emit FactoryActivation(_factory);
-  }
+  // function activateFactory(address _factory) external override onlyOwner {
+  //   MetacanaNFT items = MetacanaNFT(nftAddress);
+  //   MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
+  //   items.activateFactory(_factory);
+  //   lootBox.activateFactory(_factory);    
+  // }
 
   /**
    * @notice Will DISALLOW factory to print any asset
    * @param _factory Address of the factory to shutdown
    */
-  function shutdownFactory(address _factory) external override onlyOwner {
-    MetacanaNFT items = MetacanaNFT(nftAddress);
-    MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
-    items.shutdownFactory(_factory);
-    lootBox.shutdownFactory(_factory);
-    emit FactoryShutdown(_factory);
-  }
+  // function shutdownFactory(address _factory) external override onlyOwner {
+  //   MetacanaNFT items = MetacanaNFT(nftAddress);
+  //   MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
+  //   items.shutdownFactory(_factory);
+  //   lootBox.shutdownFactory(_factory);    
+  // }
 
   /**
    * @notice Will allow a factory to mint some token ids
@@ -137,17 +139,17 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard {
    * @param _range AssetRangeStruct.AssetRange struct for range of asset that can't be granted
    *               new mint permission to
    */
-  function lockRangeMintPermissions(AssetRangeStruct.AssetRange memory _range) public override onlyOwner {
-    require(_range.maxID < NUM_ITEM_OPTIONS || NUM_ITEM_OPTIONS <= _range.minID, 'MetacanaNFT#addMintPermission: OVERLAP_BETWEEN_BOX_AND_ITEM_RANGE');    
+  // function lockRangeMintPermissions(AssetRangeStruct.AssetRange memory _range) public override onlyOwner {
+  //   require(_range.maxID < NUM_ITEM_OPTIONS || NUM_ITEM_OPTIONS <= _range.minID, 'MetacanaNFT#addMintPermission: OVERLAP_BETWEEN_BOX_AND_ITEM_RANGE');    
     
-    if(_range.maxID < NUM_ITEM_OPTIONS){
-      MetacanaNFT items = MetacanaNFT(nftAddress);
-      items.lockRangeMintPermissions(_range);
-    } else if (NUM_ITEM_OPTIONS <= _range.minID){
-      MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
-      lootBox.lockRangeMintPermissions(_range);
-    } 
-  }
+  //   if(_range.maxID < NUM_ITEM_OPTIONS){
+  //     MetacanaNFT items = MetacanaNFT(nftAddress);
+  //     items.lockRangeMintPermissions(_range);
+  //   } else if (NUM_ITEM_OPTIONS <= _range.minID){
+  //     MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
+  //     lootBox.lockRangeMintPermissions(_range);
+  //   } 
+  // }
 
   /***********************************|
   |    Supplies Management Methods    |
@@ -159,28 +161,28 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard {
    * @param _ids Sorted-ascending array of token IDs to set the max issuance
    * @param _newMaxIssuances Array of max issuances for each corresponding ID
    */
-  function setMaxIssuances(uint256[] calldata _ids, uint256[] calldata _newMaxIssuances) external override onlyOwner {
-    require(_ids.length == _newMaxIssuances.length, 'MetacanaNFT#setMaxIssuances: INVALID_ARRAYS_LENGTH');
-    // Can only *decrease* a max issuance
-    // Can't set max issuance back to 0    
-    uint256 index = 0;    
+  // function setMaxIssuances(uint256[] calldata _ids, uint256[] calldata _newMaxIssuances) external override onlyOwner {
+  //   require(_ids.length == _newMaxIssuances.length, 'MetacanaNFT#setMaxIssuances: INVALID_ARRAYS_LENGTH');
+  //   // Can only *decrease* a max issuance
+  //   // Can't set max issuance back to 0    
+  //   uint256 index = 0;    
 
-    for (uint256 i = 0; i < _ids.length; i++) {
-      if(_ids[i] >= NUM_ITEM_OPTIONS){
-        index = index - 1;      
-      }
-    }
+  //   for (uint256 i = 0; i < _ids.length; i++) {
+  //     if(_ids[i] >= NUM_ITEM_OPTIONS){
+  //       index = index - 1;      
+  //     }
+  //   }
 
-    if (index > 0){
-      MetacanaNFT items = MetacanaNFT(nftAddress);
-      items.setMaxIssuances(_ids[0:index], _newMaxIssuances[0:index]);
-      MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
-      lootBox.setMaxIssuances(_ids[index+1:], _newMaxIssuances[index+1:]);
-    } else{
-      MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
-      lootBox.setMaxIssuances(_ids, _newMaxIssuances);
-    }   
-  }
+  //   if (index > 0){
+  //     MetacanaNFT items = MetacanaNFT(nftAddress);
+  //     items.setMaxIssuances(_ids[0:index], _newMaxIssuances[0:index]);
+  //     MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
+  //     lootBox.setMaxIssuances(_ids[index+1:], _newMaxIssuances[index+1:]);
+  //   } else{
+  //     MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
+  //     lootBox.setMaxIssuances(_ids, _newMaxIssuances);
+  //   }   
+  // }
 
   /***********************************|
   |    Royalty Management Methods     |
@@ -192,12 +194,12 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard {
    * @param _royaltyBasisPoints Basis points with 3 decimals representing the fee %
    *        e.g. a fee of 2% would be 20 (i.e. 20 / 1000 == 0.02, or 2%)
    */
-  function setGlobalRoyaltyInfo(address _receiver, uint96 _royaltyBasisPoints) external onlyOwner {
-    MetacanaNFT items = MetacanaNFT(nftAddress);
-    items.setGlobalRoyaltyInfo(_receiver, _royaltyBasisPoints);
-    MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
-    lootBox.setGlobalRoyaltyInfo(_receiver, _royaltyBasisPoints);
-  }
+  // function setGlobalRoyaltyInfo(address _receiver, uint96 _royaltyBasisPoints) external onlyOwner {
+  //   MetacanaNFT items = MetacanaNFT(nftAddress);
+  //   items.setGlobalRoyaltyInfo(_receiver, _royaltyBasisPoints);
+  //   MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
+  //   lootBox.setGlobalRoyaltyInfo(_receiver, _royaltyBasisPoints);
+  // }
 
   /***********************************|
   |      Receiver Method Handler      |
@@ -286,23 +288,23 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard {
     return _canMint(_msgSender(), _optionId, _amount);
   }
 
-  function getFactoryStatus(address _factory) external view override returns (bool) {
-    MetacanaNFT items = MetacanaNFT(nftAddress);    
-    MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
-    return items.getFactoryStatus(_factory) && lootBox.getFactoryStatus(_factory);
-  }
+  // function getFactoryStatus(address _factory) external view override returns (bool) {
+  //   MetacanaNFT items = MetacanaNFT(nftAddress);    
+  //   MetacanaNFT lootBox = MetacanaNFT(lootBoxAddress);
+  //   return items.getFactoryStatus(_factory) && lootBox.getFactoryStatus(_factory);
+  // }
 
-  function getFactoryAccessRanges(address _factory) external view override returns (AssetRangeStruct.AssetRange[] memory) {
-    revert('UNSUPPORTED_METHOD');
-  }
+  // function getFactoryAccessRanges(address _factory) external view override returns (AssetRangeStruct.AssetRange[] memory) {
+  //   revert('UNSUPPORTED_METHOD');
+  // }
 
-  function getMaxIssuances(uint256[] calldata _ids) external view override returns (uint256[] memory) {
-    revert('UNSUPPORTED_METHOD');
-  }
+  // function getMaxIssuances(uint256[] calldata _ids) external view override returns (uint256[] memory) {
+  //   revert('UNSUPPORTED_METHOD');
+  // }
 
-  function getCurrentIssuances(uint256[] calldata _ids) external view override returns (uint256[] memory) {
-    revert('UNSUPPORTED_METHOD');
-  }
+  // function getCurrentIssuances(uint256[] calldata _ids) external view override returns (uint256[] memory) {
+  //   revert('UNSUPPORTED_METHOD');
+  // }
 
   /***********************************|
   |          Minting Function         |
@@ -442,7 +444,7 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard {
   }
 
   function _isOwnerOrProxy(address _address) internal view returns (bool) {
-    ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
-    return owner() == _address || address(proxyRegistry.proxies(owner())) == _address;
+    // ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
+    return owner() == _address /*|| address(proxyRegistry.proxies(owner())) == _address*/;
   }
 }

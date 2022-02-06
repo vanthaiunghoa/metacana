@@ -1,4 +1,4 @@
-pragma solidity 0.8.0;
+pragma solidity 0.8.3;
 
 /**
  * @notice The TieredOwnable can assign ownership tiers to addresses,

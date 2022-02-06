@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ApprovedSpenderContract",
+  "sourceName": "contracts/nft/test/ApprovedSpenderContract.sol",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220b96927774d07b4194a208db0cfb2f890078a0b82ae274b2dd7b7740310d690e464736f6c63430008030033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220b96927774d07b4194a208db0cfb2f890078a0b82ae274b2dd7b7740310d690e464736f6c63430008030033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

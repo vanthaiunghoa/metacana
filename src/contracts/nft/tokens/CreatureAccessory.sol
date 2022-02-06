@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.3;
 
 import "./MetacanaNFT.sol";
 
@@ -9,12 +9,13 @@ import "./MetacanaNFT.sol";
  * CreatureAccessory - a contract for Creature Accessory semi-fungible tokens.
  */
 contract CreatureAccessory is MetacanaNFT {
-    constructor(address _proxyRegistryAddress)
+    constructor(/*address _proxyRegistryAddress,*/ address forwarder)
         MetacanaNFT(
-            "Metacana Creature Accessory",
-            "Metacana",
+            // "Metacana Creature Accessory",
+            // "Metacana",
             "https://asset.metacana.io/{id}",
-            _proxyRegistryAddress
+            // _proxyRegistryAddress,
+            forwarder
         ) {}
 
     function contractURI() public pure returns (string memory) {

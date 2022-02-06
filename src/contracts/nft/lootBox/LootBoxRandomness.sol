@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.3;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
@@ -46,7 +46,7 @@ library LootBoxRandomness {
 
   uint256 constant INVERSE_BASIS_POINT = 10000;
   
-  // NOTE: Price of the lootbox is set via sell orders on OpenSea
+  // NOTE: Price of the lootbox is set via sell orders on Marketplace
   struct OptionSettings {
     // Number of items to send per open.
     // Set to 0 to disable this Option.
@@ -97,7 +97,7 @@ library LootBoxRandomness {
     uint256 _tokenId,
     uint256 _classId
   ) public {
-    require(_classId < _state.numClasses, "_class out of range");
+    require(_classId < _state.numClasses, "class_out_of_range");
     _addTokenIdToClass(_state, _classId, _tokenId);
   }
 
@@ -110,7 +110,7 @@ library LootBoxRandomness {
     uint256 _classId,
     uint256[] memory _tokenIds
   ) public {
-    require(_classId < _state.numClasses, "_class out of range");
+    require(_classId < _state.numClasses, "class_out_of_range");
     _state.classToTokenIds[_classId] = _tokenIds;
   }
 
@@ -122,7 +122,7 @@ library LootBoxRandomness {
     LootBoxRandomnessState storage _state,
     uint256 _classId
   ) public {require(
-    _classId < _state.numClasses, "_class out of range");
+    _classId < _state.numClasses, "class_out_of_range");
     delete _state.classToTokenIds[_classId];
   }
 
@@ -159,7 +159,7 @@ library LootBoxRandomness {
     uint16[] memory _classProbabilities,
     uint16[] memory _guarantees
   ) public {
-    require(_option < _state.numOptions, "_option out of range");
+    require(_option < _state.numOptions, "option_out_of_range");
     // Allow us to skip guarantees and save gas at mint time
     // if there are no classes with guarantees
     bool hasGuaranteedClasses = false;
@@ -199,7 +199,7 @@ library LootBoxRandomness {
    * @dev Main minting logic for lootboxes
    * This is called via safeTransferFrom when CreatureAccessoryLootBox extends
    * CreatureAccessoryFactory.
-   * NOTE: prices and fees are determined by the sell order on OpenSea.
+   * NOTE: prices and fees are determined by the sell order on Marketplace.
    * WARNING: Make sure msg.sender can mint!
    */
   function _mint(
@@ -210,11 +210,11 @@ library LootBoxRandomness {
     bytes memory /* _data */,
     address _owner
   ) internal {
-    require(_optionId < _state.numOptions, "_option out of range");
+    require(_optionId < _state.numOptions, "option_out_of_range");
     // Load settings for this box option
     OptionSettings memory settings = _state.optionToSettings[_optionId];
 
-    require(settings.maxQuantityPerOpen > 0, "LootBoxRandomness#_mint: OPTION_NOT_ALLOWED");
+    require(settings.maxQuantityPerOpen > 0, "LootBoxRandomness#_mint:OPTION_NOT_ALLOWED");
 
     uint256 totalMinted = 0;
     // Iterate over the quantity of boxes specified
@@ -259,7 +259,7 @@ library LootBoxRandomness {
     uint256 _amount,
     address _owner
   ) internal returns (uint256) {
-    require(_classId < _state.numClasses, "_class out of range");
+    require(_classId < _state.numClasses, "class_out_of_range");
     Factory factory = Factory(_state.factoryAddress);
     uint256 tokenId = _pickRandomAvailableTokenIdForClass(_state, _classId, _amount, _owner);
     // This may mint, create or transfer. We don't handle that here.
@@ -293,7 +293,7 @@ library LootBoxRandomness {
     uint256 _minAmount,
     address _owner
   ) internal returns (uint256) {
-    require(_classId < _state.numClasses, "_class out of range");
+    require(_classId < _state.numClasses, "class_out_of_range");
     uint256[] memory tokenIds = _state.classToTokenIds[_classId];
     require(tokenIds.length > 0, "No token ids for _classId");
     uint256 randIndex = _random(_state).mod(tokenIds.length);
@@ -306,7 +306,7 @@ library LootBoxRandomness {
         return tokenId;
      }
     }
-    revert("LootBoxRandomness#_pickRandomAvailableTokenIdForClass: NOT_ENOUGH_TOKENS_FOR_CLASS");
+    revert("LootBoxRandomness#NOT_ENOUGH_TOKENS_FOR_CLASS");
   }
 
   /**
