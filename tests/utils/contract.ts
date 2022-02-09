@@ -139,7 +139,7 @@ export class AbstractContract {
     return info.address
   }
 
-  public async generateLinkedBytecode(networkId: number): Promise<string> {
+  public async generateLinkedBytecode(networkId: number): Promise<string> {    
     if (this.links === undefined) {
       throw new Error('Nothing to link')
     }

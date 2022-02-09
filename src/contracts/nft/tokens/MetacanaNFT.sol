@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 // import "@openzeppelin/contracts/metatx/MinimalForwarder.sol";
 // import "../common/ERC2981.sol";
 // import "@openzeppelin/contracts/interfaces/IERC2981.sol";
@@ -357,12 +358,12 @@ contract MetacanaNFT is
     uint256 _initialSupply,
     bytes memory _data
   ) public onlyOwner returns (uint256) {
-    require(!exists(_id), 'create:token_id_exist');
+    require(!exists(_id), string(abi.encodePacked('create:token_id_exist: ' , Strings.toString(_id))));
     uint256[] memory ids = new uint256[](1);
     uint256[] memory amounts = new uint256[](1);
     ids[0] = _id;
     amounts[0] = _initialSupply;
-    _validateMints(ids, amounts);
+    // _validateMints(ids, amounts);
     creators[_id] = _msgSender();
 
     _mint(_initialOwner, _id, _initialSupply, _data);

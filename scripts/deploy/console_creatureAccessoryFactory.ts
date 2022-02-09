@@ -34,6 +34,8 @@ async function main(): Promise<void> {
 
   // const prxoy_address = process.env.METACANA_NFT_PROXY_ADDRESS
   
+  console.log(`(nftAddress as any).metacanaNFT == ${(nftAddress as any).metacanaNFT}`)
+
   const CreatureAccessoryFactory_Factory: ContractFactory = await ethers.getContractFactory("CreatureAccessoryFactory");
   const creatureAccessoryFactory: Contract = await CreatureAccessoryFactory_Factory.deploy(
     (nftAddress as any).metacanaNFT,

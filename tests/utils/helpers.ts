@@ -3,6 +3,10 @@ import { BigNumber } from 'ethers'
 import { ExternalProvider, TransactionResponse } from '@ethersproject/providers'
 import { Networkish } from '@ethersproject/networks'
 
+import { resolve } from "path";
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig({ path: resolve(__dirname, "./.env") });
+
 export const UNIT_ETH = ethers.utils.parseEther('1')
 export const HIGH_GAS_LIMIT = { gasLimit: 6e9 }
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -15,11 +19,10 @@ export type AssetRange = {
 }
 
 // createTestWallet creates a new wallet
-export const createTestWallet = (web3: any, addressIndex: number = 0) => {
-  const provider = new Web3DebugProvider(web3.currentProvider)
-
+export const createTestWallet = (web3: any, addressIndex: number = 0) => {  
+  const provider = new Web3DebugProvider(web3.currentProvider)  
   const wallet = ethers.Wallet
-    .fromMnemonic(process.env.npm_package_config_mnemonic!, `m/44'/60'/0'/0/${addressIndex}`)
+    .fromMnemonic(process.env.MNEMONIC_LOCALHOST!, `m/44'/60'/0'/0/${addressIndex}`)
     .connect(provider)
 
   const signer = provider.getSigner(addressIndex)
@@ -91,7 +94,7 @@ export class Web3DebugProvider extends ethers.providers.JsonRpcProvider {
         }
 
         if (result.error) {
-          // @TODO: not any
+          // @TODO: not any          
           let error: any = new Error(result.error.message)
           error.code = result.error.code
           error.data = result.error.data

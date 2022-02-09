@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "yarn clean && yarn compile && yarn adapter",
-    "clean": "rimraf src/artifacts && rimraf src/gen && rimraf cache",
+    "clean": "rimraf src/artifacts && rimraf src/gen && rimraf src/cache",
     "compile": "hardhat --max-memory 4096 compile",
     "adapter": "yarn adapter:gen && yarn adapter:build",
     "adapter:gen": "rimraf src/gen/typechain && typechain --target ethers-v5 --out-dir src/gen/typechain './src/artifacts/contracts/**/*[^dbg].json'",
@@ -20,6 +20,7 @@
     "script:bsc_testnet": "npx hardhat run --network bsc",
     "deploy:bsc": "npx hardhat --network bsc run ./scripts/deploy/deploy.js",
     "size": "npx hardhat size-contracts",
+    "export:abi":"yarn run hardhat export-abi",
     "coverage": "hardhat coverage",
     "test:gas-report": "REPORT_GAS=true yarn test",
     "lint": "yarn lint:ts && yarn lint:sol",
@@ -63,7 +64,7 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-prettier": "^4.0.0",
     "ethers": "^5.5.4",
-    "ganache-cli": "^6.12.2",
+    "ganache-cli": "^6.12.1",
     "hardhat": "^2.8.3",
     "hardhat-abi-exporter": "^2.8.0",
     "hardhat-contract-sizer": "^2.4.0",
@@ -77,12 +78,12 @@
     "@openzeppelin/test-helpers":"^0.5.15"
   },
   "config": {
-    "mnemonic": "test test test test test test test test test test test yep",
-    "ganacheNetworkID": 127001,
+    "mnemonic": "test test test test test test test test test test test junk",
+    "ganacheNetworkID": 1337,
     "ganachePort": 8545,
-    "ganacheGasLimit": "0xfffffffffff",
-    "ganacheGasPrice": "2",
-    "etherBalance": "100000",
+    "ganacheGasLimit": "0xffffffffffff",
+    "ganacheGasPrice": "3",
+    "etherBalance": "2000000",
     "extra": ""
   },
   "dependencies": {

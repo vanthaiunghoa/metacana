@@ -22,7 +22,7 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard, Acc
   using Strings for string;
   using SafeMath for uint256;
 
-  address public proxyRegistryAddress;
+  // address public proxyRegistryAddress;
   address public nftAddress;
   address public lootBoxAddress;
   string internal constant baseMetadataURI = 'https://asset.metacana.io/api/';
@@ -39,10 +39,11 @@ contract CreatureAccessoryFactory is IMetacanaNFT, Ownable, ReentrancyGuard, Acc
 
   /*
    * Three different options for minting CreatureAccessories (basic, premium, and gold).
+   * Commented out the below to reduce contract size
    */
-  uint256 public constant BASIC_LOOTBOX = NUM_ITEM_OPTIONS + 0;
-  uint256 public constant PREMIUM_LOOTBOX = NUM_ITEM_OPTIONS + 1;
-  uint256 public constant GOLD_LOOTBOX = NUM_ITEM_OPTIONS + 2;
+  // uint256 public constant BASIC_LOOTBOX = NUM_ITEM_OPTIONS + 0;
+  // uint256 public constant PREMIUM_LOOTBOX = NUM_ITEM_OPTIONS + 1;
+  // uint256 public constant GOLD_LOOTBOX = NUM_ITEM_OPTIONS + 2;
   uint256 public constant NUM_LOOTBOX_OPTIONS = 3;
 
   uint256 public constant NUM_OPTIONS = NUM_ITEM_OPTIONS + NUM_LOOTBOX_OPTIONS;

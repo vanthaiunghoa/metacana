@@ -14,7 +14,6 @@ import {
   ERC1155Mock,
   FactoryMock,
   MockProxyRegistry,
-  ApprovedSpenderContract
 } from 'src/gen/typechain'
 
 import { BigNumber } from 'ethers'
@@ -109,8 +108,8 @@ describe('MetacanaNFT', () => {
     factoryContract = await factoryAbstract.deploy(ownerWallet, [SWAssetsContract.address]) as FactoryMock
 
     // Mint wDAI to owner and user
-    await wDaiContract.mintMock(ownerAddress, baseTokenID, baseTokenAmount, [])
-    await wDaiContract.mintMock(userAddress, baseTokenID, baseTokenAmount, [])
+    await wDaiContract.mint(ownerAddress, baseTokenID, baseTokenAmount, [])
+    await wDaiContract.mint(userAddress, baseTokenID, baseTokenAmount, [])
 
     // Assing vars
     factory = factoryContract.address
@@ -118,29 +117,29 @@ describe('MetacanaNFT', () => {
 
   describe('Getter functions', () => {
 
-    describe('getMaxIssuances() function', () => {
-      it('should return correct value', async () => {
-        const id = BigNumber.from(981273918273)
-        const maxIssuance = BigNumber.from(100)
-        await SWAssetsContract.setMaxIssuances([id], [maxIssuance])
-        const value = await SWAssetsContract.getMaxIssuances([id])
-        expect(value[0]).to.be.eql(maxIssuance)
-      })
-    })
+    // describe('getMaxIssuances() function', () => {
+    //   it('should return correct value', async () => {
+    //     const id = BigNumber.from(981273918273)
+    //     const maxIssuance = BigNumber.from(100)
+    //     await SWAssetsContract.setMaxIssuances([id], [maxIssuance])
+    //     const value = await SWAssetsContract.getMaxIssuances([id])
+    //     expect(value[0]).to.be.eql(maxIssuance)
+    //   })
+    // })
 
-    describe('getCurrentIssuances() function', () => {
-      it('should return correct value', async () => {
-        const id = BigNumber.from(nTokenTypes - 1)
-        const maxIssuance = BigNumber.from(100)
-        const expected_issuance = BigNumber.from(3)
-        await SWAssetsContract.setMaxIssuances([id], [maxIssuance])
-        await SWAssetsContract.activateFactory(factory)
-        await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
-        await factoryContract.mintBatch(userAddress, [id], [expected_issuance], [])
-        const value = await SWAssetsContract.getCurrentIssuances([id])
-        expect(value[0]).to.be.eql(expected_issuance)
-      })
-    })
+    // describe('getCurrentIssuances() function', () => {
+    //   it('should return correct value', async () => {
+    //     const id = BigNumber.from(nTokenTypes - 1)
+    //     const maxIssuance = BigNumber.from(100)
+    //     const expected_issuance = BigNumber.from(3)
+    //     await SWAssetsContract.setMaxIssuances([id], [maxIssuance])
+    //     await SWAssetsContract.activateFactory(factory)
+    //     await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
+    //     await factoryContract.mintBatch(userAddress, [id], [expected_issuance], [])
+    //     const value = await SWAssetsContract.getCurrentIssuances([id])
+    //     expect(value[0]).to.be.eql(expected_issuance)
+    //   })
+    // })
 
 
     describe('Supports ERC165', () => {
@@ -253,8 +252,8 @@ describe('MetacanaNFT', () => {
     })
 
     it('should REVERT if range overlaps with locked range', async () => {
-      let range: AssetRange = {minID: minRange, maxID: maxRange, startTime: BigNumber.from(Date.now()), endTime: BigNumber.from(Date.now() + 1000000)}
-      await SWAssetsContract.lockRangeMintPermissions(range)
+      // let range: AssetRange = {minID: minRange, maxID: maxRange, startTime: BigNumber.from(Date.now()), endTime: BigNumber.from(Date.now() + 1000000)}
+      // await SWAssetsContract.lockRangeMintPermissions(range)
 
       let tx = SWAssetsContract.addMintPermission(factory, maxRange, maxRange.add(100), startTime, endTime)
       await expect(tx).to.be.rejectedWith( RevertError("MetacanaNFT#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
@@ -270,11 +269,11 @@ describe('MetacanaNFT', () => {
     })
 
     it('should pass if range does not overlap with locked range', async () => {
-      let range: AssetRange = {minID: minRange.add(1), maxID: maxRange.add(1), startTime: BigNumber.from(Date.now()), endTime: BigNumber.from(Date.now() + 1000000)}
-      await SWAssetsContract.lockRangeMintPermissions(range)
+      // let range: AssetRange = {minID: minRange.add(1), maxID: maxRange.add(1), startTime: BigNumber.from(Date.now()), endTime: BigNumber.from(Date.now() + 1000000)}
+      // await SWAssetsContract.lockRangeMintPermissions(range)
 
-      let range2: AssetRange = {minID: maxRange.mul(3), maxID: maxRange.mul(3).add(100), startTime: BigNumber.from(Date.now()), endTime: BigNumber.from(Date.now() + 1000000)}
-      await SWAssetsContract.lockRangeMintPermissions(range2)
+      // let range2: AssetRange = {minID: maxRange.mul(3), maxID: maxRange.mul(3).add(100), startTime: BigNumber.from(Date.now()), endTime: BigNumber.from(Date.now() + 1000000)}
+      // await SWAssetsContract.lockRangeMintPermissions(range2)
       
       // Before first
       let tx = SWAssetsContract.addMintPermission(factory, 0, 1, startTime, endTime)
@@ -450,207 +449,207 @@ describe('MetacanaNFT', () => {
     })
   })
 
-  describe('activateFactory() function', () => {
+  // describe('activateFactory() function', () => {
 
-    it('should PASS if caller is owner', async () => {
-      const tx = SWAssetsContract.activateFactory(factory)
-      await expect(tx).to.be.fulfilled
-    })
+  //   it('should PASS if caller is owner', async () => {
+  //     const tx = SWAssetsContract.activateFactory(factory)
+  //     await expect(tx).to.be.fulfilled
+  //   })
 
-    it('should REVERT if caller is not owner', async () => {
-      const tx =  userSWAssetsContract.activateFactory(factory)
-      await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
-    })
+  //   it('should REVERT if caller is not owner', async () => {
+  //     const tx =  userSWAssetsContract.activateFactory(factory)
+  //     await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+  //   })
 
-    context('When factory was activated', () => {
-      let tx;
-      beforeEach(async () => {
-        tx = await SWAssetsContract.activateFactory(factory)
-      })
+  //   context('When factory was activated', () => {
+  //     let tx;
+  //     beforeEach(async () => {
+  //       tx = await SWAssetsContract.activateFactory(factory)
+  //     })
 
-      it('should set factory to active', async () => {
-        let status = await SWAssetsContract.getFactoryStatus(factory);
-        expect(status).to.be.eql(true)
-      })
+  //     it('should set factory to active', async () => {
+  //       let status = await SWAssetsContract.getFactoryStatus(factory);
+  //       expect(status).to.be.eql(true)
+  //     })
 
-      it('should emit FactoryActivation event', async () => {
-        let filterFromOperatorContract: ethers.ethers.EventFilter
+  //     it('should emit FactoryActivation event', async () => {
+  //       let filterFromOperatorContract: ethers.ethers.EventFilter
 
-        // Get event filter to get internal tx event
-        filterFromOperatorContract = SWAssetsContract.filters.FactoryActivation(null);
+  //       // Get event filter to get internal tx event
+  //       filterFromOperatorContract = SWAssetsContract.filters.FactoryActivation(null);
 
-        // Get logs from internal transaction event
-        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
-        filterFromOperatorContract.fromBlock = 0;
-        let logs = await operatorProvider.getLogs(filterFromOperatorContract);
-        expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["FactoryActivation(address)"]))
-      })
+  //       // Get logs from internal transaction event
+  //       // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+  //       filterFromOperatorContract.fromBlock = 0;
+  //       let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+  //       expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["FactoryActivation(address)"]))
+  //     })
       
-      describe('FactoryActivation Event', () => {
-        it('should have factory address as `factory` field', async () => {  
-          const tx = await SWAssetsContract.activateFactory(factory)
-          const receipt = await tx.wait(1)
-          const ev = receipt.events!.pop()!
+  //     describe('FactoryActivation Event', () => {
+  //       it('should have factory address as `factory` field', async () => {  
+  //         const tx = await SWAssetsContract.activateFactory(factory)
+  //         const receipt = await tx.wait(1)
+  //         const ev = receipt.events!.pop()!
 
-          const args = ev.args! as any
-          expect(args.factory).to.be.eql(factory)
-        })
-      })
-    })
-  })
+  //         const args = ev.args! as any
+  //         expect(args.factory).to.be.eql(factory)
+  //       })
+  //     })
+  //   })
+  // })
 
-  describe('shutdownFactory() function', () => {
-    beforeEach(async () => {
-      await SWAssetsContract.activateFactory(factory)
-    })
+  // describe('shutdownFactory() function', () => {
+  //   beforeEach(async () => {
+  //     await SWAssetsContract.activateFactory(factory)
+  //   })
 
-    it('should PASS if caller is owner', async () => {
-      const tx = SWAssetsContract.shutdownFactory(factory)
-      await expect(tx).to.be.fulfilled
-    })
+  //   it('should PASS if caller is owner', async () => {
+  //     const tx = SWAssetsContract.shutdownFactory(factory)
+  //     await expect(tx).to.be.fulfilled
+  //   })
 
-    it('should REVERT if caller is not owner', async () => {
-      const tx =  userSWAssetsContract.shutdownFactory(factory)
-      await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
-    })
+  //   it('should REVERT if caller is not owner', async () => {
+  //     const tx =  userSWAssetsContract.shutdownFactory(factory)
+  //     await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+  //   })
 
-    context('When factory was shutdown', () => {
-      let tx;
-      beforeEach(async () => {
-        tx = await SWAssetsContract.shutdownFactory(factory)
-      })
+  //   context('When factory was shutdown', () => {
+  //     let tx;
+  //     beforeEach(async () => {
+  //       tx = await SWAssetsContract.shutdownFactory(factory)
+  //     })
 
-      it('should set factory to inactive', async () => {
-        let status = await SWAssetsContract.getFactoryStatus(factory);
-        expect(status).to.be.eql(false)
-      })
+  //     it('should set factory to inactive', async () => {
+  //       let status = await SWAssetsContract.getFactoryStatus(factory);
+  //       expect(status).to.be.eql(false)
+  //     })
 
-      it('should emit FactoryShutdown event', async () => {
-        let filterFromOperatorContract: ethers.ethers.EventFilter
+  //     it('should emit FactoryShutdown event', async () => {
+  //       let filterFromOperatorContract: ethers.ethers.EventFilter
 
-        // Get event filter to get internal tx event
-        filterFromOperatorContract = SWAssetsContract.filters.FactoryShutdown(null);
+  //       // Get event filter to get internal tx event
+  //       filterFromOperatorContract = SWAssetsContract.filters.FactoryShutdown(null);
 
-        // Get logs from internal transaction event
-        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
-        filterFromOperatorContract.fromBlock = 0;
-        let logs = await operatorProvider.getLogs(filterFromOperatorContract);
-        expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["FactoryShutdown(address)"]))
-      })
+  //       // Get logs from internal transaction event
+  //       // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+  //       filterFromOperatorContract.fromBlock = 0;
+  //       let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+  //       expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["FactoryShutdown(address)"]))
+  //     })
       
-      describe('FactoryShutdown Event', () => {
-        it('should have factory address as `factory` field', async () => {  
-          const tx = await SWAssetsContract.activateFactory(factory)
-          const receipt = await tx.wait(1)
-          const ev = receipt.events!.pop()!
+  //     describe('FactoryShutdown Event', () => {
+  //       it('should have factory address as `factory` field', async () => {  
+  //         const tx = await SWAssetsContract.activateFactory(factory)
+  //         const receipt = await tx.wait(1)
+  //         const ev = receipt.events!.pop()!
 
-          const args = ev.args! as any
-          expect(args.factory).to.be.eql(factory)
-        })
-      })
-    })
-  })
+  //         const args = ev.args! as any
+  //         expect(args.factory).to.be.eql(factory)
+  //       })
+  //     })
+  //   })
+  // })
 
-  describe('lockRangeMintPermissions() function', () => {
+  // describe('lockRangeMintPermissions() function', () => {
 
-    let range: AssetRange = {minID: minRange, maxID: maxRange, startTime, endTime}
+    // let range: AssetRange = {minID: minRange, maxID: maxRange, startTime, endTime}
 
-    it('should PASS if caller is owner', async () => {
-      const tx = SWAssetsContract.lockRangeMintPermissions(range)
-      await expect(tx).to.be.fulfilled
-    })
+  //   it('should PASS if caller is owner', async () => {
+  //     const tx = SWAssetsContract.lockRangeMintPermissions(range)
+  //     await expect(tx).to.be.fulfilled
+  //   })
 
-    it('should REVERT if caller is not owner', async () => {
-      const tx =  userSWAssetsContract.lockRangeMintPermissions(range)
-      await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
-    })
+  //   it('should REVERT if caller is not owner', async () => {
+  //     const tx =  userSWAssetsContract.lockRangeMintPermissions(range)
+  //     await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+  //   })
 
-    context('When range was locked', () => {
-      let tx;
-      beforeEach(async () => {
-        tx = await SWAssetsContract.lockRangeMintPermissions(range)
-      })
+  //   context('When range was locked', () => {
+  //     let tx;
+  //     beforeEach(async () => {
+  //       tx = await SWAssetsContract.lockRangeMintPermissions(range)
+  //     })
 
-      it('should push range in `lockedRanges` array', async () => {
-        let ranges = await SWAssetsContract.getLockedRanges();
-        expect(ranges.length).to.be.eql(1)
+  //     it('should push range in `lockedRanges` array', async () => {
+  //       let ranges = await SWAssetsContract.getLockedRanges();
+  //       expect(ranges.length).to.be.eql(1)
 
-        await SWAssetsContract.lockRangeMintPermissions(range);
-        let ranges2 = await SWAssetsContract.getLockedRanges();
-        expect(ranges2.length).to.be.eql(2)
-      })
+  //       await SWAssetsContract.lockRangeMintPermissions(range);
+  //       let ranges2 = await SWAssetsContract.getLockedRanges();
+  //       expect(ranges2.length).to.be.eql(2)
+  //     })
 
-      it('should emit RangeLocked event', async () => {
-        let filterFromOperatorContract: ethers.ethers.EventFilter
+  //     it('should emit RangeLocked event', async () => {
+  //       let filterFromOperatorContract: ethers.ethers.EventFilter
 
-        // Get event filter to get internal tx event
-        filterFromOperatorContract = SWAssetsContract.filters.RangeLocked(null);
+  //       // Get event filter to get internal tx event
+  //       filterFromOperatorContract = SWAssetsContract.filters.RangeLocked(null);
 
-        // Get logs from internal transaction event
-        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
-        filterFromOperatorContract.fromBlock = 0;
-        let logs = await operatorProvider.getLogs(filterFromOperatorContract);
-        expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["RangeLocked((uint64,uint64,uint64,uint64))"]))
-      })
+  //       // Get logs from internal transaction event
+  //       // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+  //       filterFromOperatorContract.fromBlock = 0;
+  //       let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+  //       expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["RangeLocked((uint64,uint64,uint64,uint64))"]))
+  //     })
       
-      describe('RangeLocked Event', () => {
-        it('should have correct range as `range` field', async () => {  
-          const receipt = await tx.wait(1)
-          const ev = receipt.events!.pop()!
-          const args = ev.args! as any
+  //     describe('RangeLocked Event', () => {
+  //       it('should have correct range as `range` field', async () => {  
+  //         const receipt = await tx.wait(1)
+  //         const ev = receipt.events!.pop()!
+  //         const args = ev.args! as any
 
-          expect(args.locked_range).to.be.eql([minRange, maxRange, startTime, endTime])
-        })
-      })
-    })
-  })
+  //         expect(args.locked_range).to.be.eql([minRange, maxRange, startTime, endTime])
+  //       })
+  //     })
+  //   })
+  // })
 
-  describe('setMaxIssuances() function', () => {
-    const id = BigNumber.from(981273918273)
-    const maxIssuance = BigNumber.from(100)
+  // describe('setMaxIssuances() function', () => {
+  //   const id = BigNumber.from(981273918273)
+  //   const maxIssuance = BigNumber.from(100)
 
-    it('should PASS if caller is owner', async () => {
-      const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance])
-      await expect(tx).to.be.fulfilled
-    })
+  //   it('should PASS if caller is owner', async () => {
+  //     const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance])
+  //     await expect(tx).to.be.fulfilled
+  //   })
 
-    it('should REVERT if caller is not owner', async () => {
-      const tx =  userSWAssetsContract.setMaxIssuances([id], [maxIssuance])
-      await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
-    })
+  //   it('should REVERT if caller is not owner', async () => {
+  //     const tx =  userSWAssetsContract.setMaxIssuances([id], [maxIssuance])
+  //     await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+  //   })
 
-    it('should REVERT if arrays are not the same length', async () => {
-      const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance, maxIssuance])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_ARRAYS_LENGTH"))
-    })
+  //   it('should REVERT if arrays are not the same length', async () => {
+  //     const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance, maxIssuance])
+  //     await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_ARRAYS_LENGTH"))
+  //   })
 
-    context('Wen max issuance is already set', () => {
+  //   context('Wen max issuance is already set', () => {
 
-      beforeEach(async () => {
-        await SWAssetsContract.setMaxIssuances([id], [maxIssuance])
-      })
+  //     beforeEach(async () => {
+  //       await SWAssetsContract.setMaxIssuances([id], [maxIssuance])
+  //     })
 
-      it('should PASS if new max issuance is lower', async () => {
-        const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance.sub(1)])
-        await expect(tx).to.be.fulfilled
-      })
+  //     it('should PASS if new max issuance is lower', async () => {
+  //       const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance.sub(1)])
+  //       await expect(tx).to.be.fulfilled
+  //     })
 
-      it('should REVERT if new max issuance is same', async () => {
-        const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance])
-        await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
-      })
+  //     it('should REVERT if new max issuance is same', async () => {
+  //       const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance])
+  //       await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
+  //     })
 
-      it('should REVERT if new max issuance is higher', async () => {
-        const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance.add(1)])
-        await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
-      })
+  //     it('should REVERT if new max issuance is higher', async () => {
+  //       const tx = SWAssetsContract.setMaxIssuances([id], [maxIssuance.add(1)])
+  //       await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
+  //     })
 
-      it('should REVERT if new max issuance is 0', async () => {
-        const tx = SWAssetsContract.setMaxIssuances([id], [0])
-        await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
-      })
-    })
-  })
+  //     it('should REVERT if new max issuance is 0', async () => {
+  //       const tx = SWAssetsContract.setMaxIssuances([id], [0])
+  //       await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
+  //     })
+  //   })
+  // })
 
   describe('mintBatch() function', () => {
     const minRange2 = maxRange.add(9)
@@ -662,12 +661,12 @@ describe('MetacanaNFT', () => {
     const ids3 = new Array(nTokenTypes).fill('').map((a, i) => minRange3.add(i))
 
     beforeEach(async () => {
-      await SWAssetsContract.activateFactory(factory)
+      // await SWAssetsContract.activateFactory(factory)
       await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
     })
 
     it('should REVERT if called by inactive factory, but authorized IDs', async () => {
-      await SWAssetsContract.shutdownFactory(factory)
+      // await SWAssetsContract.shutdownFactory(factory)
       const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
       await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: FACTORY_NOT_ACTIVE"))
     })
@@ -713,13 +712,13 @@ describe('MetacanaNFT', () => {
       await expect(tx).to.be.rejected;
     })
 
-    it('should REVERT if exceeds max issuance', async () => {
-      const max_issuance = nTokensPerType - 1
-      const id = nTokenTypes - 1
-      await SWAssetsContract.setMaxIssuances([id], [max_issuance])
-      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: MAX_ISSUANCE_EXCEEDED"))
-    })
+    // it('should REVERT if exceeds max issuance', async () => {
+    //   const max_issuance = nTokensPerType - 1
+    //   const id = nTokenTypes - 1
+    //   // await SWAssetsContract.setMaxIssuances([id], [max_issuance])
+    //   const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
+    //   await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: MAX_ISSUANCE_EXCEEDED"))
+    // })
 
     it('should REVERT if startTime of range has not started', async () => {
       await SWAssetsContract.removeMintPermission(factory, 0)
@@ -735,33 +734,33 @@ describe('MetacanaNFT', () => {
       await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
     })
 
-    it('should PASS if reach exact max issuance', async () => {
-      const max_issuance = nTokensPerType
-      const id = nTokenTypes - 1
-      await SWAssetsContract.setMaxIssuances([id], [max_issuance])
-      const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
-      await expect(tx).to.be.fulfilled
-    })
+    // it('should PASS if reach exact max issuance', async () => {
+    //   const max_issuance = nTokensPerType
+    //   const id = nTokenTypes - 1
+    //   await SWAssetsContract.setMaxIssuances([id], [max_issuance])
+    //   const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
+    //   await expect(tx).to.be.fulfilled
+    // })
 
-    it('should update current issuance if max issuance is set', async () => {
-      const max_issuance = nTokensPerType
-      const id = nTokenTypes - 1
-      await SWAssetsContract.setMaxIssuances([id], [max_issuance])
-      await factoryContract.mintBatch(userAddress, ids, amounts, [])
-      const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
-      const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
-      expect(current_issuance[0]).to.be.eql(BigNumber.from(max_issuance))
-      expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
-    })
+    // it('should update current issuance if max issuance is set', async () => {
+    //   const max_issuance = nTokensPerType
+    //   const id = nTokenTypes - 1
+    //   await SWAssetsContract.setMaxIssuances([id], [max_issuance])
+    //   await factoryContract.mintBatch(userAddress, ids, amounts, [])
+    //   const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
+    //   const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
+    //   expect(current_issuance[0]).to.be.eql(BigNumber.from(max_issuance))
+    //   expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
+    // })
 
-    it('should NOT update current issuance if max issuance is NOT set', async () => {
-      const id = nTokenTypes - 1
-      await factoryContract.mintBatch(userAddress, ids, amounts, [])
-      const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
-      const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
-      expect(current_issuance[0]).to.be.eql(BigNumber.from(0))
-      expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
-    })
+    // it('should NOT update current issuance if max issuance is NOT set', async () => {
+    //   const id = nTokenTypes - 1
+    //   await factoryContract.mintBatch(userAddress, ids, amounts, [])
+    //   const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
+    //   const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
+    //   expect(current_issuance[0]).to.be.eql(BigNumber.from(0))
+    //   expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
+    // })
 
     it('should PASS if caller is activated and authorized factory', async () => {
       const tx = factoryContract.mintBatch(userAddress, ids, amounts, [])
@@ -846,12 +845,12 @@ describe('MetacanaNFT', () => {
     const id3 = minRange3.add(1)
 
     beforeEach(async () => {
-      await SWAssetsContract.activateFactory(factory)
+      // await SWAssetsContract.activateFactory(factory)
       await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
     })
 
     it('should REVERT if called by inactive factory, but authorized IDs', async () => {
-      await SWAssetsContract.shutdownFactory(factory)
+      // await SWAssetsContract.shutdownFactory(factory)
       const tx = factoryContract.mint(userAddress, id, amount, [])
       await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: FACTORY_NOT_ACTIVE"))
     })
@@ -878,41 +877,41 @@ describe('MetacanaNFT', () => {
       await expect(tx3).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: ID_OUT_OF_RANGE"))
     })
 
-    it('should REVERT if exceeds max issuance', async () => {
-      const max_issuance = nTokensPerType - 1
-      const id = nTokenTypes - 1
-      await SWAssetsContract.setMaxIssuances([id], [max_issuance])
-      const tx = factoryContract.mint(userAddress, id, amount, [])
-      await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: MAX_ISSUANCE_EXCEEDED"))
-    })
+    // it('should REVERT if exceeds max issuance', async () => {
+    //   const max_issuance = nTokensPerType - 1
+    //   const id = nTokenTypes - 1
+    //   await SWAssetsContract.setMaxIssuances([id], [max_issuance])
+    //   const tx = factoryContract.mint(userAddress, id, amount, [])
+    //   await expect(tx).to.be.rejectedWith(RevertError("MetacanaNFT#_validateMints: MAX_ISSUANCE_EXCEEDED"))
+    // })
 
-    it('should PASS if reach exact max issuance', async () => {
-      const max_issuance = nTokensPerType
-      const id = nTokenTypes - 1
-      await SWAssetsContract.setMaxIssuances([id], [max_issuance])
-      const tx = factoryContract.mint(userAddress, id, amount, [])
-      await expect(tx).to.be.fulfilled
-    })
+    // it('should PASS if reach exact max issuance', async () => {
+    //   const max_issuance = nTokensPerType
+    //   const id = nTokenTypes - 1
+    //   await SWAssetsContract.setMaxIssuances([id], [max_issuance])
+    //   const tx = factoryContract.mint(userAddress, id, amount, [])
+    //   await expect(tx).to.be.fulfilled
+    // })
 
-    it('should update current issuance if max issuance is set', async () => {
-      const max_issuance = nTokensPerType
-      const id = nTokenTypes - 1
-      await SWAssetsContract.setMaxIssuances([id], [max_issuance])
-      await factoryContract.mint(userAddress, id, amount, [])
-      const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
-      const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
-      expect(current_issuance[0]).to.be.eql(BigNumber.from(max_issuance))
-      expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
-    })
+    // it('should update current issuance if max issuance is set', async () => {
+    //   const max_issuance = nTokensPerType
+    //   const id = nTokenTypes - 1
+    //   await SWAssetsContract.setMaxIssuances([id], [max_issuance])
+    //   await factoryContract.mint(userAddress, id, amount, [])
+    //   const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
+    //   const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
+    //   expect(current_issuance[0]).to.be.eql(BigNumber.from(max_issuance))
+    //   expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
+    // })
 
-    it('should NOT update current issuance if max issuance is NOT set', async () => {
-      const id = nTokenTypes - 1
-      await factoryContract.mint(userAddress, id, amount, [])
-      const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
-      const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
-      expect(current_issuance[0]).to.be.eql(BigNumber.from(0))
-      expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
-    })
+    // it('should NOT update current issuance if max issuance is NOT set', async () => {
+    //   const id = nTokenTypes - 1
+    //   await factoryContract.mint(userAddress, id, amount, [])
+    //   const current_issuance = await SWAssetsContract.getCurrentIssuances([id])
+    //   const get_max_issuance = await SWAssetsContract.getMaxIssuances([id])
+    //   expect(current_issuance[0]).to.be.eql(BigNumber.from(0))
+    //   expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
+    // })
 
     it('should PASS if caller is activated and authorized factory', async () => {
       const tx = factoryContract.mint(userAddress, id, amount, [])
@@ -944,44 +943,44 @@ describe('MetacanaNFT', () => {
   describe('setGlobalRoyaltyInfo() function', () => {
     const basisFee = 50 // 5%
 
-    it('should PASS if caller is owner', async () => {
-      const tx = SWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
-      await expect(tx).to.be.fulfilled
-    })
+    // it('should PASS if caller is owner', async () => {
+    //   const tx = SWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
+    //   await expect(tx).to.be.fulfilled
+    // })
 
-    it('should REVERT if caller is not owner', async () => {
-      const tx =  userSWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
-      await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
-    })
+    // it('should REVERT if caller is not owner', async () => {
+    //   const tx =  userSWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
+    //   await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+    // })
 
-    context('When global royalty info was set', () => {
-      it('should update globalRoyaltyInfo when successful', async () => {
-        const pre_info = await SWAssetsContract.globalRoyaltyInfo()
-        expect(pre_info.receiver).to.be.eql(ethers.constants.AddressZero)
-        expect(pre_info.feeBasisPoints).to.be.eql(BigNumber.from(0))
+    // context('When global royalty info was set', () => {
+    //   it('should update globalRoyaltyInfo when successful', async () => {
+    //     const pre_info = await SWAssetsContract.globalRoyaltyInfo()
+    //     expect(pre_info.receiver).to.be.eql(ethers.constants.AddressZero)
+    //     expect(pre_info.feeBasisPoints).to.be.eql(BigNumber.from(0))
 
-        await SWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
+    //     await SWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
 
-        const info = await SWAssetsContract.globalRoyaltyInfo()
-        expect(info.receiver).to.be.eql(randomAddress)
-        expect(info.feeBasisPoints).to.be.eql(BigNumber.from(basisFee))
-      })
+    //     const info = await SWAssetsContract.globalRoyaltyInfo()
+    //     expect(info.receiver).to.be.eql(randomAddress)
+    //     expect(info.feeBasisPoints).to.be.eql(BigNumber.from(basisFee))
+    //   })
 
-      it('should return the correct fee amount', async () => {
-        const cost = BigNumber.from(1337).mul(BigNumber.from(10).pow(18))
-        const expected_fee = cost.mul(basisFee).div(1000)
+    //   it('should return the correct fee amount', async () => {
+    //     const cost = BigNumber.from(1337).mul(BigNumber.from(10).pow(18))
+    //     const expected_fee = cost.mul(basisFee).div(1000)
 
-        const pre_info = await SWAssetsContract.royaltyInfo(123123, cost)
-        expect(pre_info.receiver).to.be.eql(ethers.constants.AddressZero)
-        expect(pre_info.royaltyAmount).to.be.eql(BigNumber.from(0))
+    //     const pre_info = await SWAssetsContract.royaltyInfo(123123, cost)
+    //     expect(pre_info.receiver).to.be.eql(ethers.constants.AddressZero)
+    //     expect(pre_info.royaltyAmount).to.be.eql(BigNumber.from(0))
 
-        await SWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
+    //     await SWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
 
-        const info = await SWAssetsContract.royaltyInfo(123123, cost)
-        expect(info.receiver).to.be.eql(randomAddress)
-        expect(info.royaltyAmount).to.be.eql(BigNumber.from(expected_fee))
-      })
-    })
+    //     const info = await SWAssetsContract.royaltyInfo(123123, cost)
+    //     expect(info.receiver).to.be.eql(randomAddress)
+    //     expect(info.royaltyAmount).to.be.eql(BigNumber.from(expected_fee))
+    //   })
+    // })
   })
 
 })

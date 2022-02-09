@@ -39,7 +39,7 @@ const chainIds = {
   bsc_testnet:97
 };
 
-const MNEMONIC_DEFAULT = "test test test test test test test test test test test wow";
+const MNEMONIC_DEFAULT = "test test test test test test test test test test test junk";
 const MNEMONIC_LOCALHOST = process.env.MNEMONIC_LOCALHOST || MNEMONIC_DEFAULT;
 const MNEMONIC_TESTNET = process.env.MNEMONIC_TESTNET || MNEMONIC_DEFAULT;
 const MNEMONIC_MAINNET = process.env.MNEMONIC_MAINNET || "";
@@ -172,6 +172,10 @@ if (/*testPrivateKey MNEMONIC_TESTNET*/1) {
 
 config.networks = {
   ...config.networks,
+  ganache: {
+    url: 'http://127.0.0.1:8545',    
+    blockGasLimit: 15000000,
+  },
   hardhat: {
     chainId: 1337,
   },
