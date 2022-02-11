@@ -1,0 +1,7 @@
+{
+  "bsc_testnet": {
+    "creatureAccessoryFactory": "0xF1Db40394dB55b9E80DD7985E80572C5981c872f",
+    "forwarder": "0x165BBafD8b1e277FEB904663eD1c7f72f29bdDfa",
+    "canaItemFactory": "0x4C6d7F3104Db8e3FF8d15Ed905587047bf88EC72"
+  }
+}

@@ -19,6 +19,7 @@
     "script:prebsc": "npx hardhat run --network prebsc",
     "script:bsc_testnet": "npx hardhat run --network bsc",
     "deploy:bsc": "npx hardhat --network bsc run ./scripts/deploy/deploy.js",
+    "deploy:bsc-testnet": "./scripts/deploy/console.sh bsc_testnet",
     "size": "npx hardhat size-contracts",
     "export:abi":"yarn run hardhat export-abi",
     "coverage": "hardhat coverage",

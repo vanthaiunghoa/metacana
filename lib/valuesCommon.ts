@@ -20,19 +20,19 @@ export const CLASS_DIVINE = 4;
 export const CLASS_HIDDEN = 5;
 export const NUM_CLASSES = 6;
 
-export const LOOTBOX_OPTION_BASIC = toBN(0);
-export const LOOTBOX_OPTION_PREMIUM = toBN(1);
-export const LOOTBOX_OPTION_GOLD = toBN(2);
+export const LOOTBOX_OPTION_BASIC = (0);
+export const LOOTBOX_OPTION_PREMIUM = (1);
+export const LOOTBOX_OPTION_GOLD = (2);
 export const LOOTBOX_OPTIONS = [LOOTBOX_OPTION_BASIC, LOOTBOX_OPTION_PREMIUM, LOOTBOX_OPTION_GOLD];
 export const NUM_LOOTBOX_OPTIONS = LOOTBOX_OPTIONS.length;
 
-export const NO_SUCH_LOOTBOX_OPTION = toBN(NUM_LOOTBOX_OPTIONS + 10);
-export const LOOTBOX_OPTION_AMOUNTS = [toBN(3), toBN(5), toBN(7)];
+export const NO_SUCH_LOOTBOX_OPTION = (NUM_LOOTBOX_OPTIONS + 10);
+export const LOOTBOX_OPTION_AMOUNTS = [(3), (5), (7)];
 // Note that these are token IDs, not option IDs, so they are one higher
 export const LOOTBOX_OPTION_GUARANTEES = [
   {},
-  { 0: toBN(3) },
-  { 0: toBN(3), 2: toBN(2), 4: toBN(1) }
+  { 0: (3) },
+  { 0: (3), 2: (2), 4: (1) }
 ];
 
 module.exports = {

@@ -1,0 +1,8 @@
+{
+  "bsc_testnet": {
+    "creatureAccessoryLootBox": "0x4ef7aD6bC5860bd69509De302a4F078A4DFD786e",
+    "forwarder": "0x165BBafD8b1e277FEB904663eD1c7f72f29bdDfa",
+    "canaItemLootbox": "0xd9931Bb1b22070Bce6d97bb263F7212d2b29d10C",
+    "CanaItemLootBox": "0x808Bf683bd4e94Ed3515525e66d11190Bb0A7091"
+  }
+}

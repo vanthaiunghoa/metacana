@@ -34,14 +34,14 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_optionId",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_toAddress",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_optionId",
+        type: "uint256",
       },
       {
         internalType: "uint256",

@@ -5,12 +5,11 @@ async function verify() {
   for (const txhash of txhashs) {
     const types = [
       "Metacana",    
-      "SignatureMint1155",
+      "CanaBoxLib",
       "Marketplace",
-      "MetacanaNFT",
-      "CreatureAccessoryLootBox",
-      "CreatureAccessoryFactory",      
-      "Royalty",   
+      "CanaItem",
+      "CanaItemLootBox",
+      "ItemFactory"       
     ];
 
     const tx = await ethers.provider.getTransaction(txhash);

@@ -21,7 +21,7 @@ export interface FactoryInterface extends utils.Interface {
   contractName: "Factory";
   functions: {
     "balanceOf(address,uint256)": FunctionFragment;
-    "mint(uint256,address,uint256,bytes)": FunctionFragment;
+    "mint(address,uint256,uint256,bytes)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -30,7 +30,7 @@ export interface FactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [BigNumberish, string, BigNumberish, BytesLike]
+    values: [string, BigNumberish, BigNumberish, BytesLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -74,8 +74,8 @@ export interface Factory extends BaseContract {
     ): Promise<[BigNumber]>;
 
     mint(
-      _optionId: BigNumberish,
       _toAddress: string,
+      _optionId: BigNumberish,
       _amount: BigNumberish,
       _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -89,8 +89,8 @@ export interface Factory extends BaseContract {
   ): Promise<BigNumber>;
 
   mint(
-    _optionId: BigNumberish,
     _toAddress: string,
+    _optionId: BigNumberish,
     _amount: BigNumberish,
     _data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -104,8 +104,8 @@ export interface Factory extends BaseContract {
     ): Promise<BigNumber>;
 
     mint(
-      _optionId: BigNumberish,
       _toAddress: string,
+      _optionId: BigNumberish,
       _amount: BigNumberish,
       _data: BytesLike,
       overrides?: CallOverrides
@@ -122,8 +122,8 @@ export interface Factory extends BaseContract {
     ): Promise<BigNumber>;
 
     mint(
-      _optionId: BigNumberish,
       _toAddress: string,
+      _optionId: BigNumberish,
       _amount: BigNumberish,
       _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -138,8 +138,8 @@ export interface Factory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     mint(
-      _optionId: BigNumberish,
       _toAddress: string,
+      _optionId: BigNumberish,
       _amount: BigNumberish,
       _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
