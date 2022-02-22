@@ -24,8 +24,6 @@ export interface CanaItemFactoryInterface extends utils.Interface {
     "NUM_LOOTBOX_OPTIONS()": FunctionFragment;
     "NUM_OPTIONS()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
-    "burn(uint256,uint256)": FunctionFragment;
-    "burnBatch(uint256[],uint256[])": FunctionFragment;
     "canMint(uint256,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
@@ -34,7 +32,6 @@ export interface CanaItemFactoryInterface extends utils.Interface {
     "hasRole(bytes32,address)": FunctionFragment;
     "lootBoxAddress()": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
-    "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
     "name()": FunctionFragment;
     "nftAddress()": FunctionFragment;
@@ -64,14 +61,6 @@ export interface CanaItemFactoryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "burn",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "burnBatch",
-    values: [BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "canMint",
@@ -104,10 +93,6 @@ export interface CanaItemFactoryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "mint",
     values: [string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mintBatch",
-    values: [string, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "multicall",
@@ -159,8 +144,6 @@ export interface CanaItemFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "canMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
@@ -181,7 +164,6 @@ export interface CanaItemFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nftAddress", data: BytesLike): Result;
@@ -290,18 +272,6 @@ export interface CanaItemFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    burn(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    burnBatch(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     canMint(
       _optionId: BigNumberish,
       _amount: BigNumberish,
@@ -339,14 +309,6 @@ export interface CanaItemFactory extends BaseContract {
       _toAddress: string,
       _optionId: BigNumberish,
       _amount: BigNumberish,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    mintBatch(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
       _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -407,18 +369,6 @@ export interface CanaItemFactory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  burn(
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  burnBatch(
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   canMint(
     _optionId: BigNumberish,
     _amount: BigNumberish,
@@ -456,14 +406,6 @@ export interface CanaItemFactory extends BaseContract {
     _toAddress: string,
     _optionId: BigNumberish,
     _amount: BigNumberish,
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  mintBatch(
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
     _data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -524,18 +466,6 @@ export interface CanaItemFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    burnBatch(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     canMint(
       _optionId: BigNumberish,
       _amount: BigNumberish,
@@ -573,14 +503,6 @@ export interface CanaItemFactory extends BaseContract {
       _toAddress: string,
       _optionId: BigNumberish,
       _amount: BigNumberish,
-      _data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    mintBatch(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -681,18 +603,6 @@ export interface CanaItemFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    burnBatch(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     canMint(
       _optionId: BigNumberish,
       _amount: BigNumberish,
@@ -733,14 +643,6 @@ export interface CanaItemFactory extends BaseContract {
       _toAddress: string,
       _optionId: BigNumberish,
       _amount: BigNumberish,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    mintBatch(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
       _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -806,18 +708,6 @@ export interface CanaItemFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    burn(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    burnBatch(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     canMint(
       _optionId: BigNumberish,
       _amount: BigNumberish,
@@ -858,14 +748,6 @@ export interface CanaItemFactory extends BaseContract {
       _toAddress: string,
       _optionId: BigNumberish,
       _amount: BigNumberish,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    mintBatch(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
       _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

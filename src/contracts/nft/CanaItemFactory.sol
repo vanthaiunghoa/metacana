@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.3;
+pragma solidity ^0.8.6;
 
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -62,53 +62,6 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
     return 'Metacana';
   }
 
-  /***********************************|
-  |          Burning Functions        |
-  |__________________________________*/
-
-  /**
-   * @notice Burn _amount of tokens of a given id from msg.sender
-   * @dev This will not change the current issuance tracked in _supplyManagerAddr.
-   * @param _id     Asset id to burn
-   * @param _amount The amount to be burn
-   */
-  function burn(uint256 _id, uint256 _amount) external {
-    if(_id < NUM_ITEM_OPTIONS){
-      CanaItem items = CanaItem(nftAddress);
-      items.burn(_id, _amount);
-    } else if (NUM_ITEM_OPTIONS <= _id){
-      CanaItem lootBox = CanaItem(lootBoxAddress);
-      lootBox.burn(_id, _amount);
-    }     
-  }
-
-  /**
-   * @notice Burn _amounts of tokens of given ids from msg.sender
-   * @dev This will not change the current issuance tracked in _supplyManagerAddr.
-   * @param _ids     Sorted-ascending asset id to burn
-   * @param _amounts The amount to be burn
-   */
-  function burnBatch(uint256[] calldata _ids, uint256[] calldata _amounts) external {
-    uint256 index = 0;    
-
-    for (uint256 i = 0; i < _ids.length; i++) {
-      if(_ids[i] >= NUM_ITEM_OPTIONS){
-        index = index - 1;      
-      }
-    }
-
-    if (index > 0){
-      CanaItem items = CanaItem(nftAddress);
-      items.burnBatch(_ids[0:index], _amounts[0:index]);
-      CanaItem lootBox = CanaItem(lootBoxAddress);
-      lootBox.burnBatch(_ids[index+1:], _amounts[index+1:]);
-    } else{
-      CanaItem lootBox = CanaItem(lootBoxAddress);
-      lootBox.burnBatch(_ids, _amounts);
-    }        
-    
-  }
-
   function numOptions() external pure returns (uint256) {
     return NUM_LOOTBOX_OPTIONS + NUM_ITEM_OPTIONS;
   }
@@ -120,45 +73,6 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
   // FIXME: fix with validation
   function canMint(uint256 _optionId, uint256 _amount) external view returns (bool) {
     return _canMint(_msgSender(), _optionId, _amount);
-  }
-
-  /***********************************|
-  |          Minting Function         |
-  |__________________________________*/
-
-  /**
-   * @notice Mint tokens for each ids in _ids
-   * @dev This methods assumes ids are sorted by how the ranges are sorted in
-   *      the corresponding mintAccessRanges[msg.sender] array. Call might throw
-   *      if they are not.
-   * @param _to      The address to mint tokens to.
-   * @param _ids     Sorted-ascending array of ids to mint
-   * @param _amounts Array of amount of tokens to mint per id
-   * @param _data    Byte array of data to pass to recipient if it's a contract
-   */
-  function mintBatch(
-    address _to,
-    uint256[] calldata _ids,
-    uint256[] calldata _amounts,
-    bytes memory _data
-  ) external {    
-    uint256 index = 0;    
-
-    for (uint256 i = 0; i < _ids.length; i++) {
-      if(_ids[i] >= NUM_ITEM_OPTIONS){
-        index = index - 1;      
-      }
-    }
-
-    if (index > 0){
-      CanaItem items = CanaItem(nftAddress);
-      items.mintBatch(_to, _ids[0:index], _amounts[0:index], _data);
-      CanaItem lootBox = CanaItem(lootBoxAddress);
-      lootBox.mintBatch(_to, _ids[index+1:], _amounts[index+1:], _data);
-    } else{
-      CanaItem lootBox = CanaItem(lootBoxAddress);
-      lootBox.mintBatch(_to, _ids, _amounts, _data);
-    }          
   }
 
   function mint(

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.3;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -174,11 +174,7 @@ contract CanaItem is
                     Strings.toString(_id)
                 )
             )
-        );
-        uint256[] memory ids = new uint256[](1);
-        uint256[] memory amounts = new uint256[](1);
-        ids[0] = _id;
-        amounts[0] = _initialSupply;        
+        );               
 
         _mint(_initialOwner, _id, _initialSupply, _data);
 

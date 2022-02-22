@@ -6,6 +6,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import nftAddresses from "../../utils/addresses/console_canaItem.json";
 import lootboxAddresses from "../../utils/addresses/console_canaItemLootBox.json";
 import apAddresses from "../../utils/addresses/console_canaItemFactory.json";
+import { setupCreatureAccessories } from "../../scripts/lib/setupCreatureAccessories"
 import * as fs from "fs";
 import * as path from "path";
 
@@ -24,16 +25,28 @@ async function main(): Promise<void> {
   const lootboxAddress = lootboxAddresses[networkName as keyof typeof lootboxAddresses];
   
   console.log(`(nftAddress as any).canaItem == ${(nftAddress as any).canaItem}`)
+  console.log(`(lootboxAddress as any).CanaItemLootBox == ${(lootboxAddress as any).canaItemLootBox}`)
+  console.log(`(lootboxAddress as any).canaBoxLib == ${(lootboxAddress as any).canaBoxLib}`)
 
   const CanaItemFactory_Factory: ContractFactory = await ethers.getContractFactory("CanaItemFactory");
   const canaItemFactory: Contract = await CanaItemFactory_Factory.deploy(
     (nftAddress as any).canaItem,
-    (lootboxAddress as any).CanaItemLootBox
+    (lootboxAddress as any).canaItemLootBox
     );
 
   console.log(`Deploying CanaItemFactory: ${canaItemFactory.address} at tx hash: ${canaItemFactory.deployTransaction.hash}`);
 
   await canaItemFactory.deployed();  
+  const nftContractFact = await ethers.getContractFactory("CanaItem");
+  const nftContract = await nftContractFact.attach((nftAddress as any).canaItem);  
+  const lootBoxContractFact = await ethers.getContractFactory("CanaItemLootBox",{
+    libraries: {
+      CanaBoxLib: (lootboxAddress as any).canaBoxLib,
+    },
+  });
+  const lootBoxContract = await lootBoxContractFact.attach((lootboxAddress as any).canaItemLootBox);
+  console.log(`Done deploying all stuffs and ready to setup lootbox`);
+  await setupCreatureAccessories(nftContract, canaItemFactory, lootBoxContract, process.env.BOX_OWNER_ADDRESS)
 
   const updatedAddresses = {
     ...apAddresses,

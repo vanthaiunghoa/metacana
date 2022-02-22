@@ -73,12 +73,14 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
   } else if (network === "bsc") {
     nodeUrl = "https://bsc-dataseed1.binance.org";
   }else if (network === "bsc_testnet") {
-    nodeUrl = "https://data-seed-prebsc-1-s1.binance.org:8545"; //"https://testnet.bscscan.com";
+    nodeUrl = "https://data-seed-prebsc-2-s2.binance.org:8545"; //"https://testnet.bscscan.com";
   }
 
   return {
     chainId: chainIds[network],
     url: nodeUrl,
+    // gas: 2100000,
+    // gasPrice: 2,
     // accounts: [`${testPrivateKey}`],
     accounts: {
       mnemonic: MNEMONIC_TESTNET
@@ -92,7 +94,7 @@ interface ConfigWithEtherscan extends HardhatUserConfig {
 
 const config: ConfigWithEtherscan = {
   solidity: {
-    version: '0.8.3',
+    version: '0.8.6',
     settings: {
       optimizer: {
         enabled: true,
@@ -175,9 +177,16 @@ config.networks = {
   ganache: {
     url: 'http://127.0.0.1:8545',    
     blockGasLimit: 15000000,
+    chainId: chainIds['ganache'],
+    accounts:{
+      mnemonic: MNEMONIC_LOCALHOST
+    }
   },
   hardhat: {
-    chainId: 1337,
+    chainId: 1337,    
+    accounts:{
+      mnemonic: MNEMONIC_LOCALHOST
+    }
   },
 };
 

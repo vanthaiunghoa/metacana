@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.3;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 /*
   DESIGN NOTES:
@@ -97,7 +98,7 @@ library CanaBoxLib {
     uint256 _tokenId,
     uint256 _classId
   ) public {
-    require(_classId < _state.numClasses, "class_out_of_range");
+    require(_classId < _state.numClasses, "setClassForTokenId#class_out_of_range");
     _addTokenIdToClass(_state, _classId, _tokenId);
   }
 
@@ -110,7 +111,12 @@ library CanaBoxLib {
     uint256 _classId,
     uint256[] memory _tokenIds
   ) public {
-    require(_classId < _state.numClasses, "class_out_of_range");
+    require(_classId < _state.numClasses, string(
+                abi.encodePacked(
+                    "setTokenIdsForClass#class_out_of_range, _classId=",
+                    Strings.toString(_classId),",_state.numClasses=", Strings.toString(_state.numClasses)
+                )
+            ));//"setTokenIdsForClass#class_out_of_range");
     _state.classToTokenIds[_classId] = _tokenIds;
   }
 
@@ -122,7 +128,7 @@ library CanaBoxLib {
     LootBoxRandomnessState storage _state,
     uint256 _classId
   ) public {require(
-    _classId < _state.numClasses, "class_out_of_range");
+    _classId < _state.numClasses, "resetClass#class_out_of_range");
     delete _state.classToTokenIds[_classId];
   }
 
@@ -260,7 +266,7 @@ library CanaBoxLib {
     uint256 _amount,
     address _owner
   ) internal returns (uint256) {
-    require(_classId < _state.numClasses, "class_out_of_range");
+    require(_classId < _state.numClasses, "_sendTokenWithClass#class_out_of_range");
     Factory factory = Factory(_state.factoryAddress);
     uint256 tokenId = _pickRandomAvailableTokenIdForClass(_state, _classId, _amount, _owner);
     // This may mint, create or transfer. We don't handle that here.
@@ -294,7 +300,7 @@ library CanaBoxLib {
     uint256 _minAmount,
     address _owner
   ) internal returns (uint256) {
-    require(_classId < _state.numClasses, "class_out_of_range");
+    require(_classId < _state.numClasses, "_pickRandomAvailableTokenIdForClass#class_out_of_range");
     uint256[] memory tokenIds = _state.classToTokenIds[_classId];
     require(tokenIds.length > 0, "No token ids for _classId");
     uint256 randIndex = _random(_state).mod(tokenIds.length);

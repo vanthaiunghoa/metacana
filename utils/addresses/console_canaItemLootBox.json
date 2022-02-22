@@ -1,8 +1,6 @@
 {
   "bsc_testnet": {
-    "creatureAccessoryLootBox": "0x4ef7aD6bC5860bd69509De302a4F078A4DFD786e",
-    "forwarder": "0x165BBafD8b1e277FEB904663eD1c7f72f29bdDfa",
-    "canaItemLootbox": "0xd9931Bb1b22070Bce6d97bb263F7212d2b29d10C",
-    "CanaItemLootBox": "0x808Bf683bd4e94Ed3515525e66d11190Bb0A7091"
+    "canaItemLootBox": "0x7341cdD49bF22f3CfeE73b19CDdb441305543F98",
+    "canaBoxLib": "0x15e1689CAD505CCb3b6f8C507E6B9E6cF59Ac04C"
   }
 }

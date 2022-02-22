@@ -37,7 +37,8 @@ async function main(): Promise<void> {
     ...apAddresses,
     [networkName]: {
       ...apAddress,
-      CanaItemLootBox: CanaItemLootBox.address,      
+      canaItemLootBox: CanaItemLootBox.address,  
+      canaBoxLib: library.address,    
     },
   };
 

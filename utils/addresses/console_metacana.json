@@ -1,7 +1,5 @@
 {
   "bsc_testnet": {
-    "creatureAccessoryFactory": "0xF1Db40394dB55b9E80DD7985E80572C5981c872f",
-    "forwarder": "0x165BBafD8b1e277FEB904663eD1c7f72f29bdDfa",
-    "metacana": "0xA2F0D7a1f6AC67cD150ACDDC2869E78501154Da2"
+    "metacana": "0x3f1a8118C02B5df643893b4b543c7E13E14BEFCE"
   }
 }

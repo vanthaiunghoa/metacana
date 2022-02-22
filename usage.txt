@@ -1,0 +1,69 @@
+const saltNonce = get from server (ethers.utils.solidityPack(['uint256'], [ethers.BigNumber.from(0)]).slice(2));
+TEST_MESSAGE = xem phần SIGN MESSAGE
+const signature = await web3.eth.sign(TEST_MESSAGE, address);
+
+gọi hàm trong Marketplace:
+matchTransaction(
+	[sellerAddress, box_contract_address/item_contrtact_address/factory_address, WBNB_CONTRACT_ADDRESS/CANA_CONTRACT_ADDRESS],
+	[tokenId, price.toString(), this.web3.utils.toHex(saltNonce)],
+	signature
+)
+
+---------------------------------
+- tokenId: nếu dùng lootbox/item contract (địa chỉ tương ứng trong các file đã gửi) tường minh thì dùng trực tiếp tokenId, nếu dùng factory (chung cho mọi trường hợp) thì tokenId bằng tokenId + 6 nếu tương tác với box.
+- hiện tại mình dùng 3 loại box, 6 item, cách truyền tokenId như sau:
+	+ Item nếu gọi từ factory và canaItem contract thì vẫn giữ nguyên id (từ 0~6)
+	+ Box: nếu gọi từ factory contract thì cộng thêm 6, nếu gọi từ lootbox thì giữ nguyên (id từ 0~2)
+	
+===================
+//Dung de chuyển trạng thái selling/stopped
+bytes32 criteriaMessageHash = getMessageHash(
+            addresses[0],//Địa chỉ sở hữu nft
+            values[0], //TokenId
+            addresses[1], //địa chỉ hợp đồng thông minh loại tiền tệ mua/bán
+            values[1],  //Giá
+            values[2] //Nonce
+        );
+--------------
+MatchTransaction
+bytes32 criteriaMessageHash = getMessageHash(
+            addresses[1], //contract Address
+            values[0], //TokenId
+            addresses[2], //paymentToken
+            values[1], //price
+            values[2] //Nonce
+        );
+---------------
+emit MatchTransaction(
+            values[0],
+            addresses[1],
+            values[1],
+            addresses[2],
+            addresses[0],
+            _msgSender(),
+            values[3],
+            transactionFee
+        );
+-----------------
+event MatchTransaction(
+        uint256 indexed tokenId,
+        address contractAddress,
+        uint256 price,
+        address paymentToken,
+        address seller,
+        address buyer,
+        uint256 amount,
+        uint256 fee
+    );
+==============================
+==============================
+SIGN MESSAGE với:
+keccak256(
+	abi.encodePacked(
+		_nftAddress, //địa nft
+		_tokenId,
+		_paymentErc20,
+		_price,
+		_saltNonce
+	)
+);
