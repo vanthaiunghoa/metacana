@@ -5,6 +5,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import apAddresses from "../../utils/addresses/console_marketplace.json";;
 import { setupMarketplace } from "../lib/setupMarketplace"
 import lootboxAddresses from "../../utils/addresses/console_canaItemLootBox.json";
+import canaItemAddresses from "../../utils/addresses/console_canaItem.json";
 
 
 import { resolve } from "path";
@@ -19,9 +20,13 @@ async function main(): Promise<void> {
   
   const apAddress = apAddresses[networkName as keyof typeof apAddresses];
   const lootboxAddress = lootboxAddresses[networkName as keyof typeof lootboxAddresses];
+  const canaItemAddress = canaItemAddresses[networkName as keyof typeof canaItemAddresses];
     
   const marketplaceFact = await ethers.getContractFactory("Marketplace");
   const marketplaceContract = await marketplaceFact.attach((apAddress as any).marketplace);
+
+  const canaItemFact = await ethers.getContractFactory("CanaItem");
+  const canaItemContract = await canaItemFact.attach((canaItemAddress as any).canaItem);  
 
   const lootBoxContractFact = await ethers.getContractFactory("CanaItemLootBox",{
     libraries: {
@@ -30,7 +35,7 @@ async function main(): Promise<void> {
   });
   const lootBoxContract = await lootBoxContractFact.attach((lootboxAddress as any).canaItemLootBox);
 
-  await setupMarketplace(marketplaceContract, lootBoxContract);
+  await setupMarketplace(marketplaceContract, lootBoxContract, canaItemContract);
 
   console.log('Done setup marketplace')
 }

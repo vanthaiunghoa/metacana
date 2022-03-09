@@ -40,7 +40,9 @@ const boxPrice = 1;
 const boxId = 1;
 const nonce = 1;
 const transactionFee = 100;
-const initialHolder = 100000000;
+const sellAmount = 5;
+const buyAmount1 = 2;
+const buyAmount2 = 1;
 const wbnbAddress='0x5b3e2bc1da86ff6235d9ead4504d598cae77dbcb'
 
 describe("Maketplace", () => {
@@ -102,8 +104,7 @@ describe("Maketplace", () => {
     canaItemLootBox.setApprovalForAll(marketplace.address, true);
 
     await setupCreatureAccessories(canaItem, canaItemFactory, canaItemLootBox, owner.address)
-    await setupMarketplaceWithAddress(marketplace, receiver.address, transactionFee, metacana.address)
-    
+    await setupMarketplaceWithAddress(canaItemLootBox, marketplace, receiver.address, transactionFee, metacana.address)    
   });
 
   // This also tests the proxyRegistryAddress and lootBoxAddress accessors.
@@ -112,7 +113,7 @@ describe("Maketplace", () => {
     it('should allow owner to buy box', async () => { 
       
       // const TEST_MESSAGE = await marketplace.getMessageHash(sellerAddress, boxId, metacana.address, boxPrice, nonce);      
-      const TEST_MESSAGE =  await web3.utils.keccak256(web3.utils.encodePacked(canaItemLootBox.address, boxId, metacana.address, boxPrice, nonce) as string);
+      const TEST_MESSAGE =  await web3.utils.keccak256(web3.utils.encodePacked(canaItemLootBox.address, boxId, metacana.address, boxPrice, sellAmount, nonce) as string);
       // let accounts = await web3.eth.getAccounts();
       console.log('***********TEST_MESSAGE=', TEST_MESSAGE);
       // console.log(accounts)
@@ -126,7 +127,7 @@ describe("Maketplace", () => {
       console.log('***********signature=',signature);
             
       const txt = await marketplace.connect(buyer).matchTransaction([/*sellerAddress*/owner.address, canaItemLootBox.address, metacana.address],
-        [boxId, boxPrice, nonce, 1], signature);
+        [boxId, boxPrice, buyAmount1, sellAmount, nonce], signature);
       console.log('======TXN==========');
       console.log(txt) ;
       console.log('======RECEIVE==========');

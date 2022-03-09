@@ -21,19 +21,27 @@ export interface MarketplaceInterface extends utils.Interface {
   contractName: "Marketplace";
   functions: {
     "feeToAddress()": FunctionFragment;
-    "getMessageHash(address,uint256,address,uint256,uint256)": FunctionFragment;
-    "ignoreSignature(address[2],uint256[3],bytes)": FunctionFragment;
-    "matchTransaction(address[3],uint256[4],bytes)": FunctionFragment;
+    "getMessageHash(address,address,address,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "ignoreSignature(address[2],uint256[5],bytes)": FunctionFragment;
+    "matchTransaction(address[3],uint256[6],bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "paymentTokens(address)": FunctionFragment;
+    "privateSales(address)": FunctionFragment;
     "removePaymentTokens(address[])": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "rounds(uint256)": FunctionFragment;
     "setFeeToAddress(address)": FunctionFragment;
     "setPaymentTokens(address[])": FunctionFragment;
+    "setPrivate(address,uint256)": FunctionFragment;
+    "setRounds(uint16[])": FunctionFragment;
+    "setTimes(uint64[3])": FunctionFragment;
     "setTransactionFee(uint256)": FunctionFragment;
+    "setWhitelist(address,uint256)": FunctionFragment;
+    "times(uint256)": FunctionFragment;
     "transactionFee()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "usedSignatures(bytes)": FunctionFragment;
+    "whitelistSales(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -42,27 +50,36 @@ export interface MarketplaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getMessageHash",
-    values: [string, BigNumberish, string, BigNumberish, BigNumberish]
+    values: [
+      string,
+      string,
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "ignoreSignature",
     values: [
       [string, string],
-      [BigNumberish, BigNumberish, BigNumberish],
+      [BigNumberish, BigNumberish, BigNumberish, BigNumberish, BigNumberish],
       BytesLike
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "matchTransaction",
-    values: [
-      [string, string, string],
-      [BigNumberish, BigNumberish, BigNumberish, BigNumberish],
-      BytesLike
-    ]
+    values: [[string, string, string], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "paymentTokens",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "privateSales",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -74,6 +91,10 @@ export interface MarketplaceInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "rounds",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setFeeToAddress",
     values: [string]
   ): string;
@@ -82,9 +103,26 @@ export interface MarketplaceInterface extends utils.Interface {
     values: [string[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPrivate",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRounds",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTimes",
+    values: [[BigNumberish, BigNumberish, BigNumberish]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTransactionFee",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setWhitelist",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "times", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "transactionFee",
     values?: undefined
@@ -96,6 +134,10 @@ export interface MarketplaceInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "usedSignatures",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "whitelistSales",
+    values: [string]
   ): string;
 
   decodeFunctionResult(
@@ -120,6 +162,10 @@ export interface MarketplaceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "privateSales",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "removePaymentTokens",
     data: BytesLike
   ): Result;
@@ -127,6 +173,7 @@ export interface MarketplaceInterface extends utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "rounds", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setFeeToAddress",
     data: BytesLike
@@ -135,10 +182,18 @@ export interface MarketplaceInterface extends utils.Interface {
     functionFragment: "setPaymentTokens",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setPrivate", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setRounds", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setTimes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setTransactionFee",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setWhitelist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "times", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transactionFee",
     data: BytesLike
@@ -151,9 +206,13 @@ export interface MarketplaceInterface extends utils.Interface {
     functionFragment: "usedSignatures",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "whitelistSales",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "MatchTransaction(uint256,address,uint256,address,address,address,uint256,uint256)": EventFragment;
+    "MatchTransaction(uint256,address,address,address,address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
@@ -162,15 +221,28 @@ export interface MarketplaceInterface extends utils.Interface {
 }
 
 export type MatchTransactionEvent = TypedEvent<
-  [BigNumber, string, BigNumber, string, string, string, BigNumber, BigNumber],
+  [
+    BigNumber,
+    string,
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ],
   {
     tokenId: BigNumber;
     contractAddress: string;
-    price: BigNumber;
     paymentToken: string;
     seller: string;
     buyer: string;
-    amount: BigNumber;
+    round: BigNumber;
+    price: BigNumber;
+    buyerAmount: BigNumber;
+    sellerAmount: BigNumber;
     fee: BigNumber;
   }
 >;
@@ -218,23 +290,32 @@ export interface Marketplace extends BaseContract {
 
     getMessageHash(
       _nftAddress: string,
-      _tokenId: BigNumberish,
+      _buyerAddress: string,
       _paymentErc20: string,
+      _roundId: BigNumberish,
+      _tokenId: BigNumberish,
       _price: BigNumberish,
+      _amount: BigNumberish,
       _saltNonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     ignoreSignature(
       addresses: [string, string],
-      values: [BigNumberish, BigNumberish, BigNumberish],
+      values: [
+        BigNumberish,
+        BigNumberish,
+        BigNumberish,
+        BigNumberish,
+        BigNumberish
+      ],
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     matchTransaction(
       addresses: [string, string, string],
-      values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish],
+      values: BigNumberish[],
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -242,6 +323,8 @@ export interface Marketplace extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     paymentTokens(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+
+    privateSales(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     removePaymentTokens(
       _removedPaymentTokens: string[],
@@ -251,6 +334,8 @@ export interface Marketplace extends BaseContract {
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    rounds(arg0: BigNumberish, overrides?: CallOverrides): Promise<[number]>;
 
     setFeeToAddress(
       _feeToAddress: string,
@@ -262,10 +347,34 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setPrivate(
+      recv: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setRounds(
+      _rounds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setTimes(
+      _times: [BigNumberish, BigNumberish, BigNumberish],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setTransactionFee(
       _transactionFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    setWhitelist(
+      recv: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    times(arg0: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transactionFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -277,30 +386,44 @@ export interface Marketplace extends BaseContract {
     usedSignatures(
       arg0: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[BigNumber]>;
+
+    whitelistSales(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
   feeToAddress(overrides?: CallOverrides): Promise<string>;
 
   getMessageHash(
     _nftAddress: string,
-    _tokenId: BigNumberish,
+    _buyerAddress: string,
     _paymentErc20: string,
+    _roundId: BigNumberish,
+    _tokenId: BigNumberish,
     _price: BigNumberish,
+    _amount: BigNumberish,
     _saltNonce: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
   ignoreSignature(
     addresses: [string, string],
-    values: [BigNumberish, BigNumberish, BigNumberish],
+    values: [
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish
+    ],
     signature: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   matchTransaction(
     addresses: [string, string, string],
-    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish],
+    values: BigNumberish[],
     signature: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -308,6 +431,8 @@ export interface Marketplace extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   paymentTokens(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+  privateSales(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   removePaymentTokens(
     _removedPaymentTokens: string[],
@@ -317,6 +442,8 @@ export interface Marketplace extends BaseContract {
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  rounds(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
   setFeeToAddress(
     _feeToAddress: string,
@@ -328,10 +455,34 @@ export interface Marketplace extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setPrivate(
+    recv: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setRounds(
+    _rounds: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setTimes(
+    _times: [BigNumberish, BigNumberish, BigNumberish],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setTransactionFee(
     _transactionFee: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  setWhitelist(
+    recv: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  times(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
   transactionFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -340,30 +491,44 @@ export interface Marketplace extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  usedSignatures(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+  usedSignatures(
+    arg0: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  whitelistSales(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
     feeToAddress(overrides?: CallOverrides): Promise<string>;
 
     getMessageHash(
       _nftAddress: string,
-      _tokenId: BigNumberish,
+      _buyerAddress: string,
       _paymentErc20: string,
+      _roundId: BigNumberish,
+      _tokenId: BigNumberish,
       _price: BigNumberish,
+      _amount: BigNumberish,
       _saltNonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
     ignoreSignature(
       addresses: [string, string],
-      values: [BigNumberish, BigNumberish, BigNumberish],
+      values: [
+        BigNumberish,
+        BigNumberish,
+        BigNumberish,
+        BigNumberish,
+        BigNumberish
+      ],
       signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
     matchTransaction(
       addresses: [string, string, string],
-      values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish],
+      values: BigNumberish[],
       signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -372,12 +537,16 @@ export interface Marketplace extends BaseContract {
 
     paymentTokens(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
+    privateSales(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     removePaymentTokens(
       _removedPaymentTokens: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    rounds(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
     setFeeToAddress(
       _feeToAddress: string,
@@ -389,10 +558,34 @@ export interface Marketplace extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setPrivate(
+      recv: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setRounds(
+      _rounds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTimes(
+      _times: [BigNumberish, BigNumberish, BigNumberish],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setTransactionFee(
       _transactionFee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setWhitelist(
+      recv: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    times(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     transactionFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -404,28 +597,34 @@ export interface Marketplace extends BaseContract {
     usedSignatures(
       arg0: BytesLike,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<BigNumber>;
+
+    whitelistSales(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
-    "MatchTransaction(uint256,address,uint256,address,address,address,uint256,uint256)"(
+    "MatchTransaction(uint256,address,address,address,address,uint256,uint256,uint256,uint256,uint256)"(
       tokenId?: BigNumberish | null,
       contractAddress?: null,
-      price?: null,
       paymentToken?: null,
       seller?: null,
       buyer?: null,
-      amount?: null,
+      round?: null,
+      price?: null,
+      buyerAmount?: null,
+      sellerAmount?: null,
       fee?: null
     ): MatchTransactionEventFilter;
     MatchTransaction(
       tokenId?: BigNumberish | null,
       contractAddress?: null,
-      price?: null,
       paymentToken?: null,
       seller?: null,
       buyer?: null,
-      amount?: null,
+      round?: null,
+      price?: null,
+      buyerAmount?: null,
+      sellerAmount?: null,
       fee?: null
     ): MatchTransactionEventFilter;
 
@@ -444,23 +643,32 @@ export interface Marketplace extends BaseContract {
 
     getMessageHash(
       _nftAddress: string,
-      _tokenId: BigNumberish,
+      _buyerAddress: string,
       _paymentErc20: string,
+      _roundId: BigNumberish,
+      _tokenId: BigNumberish,
       _price: BigNumberish,
+      _amount: BigNumberish,
       _saltNonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     ignoreSignature(
       addresses: [string, string],
-      values: [BigNumberish, BigNumberish, BigNumberish],
+      values: [
+        BigNumberish,
+        BigNumberish,
+        BigNumberish,
+        BigNumberish,
+        BigNumberish
+      ],
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     matchTransaction(
       addresses: [string, string, string],
-      values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish],
+      values: BigNumberish[],
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -468,6 +676,8 @@ export interface Marketplace extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     paymentTokens(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    privateSales(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     removePaymentTokens(
       _removedPaymentTokens: string[],
@@ -477,6 +687,8 @@ export interface Marketplace extends BaseContract {
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    rounds(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     setFeeToAddress(
       _feeToAddress: string,
@@ -488,10 +700,34 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setPrivate(
+      recv: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setRounds(
+      _rounds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setTimes(
+      _times: [BigNumberish, BigNumberish, BigNumberish],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setTransactionFee(
       _transactionFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    setWhitelist(
+      recv: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    times(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     transactionFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -504,6 +740,8 @@ export interface Marketplace extends BaseContract {
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    whitelistSales(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -511,23 +749,32 @@ export interface Marketplace extends BaseContract {
 
     getMessageHash(
       _nftAddress: string,
-      _tokenId: BigNumberish,
+      _buyerAddress: string,
       _paymentErc20: string,
+      _roundId: BigNumberish,
+      _tokenId: BigNumberish,
       _price: BigNumberish,
+      _amount: BigNumberish,
       _saltNonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     ignoreSignature(
       addresses: [string, string],
-      values: [BigNumberish, BigNumberish, BigNumberish],
+      values: [
+        BigNumberish,
+        BigNumberish,
+        BigNumberish,
+        BigNumberish,
+        BigNumberish
+      ],
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     matchTransaction(
       addresses: [string, string, string],
-      values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish],
+      values: BigNumberish[],
       signature: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -535,6 +782,11 @@ export interface Marketplace extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     paymentTokens(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    privateSales(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -548,6 +800,11 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    rounds(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     setFeeToAddress(
       _feeToAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -558,9 +815,36 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setPrivate(
+      recv: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setRounds(
+      _rounds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTimes(
+      _times: [BigNumberish, BigNumberish, BigNumberish],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setTransactionFee(
       _transactionFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setWhitelist(
+      recv: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    times(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transactionFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -572,6 +856,11 @@ export interface Marketplace extends BaseContract {
 
     usedSignatures(
       arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    whitelistSales(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

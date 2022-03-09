@@ -1,5 +1,14 @@
 {
   "bsc_testnet": {
-    "metacana": "0x3f1a8118C02B5df643893b4b543c7E13E14BEFCE"
+    "metacana": "0xEd9b8482d180e8496B8f053ae3f0058648e8C0B4"
+  },
+  "hardhat": {
+    "metacana": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  },
+  "localhost": {
+    "metacana": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  },
+  "ganache": {
+    "metacana": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
   }
 }

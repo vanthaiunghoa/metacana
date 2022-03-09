@@ -1,5 +1,11 @@
 {
   "bsc_testnet": {
-    "canaItem": "0x0E0f6613F8338aebb4E57dE039F18F9f2DFA3697"
+    "canaItem": "0xc381bde260310919f0Bbf74094A928aD38F2C5a3"
+  },
+  "hardhat": {
+    "canaItem": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  },
+  "ganache": {
+    "canaItem": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
   }
 }

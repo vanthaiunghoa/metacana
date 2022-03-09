@@ -73,7 +73,7 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
   } else if (network === "bsc") {
     nodeUrl = "https://bsc-dataseed1.binance.org";
   }else if (network === "bsc_testnet") {
-    nodeUrl = "https://data-seed-prebsc-2-s2.binance.org:8545"; //"https://testnet.bscscan.com";
+    nodeUrl = "https://data-seed-prebsc-1-s2.binance.org:8545"; //"https://testnet.bscscan.com";
   }
 
   return {
@@ -94,7 +94,7 @@ interface ConfigWithEtherscan extends HardhatUserConfig {
 
 const config: ConfigWithEtherscan = {
   solidity: {
-    version: '0.8.6',
+    version: '0.8.10',
     settings: {
       optimizer: {
         enabled: true,

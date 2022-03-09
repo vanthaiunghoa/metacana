@@ -16,11 +16,13 @@ export const setupAccessory = async (
   owner
 ) => {
   for (let i = 0; i < values.NUM_ACCESSORIES; i++) {
+    
     const id = tokenIndexToId(i);    
-    await accessories.create(owner, id, values.MINT_INITIAL_SUPPLY, []);    
+    await accessories.create(owner, id, values.MINT_INITIAL_SUPPLY[Math.floor(i/8)], []);    
   }
 };
 
+//TODO: consider pre-minting only meta & prino
 export const setupPreMintBox = async (lootBox, owner) => {
   for (let i = 0; i < values.NUM_LOOTBOX_OPTIONS; i++) {
     const option = values.LOOTBOX_OPTIONS[i];    
@@ -35,8 +37,8 @@ export const setupPreMintBox = async (lootBox, owner) => {
 }
 
 // Configure the lootbox
-
 export const setupAccessoryLootBox = async (lootBox, factory) => {  
+  console.log('values.NUM_CLASSES=',values.NUM_CLASSES, values.NUM_LOOTBOX_OPTIONS)
   await lootBox.setState(
     factory.address,
     values.NUM_LOOTBOX_OPTIONS,
@@ -44,35 +46,50 @@ export const setupAccessoryLootBox = async (lootBox, factory) => {
     1337
   );
   // We have one token id per rarity class.
-  for (let i = 0; i < values.NUM_CLASSES; i++) {
-    const id = tokenIndexToId(i);
-    await lootBox.setTokenIdsForClass(i, [id]);
+  for (let i = 0; i < values.NUM_CLASSES; i++) {    
+    const ids = [...Array.from(Array(values.NUM_ACCESSORIES/values.NUM_CLASSES).keys())].map(j => tokenIndexToId(j + i*values.NUM_ACCESSORIES/values.NUM_CLASSES));   
+    
+    await lootBox.setTokenIdsForClass(i, ids);
   }
   await lootBox.setOptionSettings(
-    values.LOOTBOX_OPTION_BASIC,
-    3,
-    [7300, 2100, 400, 100, 50, 50],
+    values.LOOTBOX_OPTION_META,
+    1,
+    [2630, 5556, 0, 0, 1466, 347],
     [0, 0, 0, 0, 0, 0]
+  );  
+  await lootBox.setOptionSettings(
+    values.LOOTBOX_OPTION_PRINO,
+    (1),
+    [(6139), (3569), (166), (83), (40), (3)],
+    [(0), (0), (0), (0), (0), (0)]
+  );    
+  await lootBox.setOptionSettings(
+    values.LOOTBOX_OPTION_VOKA,
+    (1),
+    [(1500), (2500), (3500), (2200), (300), (0)],
+    [(0), (0), (0), (0), (0), (0)]
   );
   await lootBox.setOptionSettings(
-    values.LOOTBOX_OPTION_PREMIUM,
-    5,
-    [7300, 2100, 400, 100, 50, 50],
-    [3, 0, 0, 0, 0, 0]
+    values.LOOTBOX_OPTION_NEGE,
+    (1),
+    [(1700), (3500), (2000), (900), (1700), (200)],
+    [(0), (0), (0), (0), (0), (0)]
   );
+  
   await lootBox.setOptionSettings(
-    values.LOOTBOX_OPTION_GOLD,
-    7,
-    [7300, 2100, 400, 100, 50, 50],
-    [3, 0, 2, 0, 1, 0]
+    values.LOOTBOX_OPTION_HELI,
+    (1),
+    [(3500), (1500), (1000), (0), (3500), (500)],
+    [(0), (0), (0), (0), (0), (0)]
   );
+  console.log('Done setting up option-setting');
 };
 
 // Deploy and configure everything
 
-export const setupCreatureAccessories = async(accessories, factory, lootBox, owner) => {    
+export const setupCreatureAccessories = async(accessories, factory, lootBox, owner) => {      
   await setupAccessory(accessories, owner);  
-  await accessories.setApprovalForAll(factory.address, true, { from: owner });
+  await accessories.setApprovalForAll(factory.address, true);
   await accessories.transferOwnership(factory.address);
   await setupAccessoryLootBox(lootBox, factory);
   await setupPreMintBox(lootBox, owner);

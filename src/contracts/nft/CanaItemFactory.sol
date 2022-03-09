@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.10;
 
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -31,7 +31,7 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
   uint256 constant SUPPLY_PER_TOKEN_ID = UINT256_MAX;
 
   // The number of creature accessories (not creature accessory rarity classes!)
-  uint256 constant NUM_ITEM_OPTIONS = 6;
+  uint256 constant NUM_ITEM_OPTIONS = 48;
 
   /*
    * Three different options for minting CreatureAccessories (basic, premium, and gold).
@@ -40,7 +40,7 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
   // uint256 public constant BASIC_LOOTBOX = NUM_ITEM_OPTIONS + 0;
   // uint256 public constant PREMIUM_LOOTBOX = NUM_ITEM_OPTIONS + 1;
   // uint256 public constant GOLD_LOOTBOX = NUM_ITEM_OPTIONS + 2;
-  uint256 public constant NUM_LOOTBOX_OPTIONS = 3;
+  uint256 public constant NUM_LOOTBOX_OPTIONS = 5;
 
   uint256 public constant NUM_OPTIONS = NUM_ITEM_OPTIONS + NUM_LOOTBOX_OPTIONS;
 

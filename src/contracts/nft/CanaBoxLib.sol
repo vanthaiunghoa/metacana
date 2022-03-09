@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -114,7 +114,7 @@ library CanaBoxLib {
     require(_classId < _state.numClasses, string(
                 abi.encodePacked(
                     "setTokenIdsForClass#class_out_of_range, _classId=",
-                    Strings.toString(_classId),",_state.numClasses=", Strings.toString(_state.numClasses)
+                    Strings.toString(_classId),",_state.numClasses=", (_state.numClasses)
                 )
             ));//"setTokenIdsForClass#class_out_of_range");
     _state.classToTokenIds[_classId] = _tokenIds;

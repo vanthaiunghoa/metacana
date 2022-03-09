@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
@@ -8,42 +8,79 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-// import "../interfaces/IMetacanaNFT.sol";
+// import1 "../interfaces/IMetacanaNFT.sol";
 
 contract Marketplace is Ownable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
+    uint256 constant SELL_MAX = ~uint256(0) - 1;
+
     // Supported payment token WETH & list of authorized ERC20
     mapping(address => bool) public paymentTokens;
-    mapping(bytes => bool) public usedSignatures;
+    mapping(bytes => uint256) public usedSignatures;
 
     // Address to receive transaction fee
     address public feeToAddress;
     uint256 public transactionFee;
+    //rounds
+    uint16[] public rounds; // rndId --> amount
+    uint64[3] public times;
+    uint256 totalPrivate;
+    uint256 totalWhitelist;
+
+    mapping(address => uint256) public privateSales;
+    mapping(address => uint256) public whitelistSales;
 
     // Events
     event MatchTransaction(
         uint256 indexed tokenId,
         address contractAddress,
-        uint256 price,
         address paymentToken,
         address seller,
         address buyer,
-        uint256 amount,
+        uint256 round,
+        uint256 price,        
+        uint256 buyerAmount,
+        uint256 sellerAmount,
         uint256 fee
     );
 
-    function setFeeToAddress(address _feeToAddress) public onlyOwner {
+    function setFeeToAddress(address _feeToAddress) external onlyOwner {
         feeToAddress = _feeToAddress;
     }
 
-    function setTransactionFee(uint256 _transactionFee) public onlyOwner {
+    function setTransactionFee(uint256 _transactionFee) external onlyOwner {
         transactionFee = _transactionFee;
     }
 
+    function setRounds(uint16[] calldata _rounds) external onlyOwner {
+        rounds = _rounds;
+    }
+
+    //Fixed id
+    function setPrivate(address recv, uint256 amount) external onlyOwner {
+        require(block.timestamp < times[1] && block.timestamp < times[0], 'Marketplace#setPrivate:not_in_private_sale');
+        require(amount > 0, 'Marketplace#setPrivate:amount_must_be_greater_than_0');
+        require(totalPrivate + amount <= rounds[0], 'Marketplace#setPrivate:round_is_fulfilled');
+        privateSales[recv] = amount;
+        totalPrivate += amount;
+    }
+
+    //Fixed id
+    function setWhitelist(address recv, uint256 amount) external onlyOwner {
+        require(block.timestamp >= times[1] && block.timestamp <= times[2], 'Marketplace#not_in_whitelist_sale');
+        require(amount > 0, 'Marketplace#setWhitelist:amount_must_be_greater_than_0');
+        require(totalWhitelist + amount <= rounds[1], 'Marketplace#setWhitelist:round_is_fulfilled');
+        whitelistSales[recv] = amount;
+    }
+
+    function setTimes(uint64[3] calldata _times) external onlyOwner {
+        times = _times;
+    }
+
     function setPaymentTokens(address[] calldata _paymentTokens)
-        public
+        external
         onlyOwner
     {
         for (uint256 i = 0; i < _paymentTokens.length; i++) {
@@ -56,7 +93,7 @@ contract Marketplace is Ownable {
     }
 
     function removePaymentTokens(address[] calldata _removedPaymentTokens)
-        public
+        external
         onlyOwner
     {
         for (uint256 i = 0; i < _removedPaymentTokens.length; i++) {
@@ -66,15 +103,18 @@ contract Marketplace is Ownable {
 
     function ignoreSignature(
         address[2] calldata addresses,
-        uint256[3] calldata values,
+        uint256[5] calldata values,
         bytes calldata signature
     ) external {
         bytes32 criteriaMessageHash = getMessageHash(
-            addresses[0],
-            values[0],
+            addresses[0],  
+            _msgSender(),          
             addresses[1],
+            values[0],
             values[1],
-            values[2]
+            values[2],
+            values[3],
+            values[4]
         );
 
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(
@@ -86,7 +126,7 @@ contract Marketplace is Ownable {
             "Marketplace: invalid seller signature"
         );
 
-        usedSignatures[signature] = true;
+        usedSignatures[signature] = SELL_MAX + uint16(1);
     }
 
     /**
@@ -94,25 +134,39 @@ contract Marketplace is Ownable {
      */
     function matchTransaction(
         address[3] calldata addresses,
-        uint256[4] calldata values,
+        uint256[6] calldata values,
         bytes calldata signature
-    ) external returns (bool) {
+    ) external returns (bool) {  
+        if(values[0] > 1 && values[1] > 1) {
+            require(block.timestamp > times[2], 'Marketplace:TICI_is_not_in_correct_round');
+        }                    
+        if(values[0] == 0){ 
+            require(values[1] == 0, 'Marketplace:invalid_token_id');
+            require(privateSales[_msgSender()] == values[4] && values[3] == values[4] && values[3] > 0, 'Marketplace:invalid_amount');
+            require(addresses[2] == address(0), 'Marketplace:invalid_payment_address');                                   
+        } else if(values[0] == 1){
+            require(whitelistSales[_msgSender()] == values[4] && values[3] == values[4] && values[3] > 0, 'Marketplace:invalid_amount');
+        }       
+
         require(
-            paymentTokens[addresses[2]] == true,
+            paymentTokens[addresses[2]] == true || values[0] == 0,
             "Marketplace: invalid payment method"
         );
 
         require(
-            !usedSignatures[signature],
-            "Marketplace: signature used. please send another transaction with new signature"
-        );
+            usedSignatures[signature] == 0 || usedSignatures[signature] + values[3] <= values[4],
+            "Marketplace: signature used or out of seller's assets"
+        );        
 
         bytes32 criteriaMessageHash = getMessageHash(
             addresses[1],
-            values[0],
-            addresses[2],
+            values[0] == 1 || values[0] == 10?address(0):_msgSender(),
+            addresses[2],                     
+            values[0],            
             values[1],
-            values[2]
+            values[2],
+            values[4],
+            values[5]
         );
 
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(
@@ -133,36 +187,42 @@ contract Marketplace is Ownable {
         );
 
         // Check payment approval and buyer balance
-        IERC20 paymentContract = IERC20(addresses[2]);
-        require(
-            paymentContract.balanceOf(_msgSender()) >= values[1],
-            "Marketplace: buyer doesn't have enough token to buy this item"
-        );
-        require(
-            paymentContract.allowance(_msgSender(), address(this)) >= values[1],
-            "Marketplace: buyer doesn't approve marketplace to spend payment amount"
-        );
+        if(values[0] != 0 || ((values[0] > 1) && values[1] > 1) && addresses[2] == address(0)){
+            IERC20 paymentContract = IERC20(addresses[2]);
+            require(
+                paymentContract.balanceOf(_msgSender()) >= values[2],
+                "Marketplace: buyer doesn't have enough token to buy this item"
+            );
+            require(
+                paymentContract.allowance(_msgSender(), address(this)) >= values[2],
+                "Marketplace: buyer doesn't approve marketplace to spend payment amount"
+            );
 
-        // We divide by 10000 to support decimal value such as 4.25% => 425 / 10000
-        uint256 fee = transactionFee.mul(values[1]).div(10000);
-        uint256 payToSellerAmount = values[1].sub(fee);
+            // We divide by 10000 to support decimal value such as 4.25% => 425 / 10000
+            uint256 fee = transactionFee.mul(values[2]).div(10000);
+            uint256 payToSellerAmount = values[2].sub(fee);
 
-        // transfer money to seller
-        paymentContract.safeTransferFrom(
-            _msgSender(),
-            addresses[0],
-            payToSellerAmount
-        );
+            // transfer money to seller
+            paymentContract.safeTransferFrom(
+                _msgSender(),
+                addresses[0],
+                payToSellerAmount
+            );
 
-        // transfer fee to address
-        if (fee > 0) {
-            paymentContract.safeTransferFrom(_msgSender(), feeToAddress, fee);
-        }
+            // transfer fee to address
+            if (fee > 0) {
+                paymentContract.safeTransferFrom(_msgSender(), feeToAddress, fee);
+            }
+        }        
 
         // transfer item to buyer
-        nft.safeTransferFrom(addresses[0], _msgSender(), values[0], values[3], signature);
-
-        usedSignatures[signature] = true;
+        nft.safeTransferFrom(addresses[0], _msgSender(), values[1], values[3], signature);
+        usedSignatures[signature] += values[3];
+        if(values[0] == 0){
+            privateSales[_msgSender()] = 0;
+        } else if(values[0] == 1){
+            whitelistSales[_msgSender()] = 0;
+        }
         // emit sale event
         emitEvent(addresses, values);
         return true;
@@ -173,34 +233,42 @@ contract Marketplace is Ownable {
      */
     function emitEvent(
         address[3] calldata addresses,
-        uint256[4] calldata values
+        uint256[6] calldata values
     ) internal {
         emit MatchTransaction(
-            values[0],
-            addresses[1],
             values[1],
+            addresses[1],            
             addresses[2],
             addresses[0],
             _msgSender(),
+            values[0],
+            values[2],
             values[3],
+            values[4],
             transactionFee
         );
     }
 
     function getMessageHash(
         address _nftAddress,
-        uint256 _tokenId,
+		address _buyerAddress,        
         address _paymentErc20,
+        uint256 _roundId,
+		uint256 _tokenId,
         uint256 _price,
-        uint256 _saltNonce
+        uint256 _amount,
+        uint256 _saltNonce        
     ) public pure returns (bytes32) {
         return
             keccak256(
                 abi.encodePacked(
                     _nftAddress,
-                    _tokenId,
+                    _buyerAddress,// for compability with pre-sale processing...
                     _paymentErc20,
-                    _price,
+                    _roundId,
+                    _tokenId,                    
+                    _price,                    
+                    _amount,
                     _saltNonce
                 )
             );

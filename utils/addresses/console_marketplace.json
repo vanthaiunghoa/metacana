@@ -1,5 +1,8 @@
 {
   "bsc_testnet": {
-    "marketplace": "0xadbF1696C759295EFd066870c47b72a9545360d2"
+    "marketplace": "0x5eA234C136baCb9c4eDeF124047f2ff944bC0326"
+  },
+  "ganache": {
+    "marketplace": "0xDC11f7E700A4c898AE5CAddB1082cFfa76512aDD"
   }
 }
