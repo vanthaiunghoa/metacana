@@ -269,6 +269,32 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "recv",
+        "type": "address"
+      }
+    ],
+    "name": "removePrivate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "recv",
+        "type": "address"
+      }
+    ],
+    "name": "removeWhitelisth",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
@@ -341,6 +367,24 @@
   {
     "inputs": [
       {
+        "internalType": "address[]",
+        "name": "recvs",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "setPrivateBatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint16[]",
         "name": "_rounds",
         "type": "uint16[]"
@@ -380,17 +424,17 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "recv",
-        "type": "address"
+        "internalType": "address[]",
+        "name": "recvs",
+        "type": "address[]"
       },
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
       }
     ],
-    "name": "setWhitelist",
+    "name": "setWhitelistBatch",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

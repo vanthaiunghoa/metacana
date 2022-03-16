@@ -577,8 +577,8 @@
       ]
     },
     "/workspaces/farm/wip/simple-cana/src/contracts/nft/Marketplace.sol": {
-      "lastModificationDate": 1646797490219,
-      "contentHash": "c68f9bbc19a01d2b3f03af3ec2e53376",
+      "lastModificationDate": 1646907102198,
+      "contentHash": "870aa9742d2db28d23e6e474686b8c4d",
       "sourceName": "contracts/nft/Marketplace.sol",
       "solcConfig": {
         "version": "0.8.10",

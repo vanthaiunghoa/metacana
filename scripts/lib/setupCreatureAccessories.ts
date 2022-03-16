@@ -54,7 +54,7 @@ export const setupAccessoryLootBox = async (lootBox, factory) => {
   await lootBox.setOptionSettings(
     values.LOOTBOX_OPTION_META,
     1,
-    [2630, 5556, 0, 0, 1466, 347],
+    [5556, 2630, 1466, 347, 0, 0],
     [0, 0, 0, 0, 0, 0]
   );  
   await lootBox.setOptionSettings(
@@ -66,20 +66,20 @@ export const setupAccessoryLootBox = async (lootBox, factory) => {
   await lootBox.setOptionSettings(
     values.LOOTBOX_OPTION_VOKA,
     (1),
-    [(1500), (2500), (3500), (2200), (300), (0)],
+    [(3500), (2500), (1500), (2200), (300), (0)],
     [(0), (0), (0), (0), (0), (0)]
   );
   await lootBox.setOptionSettings(
     values.LOOTBOX_OPTION_NEGE,
     (1),
-    [(1700), (3500), (2000), (900), (1700), (200)],
+    [(3500), (2000), (1700), (1700), (900), (200)],
     [(0), (0), (0), (0), (0), (0)]
   );
   
   await lootBox.setOptionSettings(
     values.LOOTBOX_OPTION_HELI,
     (1),
-    [(3500), (1500), (1000), (0), (3500), (500)],
+    [(3500), (3500), (1500), (1000), (500), (0)],
     [(0), (0), (0), (0), (0), (0)]
   );
   console.log('Done setting up option-setting');

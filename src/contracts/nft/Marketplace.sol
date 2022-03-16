@@ -59,7 +59,7 @@ contract Marketplace is Ownable {
     }
 
     //Fixed id
-    function setPrivate(address recv, uint256 amount) external onlyOwner {
+    function _setPrivate(address recv, uint256 amount) internal onlyOwner {
         require(block.timestamp < times[1] && block.timestamp < times[0], 'Marketplace#setPrivate:not_in_private_sale');
         require(amount > 0, 'Marketplace#setPrivate:amount_must_be_greater_than_0');
         require(totalPrivate + amount <= rounds[0], 'Marketplace#setPrivate:round_is_fulfilled');
@@ -67,12 +67,60 @@ contract Marketplace is Ownable {
         totalPrivate += amount;
     }
 
+    function _removePrivate(address recv) internal onlyOwner {
+        delete privateSales[recv];
+    }
+
+    function setPrivate(address recv, uint256 amount) external onlyOwner {
+        return _setPrivate(recv, amount);
+    }
+
+    function removePrivate(address recv) external onlyOwner {
+        _removePrivate(recv);
+    }
+
     //Fixed id
-    function setWhitelist(address recv, uint256 amount) external onlyOwner {
+    function _setWhitelist(address recv, uint256 amount) internal onlyOwner {
         require(block.timestamp >= times[1] && block.timestamp <= times[2], 'Marketplace#not_in_whitelist_sale');
         require(amount > 0, 'Marketplace#setWhitelist:amount_must_be_greater_than_0');
         require(totalWhitelist + amount <= rounds[1], 'Marketplace#setWhitelist:round_is_fulfilled');
         whitelistSales[recv] = amount;
+    }
+
+    function _removeWhitelist(address recv) internal onlyOwner {
+        delete whitelistSales[recv];
+    }
+
+    function setWhitelist(address recv, uint256 amount) internal onlyOwner {
+        return _setWhitelist(recv, amount);
+    }
+
+    function removeWhitelisth(address recv) external onlyOwner {
+        _removeWhitelist(recv);
+    }
+
+    function setPrivateBatch(address[] calldata recvs, uint256[] calldata amounts) external onlyOwner {
+        require(recvs.length == amounts.length, 'Marketplace#setPrivateBatch:length_mismatched');
+        uint256 _amounts = amounts[0];
+        for(uint256 i = 1; i < recvs.length; i++){
+            _amounts += amounts[i];
+        }
+        require(totalPrivate + _amounts <= rounds[1], 'Marketplace#setPrivateBatch:round_is_fulfilled');
+        for(uint256 i = 0; i < recvs.length; i++){
+            _setPrivate(recvs[i], amounts[i]);
+        }
+    }
+
+    function setWhitelistBatch(address[] calldata recvs, uint256[] calldata amounts) external onlyOwner {
+        require(recvs.length == amounts.length, 'Marketplace#setWhitelistBatch:length_mismatched');
+        uint256 _amounts = amounts[0];
+        for(uint256 i = 1; i < recvs.length; i++){
+            _amounts += amounts[i];
+        }
+        require(totalWhitelist + _amounts <= rounds[1], 'Marketplace#setWhitelistBatch:round_is_fulfilled');
+        for(uint256 i = 0; i < recvs.length; i++){
+            _setWhitelist(recvs[i], amounts[i]);
+        }
     }
 
     function setTimes(uint64[3] calldata _times) external onlyOwner {

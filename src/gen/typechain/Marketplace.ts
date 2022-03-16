@@ -28,15 +28,18 @@ export interface MarketplaceInterface extends utils.Interface {
     "paymentTokens(address)": FunctionFragment;
     "privateSales(address)": FunctionFragment;
     "removePaymentTokens(address[])": FunctionFragment;
+    "removePrivate(address)": FunctionFragment;
+    "removeWhitelisth(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "rounds(uint256)": FunctionFragment;
     "setFeeToAddress(address)": FunctionFragment;
     "setPaymentTokens(address[])": FunctionFragment;
     "setPrivate(address,uint256)": FunctionFragment;
+    "setPrivateBatch(address[],uint256[])": FunctionFragment;
     "setRounds(uint16[])": FunctionFragment;
     "setTimes(uint64[3])": FunctionFragment;
     "setTransactionFee(uint256)": FunctionFragment;
-    "setWhitelist(address,uint256)": FunctionFragment;
+    "setWhitelistBatch(address[],uint256[])": FunctionFragment;
     "times(uint256)": FunctionFragment;
     "transactionFee()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -87,6 +90,14 @@ export interface MarketplaceInterface extends utils.Interface {
     values: [string[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "removePrivate",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeWhitelisth",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -107,6 +118,10 @@ export interface MarketplaceInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPrivateBatch",
+    values: [string[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setRounds",
     values: [BigNumberish[]]
   ): string;
@@ -119,8 +134,8 @@ export interface MarketplaceInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setWhitelist",
-    values: [string, BigNumberish]
+    functionFragment: "setWhitelistBatch",
+    values: [string[], BigNumberish[]]
   ): string;
   encodeFunctionData(functionFragment: "times", values: [BigNumberish]): string;
   encodeFunctionData(
@@ -170,6 +185,14 @@ export interface MarketplaceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "removePrivate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeWhitelisth",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
@@ -183,6 +206,10 @@ export interface MarketplaceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setPrivate", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setPrivateBatch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setRounds", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setTimes", data: BytesLike): Result;
   decodeFunctionResult(
@@ -190,7 +217,7 @@ export interface MarketplaceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setWhitelist",
+    functionFragment: "setWhitelistBatch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "times", data: BytesLike): Result;
@@ -331,6 +358,16 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    removePrivate(
+      recv: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    removeWhitelisth(
+      recv: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -353,6 +390,12 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setPrivateBatch(
+      recvs: string[],
+      amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setRounds(
       _rounds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -368,9 +411,9 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setWhitelist(
-      recv: string,
-      amount: BigNumberish,
+    setWhitelistBatch(
+      recvs: string[],
+      amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -439,6 +482,16 @@ export interface Marketplace extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  removePrivate(
+    recv: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  removeWhitelisth(
+    recv: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -461,6 +514,12 @@ export interface Marketplace extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setPrivateBatch(
+    recvs: string[],
+    amounts: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setRounds(
     _rounds: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -476,9 +535,9 @@ export interface Marketplace extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setWhitelist(
-    recv: string,
-    amount: BigNumberish,
+  setWhitelistBatch(
+    recvs: string[],
+    amounts: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -544,6 +603,10 @@ export interface Marketplace extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    removePrivate(recv: string, overrides?: CallOverrides): Promise<void>;
+
+    removeWhitelisth(recv: string, overrides?: CallOverrides): Promise<void>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     rounds(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
@@ -564,6 +627,12 @@ export interface Marketplace extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setPrivateBatch(
+      recvs: string[],
+      amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setRounds(
       _rounds: BigNumberish[],
       overrides?: CallOverrides
@@ -579,9 +648,9 @@ export interface Marketplace extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setWhitelist(
-      recv: string,
-      amount: BigNumberish,
+    setWhitelistBatch(
+      recvs: string[],
+      amounts: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -684,6 +753,16 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    removePrivate(
+      recv: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    removeWhitelisth(
+      recv: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -706,6 +785,12 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setPrivateBatch(
+      recvs: string[],
+      amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setRounds(
       _rounds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -721,9 +806,9 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setWhitelist(
-      recv: string,
-      amount: BigNumberish,
+    setWhitelistBatch(
+      recvs: string[],
+      amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -796,6 +881,16 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    removePrivate(
+      recv: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeWhitelisth(
+      recv: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -821,6 +916,12 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setPrivateBatch(
+      recvs: string[],
+      amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setRounds(
       _rounds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -836,9 +937,9 @@ export interface Marketplace extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setWhitelist(
-      recv: string,
-      amount: BigNumberish,
+    setWhitelistBatch(
+      recvs: string[],
+      amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
