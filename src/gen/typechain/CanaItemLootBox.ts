@@ -45,7 +45,7 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setOptionSettings(uint256,uint256,uint16[],uint16[])": FunctionFragment;
     "setState(address,uint256,uint256,uint256)": FunctionFragment;
-    "setTokenIdsForClass(uint256,uint256[])": FunctionFragment;
+    "setTokenIdsForClass(uint256,uint256,uint256[])": FunctionFragment;
     "setURI(string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
@@ -146,7 +146,7 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setTokenIdsForClass",
-    values: [BigNumberish, BigNumberish[]]
+    values: [BigNumberish, BigNumberish, BigNumberish[]]
   ): string;
   encodeFunctionData(functionFragment: "setURI", values: [string]): string;
   encodeFunctionData(
@@ -527,6 +527,7 @@ export interface CanaItemLootBox extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setTokenIdsForClass(
+      _optionId: BigNumberish,
       _classId: BigNumberish,
       _tokenIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -720,6 +721,7 @@ export interface CanaItemLootBox extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setTokenIdsForClass(
+    _optionId: BigNumberish,
     _classId: BigNumberish,
     _tokenIds: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -909,6 +911,7 @@ export interface CanaItemLootBox extends BaseContract {
     ): Promise<void>;
 
     setTokenIdsForClass(
+      _optionId: BigNumberish,
       _classId: BigNumberish,
       _tokenIds: BigNumberish[],
       overrides?: CallOverrides
@@ -1181,6 +1184,7 @@ export interface CanaItemLootBox extends BaseContract {
     ): Promise<BigNumber>;
 
     setTokenIdsForClass(
+      _optionId: BigNumberish,
       _classId: BigNumberish,
       _tokenIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1387,6 +1391,7 @@ export interface CanaItemLootBox extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setTokenIdsForClass(
+      _optionId: BigNumberish,
       _classId: BigNumberish,
       _tokenIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.6;
 
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -22,7 +22,7 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
   address public nftAddress;
   address public lootBoxAddress;
   string internal constant baseMetadataURI = 'https://asset.metacana.io/api/';
-  uint256 constant UINT256_MAX = ~uint256(0);
+  uint256 constant UINT256_MAX = 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe;//~uint256(0);
 
   /*
    * Optionally set this to a small integer to enforce limited existence per option/token ID

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -65,7 +65,7 @@ library CanaBoxLib {
       uint256 numOptions;
       uint256 numClasses;
       mapping (uint256 => OptionSettings) optionToSettings;
-      mapping (uint256 => uint256[]) classToTokenIds;
+      mapping (uint256 => mapping (uint256 => uint256[])) classToTokenIds;
       uint256 seed;
   }
 
@@ -95,11 +95,12 @@ library CanaBoxLib {
    */
   function setClassForTokenId(
     LootBoxRandomnessState storage _state,
+    uint256  _optionId,
     uint256 _tokenId,
     uint256 _classId
   ) public {
     require(_classId < _state.numClasses, "setClassForTokenId#class_out_of_range");
-    _addTokenIdToClass(_state, _classId, _tokenId);
+    _addTokenIdToClass(_state, _optionId, _classId, _tokenId);
   }
 
   /**
@@ -108,16 +109,17 @@ library CanaBoxLib {
    */
   function setTokenIdsForClass(
     LootBoxRandomnessState storage _state,
+    uint256  _optionId,
     uint256 _classId,
     uint256[] memory _tokenIds
   ) public {
     require(_classId < _state.numClasses, string(
                 abi.encodePacked(
                     "setTokenIdsForClass#class_out_of_range, _classId=",
-                    Strings.toString(_classId),",_state.numClasses=", (_state.numClasses)
+                    Strings.toString(_classId),"_optionId=",Strings.toString(_optionId), ",_state.numClasses=", (_state.numClasses)
                 )
             ));//"setTokenIdsForClass#class_out_of_range");
-    _state.classToTokenIds[_classId] = _tokenIds;
+    _state.classToTokenIds[_optionId][_classId] = _tokenIds;
   }
 
   /**
@@ -126,10 +128,11 @@ library CanaBoxLib {
    */
   function resetClass(
     LootBoxRandomnessState storage _state,
+    uint256  _optionId,
     uint256 _classId
   ) public {require(
     _classId < _state.numClasses, "resetClass#class_out_of_range");
-    delete _state.classToTokenIds[_classId];
+    delete _state.classToTokenIds[_optionId][_classId];
   }
 
   /**
@@ -232,7 +235,7 @@ library CanaBoxLib {
         for (uint256 classId = 0; classId < settings.guarantees.length; classId++) {
           uint256 quantityOfGuaranteed = settings.guarantees[classId];
           if(quantityOfGuaranteed > 0) {
-            _sendTokenWithClass(_state, classId, _toAddress, quantityOfGuaranteed, _owner);
+            _sendTokenWithClass(_state, classId, _optionId, _toAddress, quantityOfGuaranteed, _owner);
             quantitySent += quantityOfGuaranteed;
           }
         }
@@ -242,7 +245,7 @@ library CanaBoxLib {
       while (quantitySent < settings.maxQuantityPerOpen) {
         uint256 quantityOfRandomized = 1;
         uint256 class = _pickRandomClass(_state, settings.classProbabilities);
-        _sendTokenWithClass(_state, class, _toAddress, quantityOfRandomized, _owner);
+        _sendTokenWithClass(_state, _optionId, class, _toAddress, quantityOfRandomized, _owner);
         quantitySent += quantityOfRandomized;
       }
 
@@ -261,6 +264,7 @@ library CanaBoxLib {
   // Returns the tokenId sent to _toAddress
   function _sendTokenWithClass(
     LootBoxRandomnessState storage _state,
+    uint256 _optionId,
     uint256 _classId,
     address _toAddress,
     uint256 _amount,
@@ -268,7 +272,7 @@ library CanaBoxLib {
   ) internal returns (uint256) {
     require(_classId < _state.numClasses, "_sendTokenWithClass#class_out_of_range");
     Factory factory = Factory(_state.factoryAddress);
-    uint256 tokenId = _pickRandomAvailableTokenIdForClass(_state, _classId, _amount, _owner);
+    uint256 tokenId = _pickRandomAvailableTokenIdForClass(_state,_optionId, _classId, _amount, _owner);
     // This may mint, create or transfer. We don't handle that here.
     // We use tokenId as an option ID here.
     factory.mint(_toAddress, tokenId, _amount, "");
@@ -296,12 +300,13 @@ library CanaBoxLib {
 
   function _pickRandomAvailableTokenIdForClass(
     LootBoxRandomnessState storage _state,
+    uint256 _optionId,
     uint256 _classId,
     uint256 _minAmount,
     address _owner
   ) internal returns (uint256) {
     require(_classId < _state.numClasses, "_pickRandomAvailableTokenIdForClass#class_out_of_range");
-    uint256[] memory tokenIds = _state.classToTokenIds[_classId];
+    uint256[] memory tokenIds = _state.classToTokenIds[_optionId][_classId];
     require(tokenIds.length > 0, "No token ids for _classId");
     uint256 randIndex = _random(_state).mod(tokenIds.length);
     // Make sure owner() owns or can mint enough
@@ -326,10 +331,10 @@ library CanaBoxLib {
     return randomNumber;
   }
 
-  function _addTokenIdToClass(LootBoxRandomnessState storage _state, uint256 _classId, uint256 _tokenId) internal {
+  function _addTokenIdToClass(LootBoxRandomnessState storage _state, uint256 _optionId, uint256 _classId, uint256 _tokenId) internal {
     // This is called by code that has already checked this, sometimes in a
     // loop, so don't pay the gas cost of checking this here.
     //require(_classId < _state.numClasses, "_class out of range");
-    _state.classToTokenIds[_classId].push(_tokenId);
+    _state.classToTokenIds[_optionId][_classId].push(_tokenId);
   }
 }

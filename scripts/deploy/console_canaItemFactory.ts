@@ -46,7 +46,7 @@ async function main(): Promise<void> {
   });
   const lootBoxContract = await lootBoxContractFact.attach((lootboxAddress as any).canaItemLootBox);
   console.log(`Done deploying all stuffs and ready to setup lootbox`);
-  await setupCreatureAccessories(nftContract, canaItemFactory, lootBoxContract, process.env.BOX_OWNER_ADDRESS)
+  await setupCreatureAccessories(nftContract, canaItemFactory, lootBoxContract, process.env.OWNER_ADDRESS)
 
   const updatedAddresses = {
     ...apAddresses,

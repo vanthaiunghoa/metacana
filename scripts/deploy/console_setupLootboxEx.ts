@@ -34,7 +34,7 @@ async function main(): Promise<void> {
   const lootBoxContract = await lootBoxContractFact.attach((lootboxAddress as any).canaItemLootBox);
   const canaItemFactoryFact = await ethers.getContractFactory("CanaItemFactory");
   const canaItemFactoryContract = await canaItemFactoryFact.attach((apAddress as any).canaItemFactory);
-  await setupCreatureAccessories(nftContract, canaItemFactoryContract, lootBoxContract, process.env.BOX_OWNER_ADDRESS)
+  await setupCreatureAccessories(nftContract, canaItemFactoryContract, lootBoxContract, process.env.OWNER_ADDRESS)
 
   console.log('Done setup')
 }

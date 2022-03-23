@@ -1,14 +1,14 @@
 {
   "bsc_testnet": {
-    "canaItemLootBox": "0xfd69EC843B27b8119169a4533e9c754481F7a779",
-    "canaBoxLib": "0x826b4A7e05a7b4dE5CE0605AF8c6dDE35897e7Ec"
+    "canaItemLootBox": "0x734eaBf03B42B01a1F54c1863086F670C0705463",
+    "canaBoxLib": "0xcD0C474f85651FbeBdde8Fcd4d914ff027839246"
   },
   "hardhat": {
     "canaItemLootBox": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
     "canaBoxLib": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
   },
   "ganache": {
-    "canaItemLootBox": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-    "canaBoxLib": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    "canaItemLootBox": "0x798f111c92E38F102931F34D1e0ea7e671BDBE31",
+    "canaBoxLib": "0xfb6dAB6200b8958C2655C3747708F82243d3F32E"
   }
 }

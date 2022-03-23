@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -41,10 +41,11 @@ contract CanaItemLootBox is CanaItem, ReentrancyGuard {
   }
 
   function setTokenIdsForClass(
+    uint256 _optionId,
     uint256 _classId,
     uint256[] memory _tokenIds
   ) public onlyOwner {
-      CanaBoxLib.setTokenIdsForClass(state, _classId, _tokenIds);
+      CanaBoxLib.setTokenIdsForClass(state, _optionId, _classId, _tokenIds);
   }
 
   function setOptionSettings(

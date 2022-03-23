@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
@@ -14,7 +14,7 @@ contract Marketplace is Ownable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    uint256 constant SELL_MAX = ~uint256(0) - 1;
+    uint256 constant SELL_MAX = 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe - 1;//~uint256(0) - 1;
 
     // Supported payment token WETH & list of authorized ERC20
     mapping(address => bool) public paymentTokens;
@@ -60,7 +60,7 @@ contract Marketplace is Ownable {
 
     //Fixed id
     function _setPrivate(address recv, uint256 amount) internal onlyOwner {
-        require(block.timestamp < times[1] && block.timestamp < times[0], 'Marketplace#setPrivate:not_in_private_sale');
+        require(block.timestamp < times[1] && block.timestamp >= times[0], 'Marketplace#setPrivate:not_in_private_sale');
         require(amount > 0, 'Marketplace#setPrivate:amount_must_be_greater_than_0');
         require(totalPrivate + amount <= rounds[0], 'Marketplace#setPrivate:round_is_fulfilled');
         privateSales[recv] = amount;
@@ -190,7 +190,11 @@ contract Marketplace is Ownable {
         }                    
         if(values[0] == 0){ 
             require(values[1] == 0, 'Marketplace:invalid_token_id');
-            require(privateSales[_msgSender()] == values[4] && values[3] == values[4] && values[3] > 0, 'Marketplace:invalid_amount');
+            require(privateSales[_msgSender()] == values[4] && values[3] == values[4] && values[3] > 0, 
+                string(abi.encodePacked(
+                    "Marketplace:invalid_amount=",
+                    privateSales[_msgSender()], ",values[4]=", values[4], ",values[3]=",values[3]
+                )));//'Marketplace:invalid_amount');
             require(addresses[2] == address(0), 'Marketplace:invalid_payment_address');                                   
         } else if(values[0] == 1){
             require(whitelistSales[_msgSender()] == values[4] && values[3] == values[4] && values[3] > 0, 'Marketplace:invalid_amount');
@@ -208,7 +212,7 @@ contract Marketplace is Ownable {
 
         bytes32 criteriaMessageHash = getMessageHash(
             addresses[1],
-            values[0] == 1 || values[0] == 10?address(0):_msgSender(),
+            values[0] != 1 && values[0] != 0?address(0):_msgSender(),
             addresses[2],                     
             values[0],            
             values[1],

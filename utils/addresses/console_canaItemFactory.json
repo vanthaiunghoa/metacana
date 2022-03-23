@@ -1,8 +1,8 @@
 {
   "bsc_testnet": {
-    "canaItemFactory": "0xb999E98CEaD274431Fe676a51caeF054eE15e296"
+    "canaItemFactory": "0x8d3a323aCC6eF66ec43978D503Bb2DdCF002a59B"
   },
   "ganache": {
-    "canaItemFactory": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+    "canaItemFactory": "0xabebE9a2D62Af9a89E86EB208b51321e748640C3"
   }
 }

@@ -5,12 +5,15 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { setupCreatureAccessories } from "../../scripts/lib/setupCreatureAccessories"
 /* libraries used */
 
-import { setupMarketplaceWithAddress } from "../../scripts/lib/setupMarketplace";
+import { setupMarketplaceWithAddress, setSales } from "../../scripts/lib/setupMarketplace";
 import { 
   expect,
   assert,
   RevertError,
+  ZERO_ADDRESS,
 } from '../utils'
+
+import { ADDRESS_ZERO } from '../../scripts/lib/testValuesCommon'
 
 /* Contracts in this test */
 import {   
@@ -38,6 +41,8 @@ import { text } from "node:stream/consumers";
 
 const boxPrice = 1;
 const boxId = 1;
+const metaBoxId = 0;
+const prinoBoxId = 1;
 const nonce = 1;
 const transactionFee = 100;
 const sellAmount = 5;
@@ -56,29 +61,34 @@ describe("Maketplace", () => {
   let owner: SignerWithAddress
   let buyer: SignerWithAddress
   let seller: SignerWithAddress
+  let buyer1: SignerWithAddress
   let receiver: SignerWithAddress
+  let addresses;
+  const amounts = [100, 200];  
 
   before(async () => {    
        
-    [owner, buyer, seller, receiver] = await ethers.getSigners()
+    [owner, buyer, buyer1, seller, receiver] = await ethers.getSigners();
+    addresses = [buyer.address, buyer1.address];
     const marketplaceFactory: ContractFactory = await ethers.getContractFactory(
       "Marketplace"
     )
-    marketplace = (await marketplaceFactory.deploy()) as Marketplace;
-    await marketplace.deployed();
+    marketplace = (await marketplaceFactory.connect(owner).deploy()) as Marketplace;
+    await marketplace.connect(owner).deployed();
         
     const _canaItemFactory: ContractFactory = await ethers.getContractFactory(
       "CanaItem"
     )
-    canaItem = (await _canaItemFactory.deploy()) as CanaItem;
-    await canaItem.deployed();
+    canaItem = (await _canaItemFactory.connect(owner).deploy()) as CanaItem;
+    await canaItem.connect(owner).deployed();
 
     const Metacana_Factory: ContractFactory = await ethers.getContractFactory("Metacana");
-    metacana = await Metacana_Factory.deploy() as Metacana;
+    metacana = await Metacana_Factory.connect(owner).deploy() as Metacana;
+    await metacana.connect(owner).deployed();
 
     const Library = await ethers.getContractFactory("CanaBoxLib");
-    const library = await Library.deploy();
-    await library.deployed();
+    const library = await Library.connect(owner).deploy();
+    await library.connect(owner).deployed();
 
     const canaItemLootBoxFactory: ContractFactory = await ethers.getContractFactory("CanaItemLootBox", {
       libraries: {
@@ -87,29 +97,117 @@ describe("Maketplace", () => {
     });    
 
     console.log(`****Deployed canaItemLootBoxFactory`)
-    canaItemLootBox = await canaItemLootBoxFactory.deploy() as CanaItemLootBox;
-    await canaItemLootBox.deployed();
+    canaItemLootBox = await canaItemLootBoxFactory.connect(owner).deploy() as CanaItemLootBox;
+    await canaItemLootBox.connect(owner).deployed();
 
     const canaItemFactoryFactory: ContractFactory = await ethers.getContractFactory("CanaItemFactory");
-    canaItemFactory = await canaItemFactoryFactory.deploy(
+    canaItemFactory = await canaItemFactoryFactory.connect(owner).deploy(
       canaItem.address,
       canaItemLootBox.address
       ) as CanaItemFactory;
-      canaItemFactory.deployed();
+      canaItemFactory.connect(owner).deployed();
 
     console.log(`****Deployed canaItemLootBox`)
     metacana.mint(buyer.address, 1000*boxPrice);
     console.log(`****metacana Minted`)
     metacana.connect(buyer).approve(marketplace.address, 1000*boxPrice);
+    console.log(`****metacana approved for marketplace`)
     canaItemLootBox.setApprovalForAll(marketplace.address, true);
-
+    console.log(`****lootbox approvedForAll for marketplace`)
+    
+    await setupMarketplaceWithAddress(canaItem, canaItemLootBox, marketplace, receiver.address, transactionFee, metacana.address, canaItemFactory, owner)        
+    await setSales(marketplace, addresses, amounts, 0, owner);
+    // await setSales(marketplace, addresses, amounts, 1, owner);
     await setupCreatureAccessories(canaItem, canaItemFactory, canaItemLootBox, owner.address)
-    await setupMarketplaceWithAddress(canaItemLootBox, marketplace, receiver.address, transactionFee, metacana.address)    
   });
 
   // This also tests the proxyRegistryAddress and lootBoxAddress accessors.
-
   describe('#matchTransaction()', () => {
+    
+    it('should allow owner to buy private boxes', async () => { 
+      const round = 0;
+      const message = await web3.utils.keccak256(web3.utils.encodePacked(
+        canaItemLootBox.address,          
+        addresses[0],
+        ADDRESS_ZERO, 
+        round,
+        metaBoxId,
+        boxPrice, 
+        amounts[0], 
+        nonce) as string);
+      const signature =  await web3.eth.sign(message, owner.address);
+
+      const txt = await marketplace.connect(buyer).matchTransaction(
+        [owner.address, 
+        canaItemLootBox.address, 
+        ADDRESS_ZERO],
+        [round, metaBoxId, boxPrice, amounts[0], amounts[0], nonce], signature);
+      console.log('======TXN==========');
+      console.log(txt) ;
+      console.log('======RECEIVE==========');
+      const receipt = await txt.wait(1)
+      console.log(receipt) ;
+      console.log('======EVENT==========')
+      console.log(receipt.events)      
+      const ev = receipt.events!.pop()!;
+      expect(ev.event).to.be.eql('MatchTransaction');
+      const args = ev.args! as any;
+      console.log('args.tokenId=',args.tokenId);
+      console.log("BigNumber.from(metaBoxId)=", BigNumber.from(metaBoxId))
+      expect(BigNumber.from(args.tokenId)).to.be.eql(BigNumber.from(metaBoxId));
+      expect(args.contractAddress).to.be.eql(canaItemLootBox.address);
+      expect(BigNumber.from(args.price)).to.be.eql(BigNumber.from(boxPrice));
+      expect(args.paymentToken).to.be.eql(ZERO_ADDRESS);       
+      expect(args.seller).to.be.eql(owner.address);  
+      expect(args.buyer).to.be.eql(buyer.address);     ;
+      expect(BigNumber.from(args.sellerAmount)).to.be.eql(BigNumber.from(amounts[0]));
+      expect(BigNumber.from(args.buyerAmount)).to.be.eql(BigNumber.from(amounts[0]));
+      expect(BigNumber.from(args.fee)).to.be.eql(BigNumber.from(transactionFee));
+      expect(BigNumber.from(args.round)).to.be.eql(BigNumber.from(round));      
+    });
+
+    // it('should allow owner to buy whitelist boxes', async () => { 
+    //   const round = 0;
+    //   const message = await web3.utils.keccak256(web3.utils.encodePacked(
+    //     canaItemLootBox.address,          
+    //     addresses[0],
+    //     ADDRESS_ZERO, 
+    //     round,
+    //     metaBoxId,
+    //     boxPrice, 
+    //     amounts[0], 
+    //     nonce) as string);
+    //   const signature =  await web3.eth.sign(message, owner.address);
+
+    //   const txt = await marketplace.connect(buyer).matchTransaction(
+    //     [owner.address, 
+    //     canaItemLootBox.address, 
+    //     ADDRESS_ZERO],
+    //     [round, metaBoxId, boxPrice, amounts[0], amounts[0], nonce], signature);
+    //   console.log('======TXN==========');
+    //   console.log(txt) ;
+    //   console.log('======RECEIVE==========');
+    //   const receipt = await txt.wait(1)
+    //   console.log(receipt) ;
+    //   console.log('======EVENT==========')
+    //   console.log(receipt.events)      
+    //   const ev = receipt.events!.pop()!;
+    //   expect(ev.event).to.be.eql('MatchTransaction');
+    //   const args = ev.args! as any;
+    //   console.log('args.tokenId=',args.tokenId);
+    //   console.log("BigNumber.from(metaBoxId)=", BigNumber.from(metaBoxId))
+    //   expect(BigNumber.from(args.tokenId)).to.be.eql(BigNumber.from(metaBoxId));
+    //   expect(args.contractAddress).to.be.eql(canaItemLootBox.address);
+    //   expect(BigNumber.from(args.price)).to.be.eql(BigNumber.from(boxPrice));
+    //   expect(args.paymentToken).to.be.eql(ZERO_ADDRESS);       
+    //   expect(args.seller).to.be.eql(owner.address);  
+    //   expect(args.buyer).to.be.eql(buyer.address);     ;
+    //   expect(BigNumber.from(args.sellerAmount)).to.be.eql(BigNumber.from(amounts[0]));
+    //   expect(BigNumber.from(args.buyerAmount)).to.be.eql(BigNumber.from(amounts[0]));
+    //   expect(BigNumber.from(args.fee)).to.be.eql(BigNumber.from(transactionFee));
+    //   expect(BigNumber.from(args.round)).to.be.eql(BigNumber.from(round));      
+    // });
+
     it('should allow owner to buy box', async () => { 
       
       // const TEST_MESSAGE = await marketplace.getMessageHash(sellerAddress, boxId, metacana.address, boxPrice, nonce);      
