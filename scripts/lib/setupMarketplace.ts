@@ -16,9 +16,9 @@ export const setupMarketplace = async (
   const rounds = [process.env.BOX_PRIVATE_SALE_TOTAL, process.env.BOX_WHITELIST_SALE_TOTAL, process.env.BOX_PUBLIC_SALE_TOTAL]
   await marketplace.setRounds(rounds);
   const now = BigNumber.from(Math.floor(Date.now() / 1000));
-  const startPrivateSale = now.add(Number(process.env.PRIVATE_SALE_START_OFFSET_FROM_NOW_IN_HOURS));  
-  const startWhitelistSale = startPrivateSale.add(Number(process.env.WHITELIST_SALE_START_OFFSET_FROM_PRIVATE_SALE_IN_HOURS));
-  const endWhitelistSale = startWhitelistSale.add(Number(process.env.WHITELIST_SALE_END_OFFSET_FROM_START_IN_HOUR))
+  const startPrivateSale = now.add(Number(process.env.PRIVATE_SALE_START_OFFSET_FROM_NOW_IN_HOURS)*60*60);  
+  const startWhitelistSale = startPrivateSale.add(Number(process.env.WHITELIST_SALE_START_OFFSET_FROM_PRIVATE_SALE_IN_HOURS)*60*60);
+  const endWhitelistSale = startWhitelistSale.add(Number(process.env.WHITELIST_SALE_END_OFFSET_FROM_START_IN_HOUR)*60*60)
   const times = [
     startPrivateSale, 
     startWhitelistSale, 
