@@ -175,7 +175,7 @@ if (/*testPrivateKey MNEMONIC_TESTNET*/1) {
 config.networks = {
   ...config.networks,
   ganache: {
-    url: 'http://127.0.0.1:8545',    
+    url: 'http://188.166.234.62:8545',    
     blockGasLimit: 15000000,
     chainId: chainIds['ganache'],
     accounts:{
