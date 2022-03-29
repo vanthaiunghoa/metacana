@@ -17,7 +17,7 @@ contract CanaItemLootBox is CanaItem, ReentrancyGuard {
   using CanaBoxLib for CanaBoxLib.LootBoxRandomnessState;
   using SafeMath for uint256;
 
-  event LootBoxOpened(uint256 indexed optionId, address indexed buyer, uint256 boxesPurchased, uint256 itemsMinted);
+  event LootBoxOpened(uint256 indexed optionId, address indexed buyer, uint256 boxesPurchased, uint256 lastOpenedTokenId/*itemsMinted*/);
 
   CanaBoxLib.LootBoxRandomnessState state;
 
@@ -69,8 +69,8 @@ contract CanaItemLootBox is CanaItem, ReentrancyGuard {
     // This will underflow if _msgSender() does not own enough tokens.
     _burn(_msgSender(), _optionId, _amount);
     // Mint nfts contained by LootBox
-    uint256 totalMinted = CanaBoxLib._mint(state, _optionId, _toAddress, _amount, "", address(this));
-    emit LootBoxOpened(_optionId, _toAddress, _amount, totalMinted);
+    uint256 lastOpenedTokenId = CanaBoxLib._mint(state, _optionId, _toAddress, _amount, "", address(this));
+    emit LootBoxOpened(_optionId, _toAddress, _amount, lastOpenedTokenId);
   }
 
   /**

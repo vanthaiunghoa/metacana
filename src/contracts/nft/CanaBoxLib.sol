@@ -225,7 +225,8 @@ library CanaBoxLib {
 
     require(settings.maxQuantityPerOpen > 0, "CanaBoxLib#_mint:OPTION_NOT_ALLOWED");
 
-    uint256 totalMinted = 0;
+    // uint256 totalMinted = 0;
+    uint256 lastOpenedToken;
     // Iterate over the quantity of boxes specified
     for (uint256 i = 0; i < _amount; i++) {
       // Iterate over the box's set quantity
@@ -235,7 +236,7 @@ library CanaBoxLib {
         for (uint256 classId = 0; classId < settings.guarantees.length; classId++) {
           uint256 quantityOfGuaranteed = settings.guarantees[classId];
           if(quantityOfGuaranteed > 0) {
-            _sendTokenWithClass(_state, classId, _optionId, _toAddress, quantityOfGuaranteed, _owner);
+            lastOpenedToken = _sendTokenWithClass(_state, classId, _optionId, _toAddress, quantityOfGuaranteed, _owner);
             quantitySent += quantityOfGuaranteed;
           }
         }
@@ -245,16 +246,16 @@ library CanaBoxLib {
       while (quantitySent < settings.maxQuantityPerOpen) {
         uint256 quantityOfRandomized = 1;
         uint256 class = _pickRandomClass(_state, settings.classProbabilities);
-        _sendTokenWithClass(_state, _optionId, class, _toAddress, quantityOfRandomized, _owner);
+        lastOpenedToken = _sendTokenWithClass(_state, _optionId, class, _toAddress, quantityOfRandomized, _owner);
         quantitySent += quantityOfRandomized;
       }
 
-      totalMinted += quantitySent;
+      // totalMinted += quantitySent;
     }
 
     // Event emissions
     // emit LootBoxOpened(_optionId, _toAddress, _amount, totalMinted);
-    return totalMinted;
+    return lastOpenedToken;//totalMinted;
   }
 
   /////

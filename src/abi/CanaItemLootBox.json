@@ -53,7 +53,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "itemsMinted",
+        "name": "lastOpenedTokenId",
         "type": "uint256"
       }
     ],

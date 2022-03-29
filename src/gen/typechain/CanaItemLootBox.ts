@@ -286,7 +286,7 @@ export type LootBoxOpenedEvent = TypedEvent<
     optionId: BigNumber;
     buyer: string;
     boxesPurchased: BigNumber;
-    itemsMinted: BigNumber;
+    lastOpenedTokenId: BigNumber;
   }
 >;
 
@@ -964,13 +964,13 @@ export interface CanaItemLootBox extends BaseContract {
       optionId?: BigNumberish | null,
       buyer?: string | null,
       boxesPurchased?: null,
-      itemsMinted?: null
+      lastOpenedTokenId?: null
     ): LootBoxOpenedEventFilter;
     LootBoxOpened(
       optionId?: BigNumberish | null,
       buyer?: string | null,
       boxesPurchased?: null,
-      itemsMinted?: null
+      lastOpenedTokenId?: null
     ): LootBoxOpenedEventFilter;
 
     "OwnershipTransferred(address,address)"(

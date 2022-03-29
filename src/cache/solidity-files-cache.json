@@ -1203,8 +1203,8 @@
       ]
     },
     "/workspaces/farm/wip/simple-cana/src/contracts/nft/CanaItemLootBox.sol": {
-      "lastModificationDate": 1647587415044,
-      "contentHash": "3d0105a306afcd7c6d054f91a8e9f933",
+      "lastModificationDate": 1648544032659,
+      "contentHash": "a50de96b4f2fa826bb8c0d0b4628fadf",
       "sourceName": "contracts/nft/CanaItemLootBox.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1286,8 +1286,8 @@
       ]
     },
     "/workspaces/farm/wip/simple-cana/src/contracts/nft/CanaBoxLib.sol": {
-      "lastModificationDate": 1648021136954,
-      "contentHash": "c3c4ef47d7c3f1c822261233ac2fad01",
+      "lastModificationDate": 1648543836900,
+      "contentHash": "1993bd6a1f7b86aac0b2d76ad7172de6",
       "sourceName": "contracts/nft/CanaBoxLib.sol",
       "solcConfig": {
         "version": "0.8.6",
