@@ -26,8 +26,8 @@ contract Marketplace is Ownable {
     //rounds
     uint16[] public rounds; // rndId --> amount
     uint64[3] public times;
-    uint256 totalPrivate;
-    uint256 totalWhitelist;
+    uint256 public totalPrivate;
+    uint256 public totalWhitelist;
 
     mapping(address => uint256) public privateSales;
     mapping(address => uint256) public whitelistSales;
@@ -193,11 +193,12 @@ contract Marketplace is Ownable {
             require(privateSales[_msgSender()] == values[4] && values[3] == values[4] && values[3] > 0, 
                 string(abi.encodePacked(
                     "Marketplace:invalid_amount=",
-                    privateSales[_msgSender()], ",values[4]=", values[4], ",values[3]=",values[3]
+                    Strings.toString(privateSales[_msgSender()]), ",values[4]=", Strings.toString(values[4]), ",values[3]=",Strings.toString(values[3])
                 )));//'Marketplace:invalid_amount');
             require(addresses[2] == address(0), 'Marketplace:invalid_payment_address');                                   
         } else if(values[0] == 1){
             require(whitelistSales[_msgSender()] == values[4] && values[3] == values[4] && values[3] > 0, 'Marketplace:invalid_amount');
+            require(block.timestamp >= times[1] && block.timestamp <= times[2], 'Marketplace:not_in_whitelist_round');
         }       
 
         require(

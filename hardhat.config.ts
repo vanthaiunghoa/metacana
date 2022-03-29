@@ -39,7 +39,7 @@ const chainIds = {
   bsc_testnet:97
 };
 
-const MNEMONIC_DEFAULT = "test test test test test test test test test test test junk";
+const MNEMONIC_DEFAULT = "robust minute uncle switch notice hat nation trouble solution venture slot tonight";
 const MNEMONIC_LOCALHOST = process.env.MNEMONIC_LOCALHOST || MNEMONIC_DEFAULT;
 const MNEMONIC_TESTNET = process.env.MNEMONIC_TESTNET || MNEMONIC_DEFAULT;
 const MNEMONIC_MAINNET = process.env.MNEMONIC_MAINNET || "";
@@ -73,7 +73,7 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
   } else if (network === "bsc") {
     nodeUrl = "https://bsc-dataseed1.binance.org";
   }else if (network === "bsc_testnet") {
-    nodeUrl = "https://data-seed-prebsc-1-s2.binance.org:8545"; //"https://testnet.bscscan.com";
+    nodeUrl = "https://data-seed-prebsc-2-s2.binance.org:8545"; //"https://testnet.bscscan.com";
   }
 
   return {

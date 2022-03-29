@@ -23,6 +23,7 @@
     "size": "npx hardhat size-contracts",
     "export:abi":"yarn run hardhat export-abi",
     "coverage": "hardhat coverage",
+    "node":"npx hardhat node --hostname 0.0.0.0",
     "test:gas-report": "REPORT_GAS=true yarn test",
     "lint": "yarn lint:ts && yarn lint:sol",
     "lint:fix": "yarn lint:ts:fix && yarn lint:sol:fix",
@@ -80,7 +81,7 @@
     "@openzeppelin/test-helpers":"^0.5.15"
   },
   "config": {
-    "mnemonic": "test test test test test test test test test test test junk",
+    "mnemonic": "robust minute uncle switch notice hat nation trouble solution venture slot tonight",
     "ganacheNetworkID": 1337,
     "ganachePort": 8545,
     "ganacheGasLimit": "0xffffffffffff",

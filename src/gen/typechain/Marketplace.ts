@@ -41,6 +41,8 @@ export interface MarketplaceInterface extends utils.Interface {
     "setTransactionFee(uint256)": FunctionFragment;
     "setWhitelistBatch(address[],uint256[])": FunctionFragment;
     "times(uint256)": FunctionFragment;
+    "totalPrivate()": FunctionFragment;
+    "totalWhitelist()": FunctionFragment;
     "transactionFee()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "usedSignatures(bytes)": FunctionFragment;
@@ -139,6 +141,14 @@ export interface MarketplaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "times", values: [BigNumberish]): string;
   encodeFunctionData(
+    functionFragment: "totalPrivate",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalWhitelist",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "transactionFee",
     values?: undefined
   ): string;
@@ -221,6 +231,14 @@ export interface MarketplaceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "times", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalPrivate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalWhitelist",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transactionFee",
     data: BytesLike
@@ -419,6 +437,10 @@ export interface Marketplace extends BaseContract {
 
     times(arg0: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    totalPrivate(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    totalWhitelist(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     transactionFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferOwnership(
@@ -543,6 +565,10 @@ export interface Marketplace extends BaseContract {
 
   times(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
+  totalPrivate(overrides?: CallOverrides): Promise<BigNumber>;
+
+  totalWhitelist(overrides?: CallOverrides): Promise<BigNumber>;
+
   transactionFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferOwnership(
@@ -655,6 +681,10 @@ export interface Marketplace extends BaseContract {
     ): Promise<void>;
 
     times(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalPrivate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalWhitelist(overrides?: CallOverrides): Promise<BigNumber>;
 
     transactionFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -814,6 +844,10 @@ export interface Marketplace extends BaseContract {
 
     times(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
+    totalPrivate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalWhitelist(overrides?: CallOverrides): Promise<BigNumber>;
+
     transactionFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
@@ -947,6 +981,10 @@ export interface Marketplace extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalPrivate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    totalWhitelist(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transactionFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
