@@ -7,7 +7,7 @@ async function verify() {
       "Metacana",    
       "CanaBoxLib",
       "Marketplace",
-      "CanaItem",
+      "ERC1155",
       "CanaItemLootBox",
       "ItemFactory"       
     ];

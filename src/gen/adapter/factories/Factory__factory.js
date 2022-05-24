@@ -10,37 +10,8 @@ var _abi = [
         inputs: [
             {
                 internalType: "address",
-                name: "_owner",
-                type: "address"
-            },
-            {
-                internalType: "uint256",
-                name: "_optionId",
-                type: "uint256"
-            },
-        ],
-        name: "balanceOf",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256"
-            },
-        ],
-        stateMutability: "view",
-        type: "function"
-    },
-    {
-        inputs: [
-            {
-                internalType: "address",
                 name: "_toAddress",
                 type: "address"
-            },
-            {
-                internalType: "uint256",
-                name: "_optionId",
-                type: "uint256"
             },
             {
                 internalType: "uint256",
@@ -53,9 +24,15 @@ var _abi = [
                 type: "bytes"
             },
         ],
-        name: "mint",
-        outputs: [],
-        stateMutability: "nonpayable",
+        name: "autoIdCreate",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256"
+            },
+        ],
+        stateMutability: "view",
         type: "function"
     },
 ];

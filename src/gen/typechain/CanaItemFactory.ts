@@ -23,6 +23,7 @@ export interface CanaItemFactoryInterface extends utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "NUM_LOOTBOX_OPTIONS()": FunctionFragment;
     "NUM_OPTIONS()": FunctionFragment;
+    "autoIdCreate(address,uint256,bytes)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "canMint(uint256,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -57,6 +58,10 @@ export interface CanaItemFactoryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "NUM_OPTIONS",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "autoIdCreate",
+    values: [string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
@@ -141,6 +146,10 @@ export interface CanaItemFactoryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "NUM_OPTIONS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "autoIdCreate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -266,6 +275,13 @@ export interface CanaItemFactory extends BaseContract {
 
     NUM_OPTIONS(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    autoIdCreate(
+      _toAddress: string,
+      _amount: BigNumberish,
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     balanceOf(
       _owner: string,
       _optionId: BigNumberish,
@@ -363,6 +379,13 @@ export interface CanaItemFactory extends BaseContract {
 
   NUM_OPTIONS(overrides?: CallOverrides): Promise<BigNumber>;
 
+  autoIdCreate(
+    _toAddress: string,
+    _amount: BigNumberish,
+    _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   balanceOf(
     _owner: string,
     _optionId: BigNumberish,
@@ -459,6 +482,13 @@ export interface CanaItemFactory extends BaseContract {
     NUM_LOOTBOX_OPTIONS(overrides?: CallOverrides): Promise<BigNumber>;
 
     NUM_OPTIONS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    autoIdCreate(
+      _toAddress: string,
+      _amount: BigNumberish,
+      _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     balanceOf(
       _owner: string,
@@ -597,6 +627,13 @@ export interface CanaItemFactory extends BaseContract {
 
     NUM_OPTIONS(overrides?: CallOverrides): Promise<BigNumber>;
 
+    autoIdCreate(
+      _toAddress: string,
+      _amount: BigNumberish,
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     balanceOf(
       _owner: string,
       _optionId: BigNumberish,
@@ -701,6 +738,13 @@ export interface CanaItemFactory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     NUM_OPTIONS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    autoIdCreate(
+      _toAddress: string,
+      _amount: BigNumberish,
+      _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     balanceOf(
       _owner: string,

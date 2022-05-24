@@ -3,16 +3,20 @@
 /* eslint-disable */
 export type { Metacana } from "./Metacana";
 export type { Factory } from "./Factory";
+export type { CanaERC1155 } from "./CanaERC1155";
 export type { CanaItem } from "./CanaItem";
 export type { CanaItemFactory } from "./CanaItemFactory";
 export type { CanaItemLootBox } from "./CanaItemLootBox";
 export type { Marketplace } from "./Marketplace";
+export type { VLootBox } from "./VLootBox";
 export type { TestForReentrancyAttack } from "./TestForReentrancyAttack";
 
 export { Metacana__factory } from "./factories/Metacana__factory";
 export { Factory__factory } from "./factories/Factory__factory";
+export { CanaERC1155__factory } from "./factories/CanaERC1155__factory";
 export { CanaItem__factory } from "./factories/CanaItem__factory";
 export { CanaItemFactory__factory } from "./factories/CanaItemFactory__factory";
 export { CanaItemLootBox__factory } from "./factories/CanaItemLootBox__factory";
 export { Marketplace__factory } from "./factories/Marketplace__factory";
+export { VLootBox__factory } from "./factories/VLootBox__factory";
 export { TestForReentrancyAttack__factory } from "./factories/TestForReentrancyAttack__factory";

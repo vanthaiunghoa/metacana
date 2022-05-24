@@ -8,7 +8,8 @@ import "@openzeppelin/contracts/utils/Multicall.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import '@openzeppelin/contracts/utils/Strings.sol';
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import './CanaItem.sol';
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import './CanaERC1155.sol';
 
 /**
  * @title CanaItemFactory
@@ -75,6 +76,19 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
     return _canMint(_msgSender(), _optionId, _amount);
   }
 
+
+  /**
+   * @dev Auto-generate id and mint NFT with it, just for the accessory only!
+   */
+  function autoIdCreate(
+    address _toAddress,    
+    uint256 _amount,
+    bytes calldata _data
+  ) public nonReentrant returns (uint256){
+    CanaERC1155 items = CanaERC1155(nftAddress);
+    return items.autoIdCreate(_toAddress, "", _amount, _data);
+  }
+
   function mint(
     address _toAddress,
     uint256 _optionId,
@@ -93,28 +107,36 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
     uint256 _amount,
     bytes memory _data
   ) internal {
-    require(_canMint(_msgSender(), _option, _amount), 'CanaItemFactory#_mint: CANNOT_MINT_MORE');
-    if (_option < NUM_ITEM_OPTIONS) {
-      require(_isOwnerOrProxy(_msgSender()) || _msgSender() == lootBoxAddress, 'Caller cannot mint accessories');
-      // Items are pre-mined (by the owner), so transfer them (We are an
-      // operator for the owner).
-      CanaItem items = CanaItem(nftAddress);
-      // Option is used as a token ID here
-      items.safeTransferFrom(owner(), _toAddress, _option, _amount, _data);
-    } else if (_option < NUM_OPTIONS) {
-      require(_isOwnerOrProxy(_msgSender()), 'Caller cannot mint boxes');
-      uint256 lootBoxOption = _option - NUM_ITEM_OPTIONS;
-      // LootBoxes are not premined, so we need to create or mint them.
-      // lootBoxOption is used as a token ID here.
-      _createOrMint(lootBoxAddress, _toAddress, lootBoxOption, _amount, _data);
+    bool isItem = IERC1155(lootBoxAddress).supportsInterface(0xd9b67a26);
+    require(isItem || _canMint(_msgSender(), _option, _amount), 'CanaItemFactory#_mint: CANNOT_MINT_MORE');
+    if(isItem){
+      if (_option < NUM_ITEM_OPTIONS) {
+        require(_isOwnerOrProxy(_msgSender()) || _msgSender() == lootBoxAddress, 'Caller cannot mint accessories');
+        // Items are pre-mined (by the owner), so transfer them (We are an
+        // operator for the owner).
+        CanaERC1155 items = CanaERC1155(nftAddress);
+        // Option is used as a token ID here
+        items.safeTransferFrom(owner(), _toAddress, _option, _amount, _data);
+      } else if (_option < NUM_OPTIONS) {
+        require(_isOwnerOrProxy(_msgSender()), 'Caller cannot mint boxes');
+        uint256 lootBoxOption = _option - NUM_ITEM_OPTIONS;
+        // LootBoxes are not premined, so we need to create or mint them.
+        // lootBoxOption is used as a token ID here.
+        _createOrMint(lootBoxAddress, _toAddress, lootBoxOption, _amount, _data);
+      } else {
+        revert('Unknown _option');
+      }
     } else {
-      revert('Unknown _option');
-    }
+      //Should check if mint (CH) or create a new Id (IS)
+      require(_isOwnerOrProxy(_msgSender()), 'Caller cannot mint boxes');
+      uint256 lootBoxOption = _option - NUM_ITEM_OPTIONS;     
+      _createOrMint(nftAddress, _toAddress, lootBoxOption, _amount, _data);
+    }   
   }
 
   /*
    * Note: make sure code that calls this is non-reentrant.
-   * Note: this is the token _id *within* the ERC1155 contract, not the option
+   * Note: this is the token _id *within* the CanaERC1155 contract, not the option
    *       id from this contract.
    */
   function _createOrMint(
@@ -124,12 +146,13 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
     uint256 _amount,
     bytes memory _data
   ) internal {
-    CanaItem tradable = CanaItem(_erc1155Address);
+    CanaERC1155 tradable = CanaERC1155(_erc1155Address);
     // Lazily create the token
-    if (!tradable.exists(_id)) {
-      tradable.create(_to, _id, _amount, _data);
+    if (!tradable.exists(_id)) {//Lootbox must be pre-created
+      // tradable.create(_to, _id, _amount, _data);
+      uint256 tokenId = tradable.autoIdCreate(_to, _id, _amount, _data);
     } else {
-      tradable.mint(_to, _id, _amount, _data);
+      tradable.mint(_to, _id, _amount, _data); //->CH
     }
   }
 
@@ -137,6 +160,8 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
    * Get the factory's ownership of Option.
    * Should be the amount it can still mint.
    * NOTE: Called by `canMint`
+   * Meta: 0x0e89341c
+   * Main: 0xd9b67a26--> check IERC1155(contractAddress).supportsInterface(0xd9b67a26)
    */
   function balanceOf(address _owner, uint256 _optionId) public view returns (uint256) {
     if (_optionId < NUM_ITEM_OPTIONS) {
@@ -146,7 +171,7 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
         return 0;
       }
       // The pre-minted balance belongs to the address that minted this contract
-      CanaItem lootBox = CanaItem(nftAddress);
+      CanaERC1155 lootBox = CanaERC1155(nftAddress);
       // OptionId is used as a token ID here
       uint256 currentSupply = lootBox.balanceOf(owner(), _optionId);
       return currentSupply;
@@ -157,7 +182,7 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
       }
       // We explicitly calculate the token ID here
       uint256 tokenId = (_optionId - NUM_ITEM_OPTIONS);
-      CanaItem lootBox = CanaItem(lootBoxAddress);
+      CanaERC1155 lootBox = CanaERC1155(lootBoxAddress);
       uint256 currentSupply = lootBox.totalSupply(tokenId);
       // We can mint up to a balance of SUPPLY_PER_TOKEN_ID
       return SUPPLY_PER_TOKEN_ID.sub(currentSupply);
@@ -170,7 +195,7 @@ contract CanaItemFactory is Ownable, ReentrancyGuard, AccessControlEnumerable, M
     uint256 _amount
   ) internal view returns (bool) {
         
-    return _amount > 0 && balanceOf(_fromAddress, _optionId) >= _amount ;
+    return (_amount > 0 && balanceOf(_fromAddress, _optionId) >= _amount) ;
   }
 
   function _isOwnerOrProxy(address _address) internal view returns (bool) {

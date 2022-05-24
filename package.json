@@ -19,7 +19,9 @@
     "script:prebsc": "npx hardhat run --network bsc_testnet",
     "script:bsc": "npx hardhat run --network bsc",
     "deploy:bsc": "npx hardhat --network bsc run ./scripts/deploy/deploy.ts",
-    "deploy:bsc-testnet": "./scripts/deploy/console.sh bsc_testnet",
+    "deploy:bsc_testnet": "./scripts/deploy/console.sh bsc_testnet",
+    "deploy:avax": "npx hardhat --network avax run ./scripts/deploy/deploy.ts",
+    "deploy:avax_testnet": "./scripts/deploy/console.sh avax_testnet",
     "size": "npx hardhat size-contracts",
     "export:abi":"yarn run hardhat export-abi",
     "coverage": "hardhat coverage",
@@ -90,7 +92,7 @@
     "extra": ""
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.5.0",
+    "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.4.2"
   }
 }

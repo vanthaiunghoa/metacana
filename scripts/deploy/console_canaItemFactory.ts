@@ -3,8 +3,8 @@ import hre, { ethers } from "hardhat";
 // Types
 import { Contract, ContractFactory } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import nftAddresses from "../../utils/addresses/console_canaItem.json";
-import lootboxAddresses from "../../utils/addresses/console_canaItemLootBox.json";
+import canaItems from "../../utils/addresses/console_canaItem.json";
+import lootchestAddresses from "../../utils/addresses/console_canaItemLootChest.json";
 import apAddresses from "../../utils/addresses/console_canaItemFactory.json";
 import { setupCreatureAccessories } from "../../scripts/lib/setupCreatureAccessories"
 import * as fs from "fs";
@@ -21,32 +21,32 @@ async function main(): Promise<void> {
   const networkName: string = hre.network.name;    
   
   const apAddress = apAddresses[networkName as keyof typeof apAddresses];
-  const nftAddress = nftAddresses[networkName as keyof typeof nftAddresses];
-  const lootboxAddress = lootboxAddresses[networkName as keyof typeof lootboxAddresses];
+  const canaItem = canaItems[networkName as keyof typeof canaItems];
+  const lootchestAddress = lootchestAddresses[networkName as keyof typeof lootchestAddresses];
   
-  console.log(`(nftAddress as any).canaItem == ${(nftAddress as any).canaItem}`)
-  console.log(`(lootboxAddress as any).CanaItemLootBox == ${(lootboxAddress as any).canaItemLootBox}`)
-  console.log(`(lootboxAddress as any).canaBoxLib == ${(lootboxAddress as any).canaBoxLib}`)
+  console.log(`(canaItem as any).canaItem == ${(canaItem as any).canaItem}`)
+  console.log(`(lootchestAddress as any).canaItemLootChest == ${(lootchestAddress as any).canaItemLootChest}`)
+  console.log(`(lootchestAddress as any).canaBoxLib == ${(lootchestAddress as any).canaBoxLib}`)
 
-  const CanaItemFactory_Factory: ContractFactory = await ethers.getContractFactory("CanaItemFactory");
-  const canaItemFactory: Contract = await CanaItemFactory_Factory.deploy(
-    (nftAddress as any).canaItem,
-    (lootboxAddress as any).canaItemLootBox
+  const canaItemFactory_Factory: ContractFactory = await ethers.getContractFactory("CanaItemFactory");
+  const canaItemFactory: Contract = await canaItemFactory_Factory.deploy(
+    (canaItem as any).canaItem,
+    (lootchestAddress as any).canaItemLootChest
     );
 
   console.log(`Deploying CanaItemFactory: ${canaItemFactory.address} at tx hash: ${canaItemFactory.deployTransaction.hash}`);
 
   await canaItemFactory.deployed();  
-  const nftContractFact = await ethers.getContractFactory("CanaItem");
-  const nftContract = await nftContractFact.attach((nftAddress as any).canaItem);  
-  const lootBoxContractFact = await ethers.getContractFactory("CanaItemLootBox",{
+  const canaItemContractFact = await ethers.getContractFactory("ERC1155");
+  const canaItemContract = await canaItemContractFact.attach((canaItem as any).canaItem);  
+  const lootChestContractFact = await ethers.getContractFactory("CanaItemLootBox",{
     libraries: {
-      CanaBoxLib: (lootboxAddress as any).canaBoxLib,
+      CanaBoxLib: (lootchestAddress as any).canaBoxLib,
     },
   });
-  const lootBoxContract = await lootBoxContractFact.attach((lootboxAddress as any).canaItemLootBox);
+  const lootChestContract = await lootChestContractFact.attach((lootchestAddress as any).canaItemLootChest);
   console.log(`Done deploying all stuffs and ready to setup lootbox`);
-  await setupCreatureAccessories(nftContract, canaItemFactory, lootBoxContract, process.env.OWNER_ADDRESS)
+  await setupCreatureAccessories(canaItemContract, canaItemFactory, lootChestContract, process.env.OWNER_ADDRESS)
 
   const updatedAddresses = {
     ...apAddresses,

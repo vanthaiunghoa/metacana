@@ -13,7 +13,7 @@ import {
 
 /* Contracts in this test */
 import {   
-  CanaItem,
+  ERC1155,
   CanaItemFactory,
   CanaItemLootBox,
   TestForReentrancyAttack
@@ -48,8 +48,8 @@ describe("CanaItemFactory", () => {
   let ownerAddress: string ; 
   let userAddress: string;
   let signers: any;
-  let canaItem: CanaItem;
-  let userCanaItem: CanaItem;
+  let canaItem: ERC1155;
+  let userCanaItem: ERC1155;
   let canaItemLootBox: CanaItemLootBox;
   let canaItemFactory: CanaItemFactory;
   let userCanaItemFactory: CanaItemFactory;
@@ -62,9 +62,9 @@ describe("CanaItemFactory", () => {
     // signers = await ethers.getSigners();    
 
     const _canaItemFactory: ContractFactory = await ethers.getContractFactory(
-      "CanaItem"
+      "ERC1155"
     )
-    canaItem = (await _canaItemFactory.deploy()) as CanaItem;
+    canaItem = (await _canaItemFactory.deploy()) as ERC1155;
     await canaItem.deployed();
     userCanaItem = await canaItem.connect(userSigner);
     

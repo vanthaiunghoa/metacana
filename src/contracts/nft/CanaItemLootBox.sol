@@ -4,22 +4,32 @@ pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./CanaItem.sol";
+import "./CanaERC1155.sol";
 import "./CanaBoxLib.sol";
 
+
+abstract contract LootBox {
+    function unpack(
+    uint256 _optionId,
+    address _toAddress, //0 -> final one, #0 -> unpack -> unpack
+    uint256 _amount
+  ) external returns (uint256 attId, uint256 classId);
+}
 
 /**
  * @title CanaItemLootBox
  * CanaItemLootBox - a randomized and openable lootbox of Creature
  * Accessories. We may need to set range for minting tokens
  */
-contract CanaItemLootBox is CanaItem, ReentrancyGuard {
+contract CanaItemLootBox is CanaERC1155, ReentrancyGuard {
   using CanaBoxLib for CanaBoxLib.LootBoxRandomnessState;
   using SafeMath for uint256;
 
-  event LootBoxOpened(uint256 indexed optionId, address indexed buyer, uint256 boxesPurchased, uint256 lastOpenedTokenId/*itemsMinted*/);
+  event LootBoxOpened(uint256 indexed optionId, address indexed buyer, uint256 boxesPurchased, uint256 tokenId, uint256 classId, uint256 attId);
 
   CanaBoxLib.LootBoxRandomnessState state;
+
+  
 
   /**
    * @dev Example constructor. Sets minimal configuration.
@@ -28,7 +38,7 @@ contract CanaItemLootBox is CanaItem, ReentrancyGuard {
    *                              On mainnet: 
    */
   constructor()
-  CanaItem(    
+  CanaERC1155(    
   ) {}
 
   function setState(
@@ -52,9 +62,10 @@ contract CanaItemLootBox is CanaItem, ReentrancyGuard {
     uint256 _option,
     uint256 _maxQuantityPerOpen,
     uint16[] memory _classProbabilities,
-    uint16[] memory _guarantees
+    uint16[] memory _guarantees,
+    int16[] memory _maxPerClass
   ) public onlyOwner {
-    CanaBoxLib.setOptionSettings(state, _option, _maxQuantityPerOpen, _classProbabilities, _guarantees);
+    CanaBoxLib.setOptionSettings(state, _option, _maxQuantityPerOpen, _classProbabilities, _guarantees, _maxPerClass);
   }
 
   ///////
@@ -68,9 +79,14 @@ contract CanaItemLootBox is CanaItem, ReentrancyGuard {
   ) external {
     // This will underflow if _msgSender() does not own enough tokens.
     _burn(_msgSender(), _optionId, _amount);
-    // Mint nfts contained by LootBox
-    uint256 lastOpenedTokenId = CanaBoxLib._mint(state, _optionId, _toAddress, _amount, "", address(this));
-    emit LootBoxOpened(_optionId, _toAddress, _amount, lastOpenedTokenId);
+    
+    // Mint nfts contained by LootBox   
+    Factory factory = Factory(state.factoryAddress); 
+    (uint256 attId, uint256 classId) = CanaBoxLib._mint(state, _optionId, /*_toAddress,*/ _amount, ""/*, address(this)*/);
+    uint256 tokenId = factory.autoIdCreate(_toAddress, _amount, "");
+    //--> v-unpack (attId)
+    emit LootBoxOpened(_optionId, _toAddress, _amount, tokenId, classId, attId);
+    
   }
 
   /**

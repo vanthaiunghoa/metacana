@@ -22,19 +22,32 @@ export interface CanaItemInterface extends utils.Interface {
   functions: {
     "addApprovalWhitelist(address)": FunctionFragment;
     "approvalWhitelists(address)": FunctionFragment;
+    "autoIdCreate(address,string,uint256,bytes)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "burn(uint256,uint256)": FunctionFragment;
     "burnBatch(address,uint256[],uint256[])": FunctionFragment;
     "create(address,uint256,uint256,bytes)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
+    "getDaysBetweenGenesisMint()": FunctionFragment;
+    "getDaysBetweenOrdinaryMint()": FunctionFragment;
+    "getMaxNumGenesisMint()": FunctionFragment;
+    "getMaxNumOrdinaryMint()": FunctionFragment;
+    "getMinLevelRequiredGenesisToMint()": FunctionFragment;
+    "getMinLevelRequiredOrdinaryToMint()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
+    "isGenesis(uint256)": FunctionFragment;
     "isLocked(uint256)": FunctionFragment;
+    "lastMintTime(uint256)": FunctionFragment;
+    "levels(uint256)": FunctionFragment;
     "lock(uint256)": FunctionFragment;
     "lockedTokens(uint256)": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
     "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
+    "nature(uint256)": FunctionFragment;
+    "nextTokenId()": FunctionFragment;
+    "numOfMint(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
@@ -43,8 +56,16 @@ export interface CanaItemInterface extends utils.Interface {
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setBaseURI(string)": FunctionFragment;
+    "setDaysBetweenGenesisMint(uint8)": FunctionFragment;
+    "setDaysBetweenOrdinaryMint(uint8)": FunctionFragment;
+    "setMaxNumGenesisMint(uint8)": FunctionFragment;
+    "setMaxNumOrdinaryMint(uint8)": FunctionFragment;
+    "setMinLevelRequiredGenesisToMint(uint8)": FunctionFragment;
+    "setMinLevelRequiredOrdinaryToMint(uint8)": FunctionFragment;
     "setURI(string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "totalGenesis()": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unlock(uint256)": FunctionFragment;
@@ -59,6 +80,10 @@ export interface CanaItemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "approvalWhitelists",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "autoIdCreate",
+    values: [string, string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
@@ -85,11 +110,47 @@ export interface CanaItemInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getDaysBetweenGenesisMint",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDaysBetweenOrdinaryMint",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMaxNumGenesisMint",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMaxNumOrdinaryMint",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMinLevelRequiredGenesisToMint",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMinLevelRequiredOrdinaryToMint",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "isGenesis",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isLocked",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lastMintTime",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "levels",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "lock", values: [BigNumberish]): string;
@@ -108,6 +169,18 @@ export interface CanaItemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "multicall",
     values: [BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nature",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nextTokenId",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "numOfMint",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -132,10 +205,39 @@ export interface CanaItemInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
   ): string;
+  encodeFunctionData(functionFragment: "setBaseURI", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setDaysBetweenGenesisMint",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setDaysBetweenOrdinaryMint",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxNumGenesisMint",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxNumOrdinaryMint",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinLevelRequiredGenesisToMint",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinLevelRequiredOrdinaryToMint",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "setURI", values: [string]): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalGenesis",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -160,6 +262,10 @@ export interface CanaItemInterface extends utils.Interface {
     functionFragment: "approvalWhitelists",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "autoIdCreate",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
@@ -170,10 +276,40 @@ export interface CanaItemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getDaysBetweenGenesisMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDaysBetweenOrdinaryMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxNumGenesisMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxNumOrdinaryMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMinLevelRequiredGenesisToMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMinLevelRequiredOrdinaryToMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "isGenesis", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isLocked", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "lastMintTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "levels", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lockedTokens",
@@ -182,6 +318,12 @@ export interface CanaItemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nature", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "nextTokenId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "numOfMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -205,9 +347,38 @@ export interface CanaItemInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setBaseURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setDaysBetweenGenesisMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setDaysBetweenOrdinaryMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxNumGenesisMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxNumOrdinaryMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinLevelRequiredGenesisToMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinLevelRequiredOrdinaryToMint",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalGenesis",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -224,6 +395,7 @@ export interface CanaItemInterface extends utils.Interface {
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "Created(address,address,uint256,string)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
@@ -233,6 +405,7 @@ export interface CanaItemInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Created"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
@@ -247,6 +420,13 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export type CreatedEvent = TypedEvent<
+  [string, string, BigNumber, string],
+  { creator: string; to: string; tokenId: BigNumber; tokenURI: string }
+>;
+
+export type CreatedEventFilter = TypedEventFilter<CreatedEvent>;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string],
@@ -335,6 +515,14 @@ export interface CanaItem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    autoIdCreate(
+      _to: string,
+      _uri: string,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -383,16 +571,44 @@ export interface CanaItem extends BaseContract {
 
     exists(id: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
 
+    getDaysBetweenGenesisMint(overrides?: CallOverrides): Promise<[number]>;
+
+    getDaysBetweenOrdinaryMint(overrides?: CallOverrides): Promise<[number]>;
+
+    getMaxNumGenesisMint(overrides?: CallOverrides): Promise<[number]>;
+
+    getMaxNumOrdinaryMint(overrides?: CallOverrides): Promise<[number]>;
+
+    getMinLevelRequiredGenesisToMint(
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
+    getMinLevelRequiredOrdinaryToMint(
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
     isApprovedForAll(
       _owner: string,
       _operator: string,
       overrides?: CallOverrides
     ): Promise<[boolean] & { isOperator: boolean }>;
 
+    isGenesis(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     isLocked(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    lastMintTime(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    levels(arg0: BigNumberish, overrides?: CallOverrides): Promise<[number]>;
 
     lock(
       tokenId: BigNumberish,
@@ -424,6 +640,12 @@ export interface CanaItem extends BaseContract {
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    nature(arg0: BigNumberish, overrides?: CallOverrides): Promise<[number]>;
+
+    nextTokenId(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    numOfMint(arg0: BigNumberish, overrides?: CallOverrides): Promise<[number]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -466,8 +688,49 @@ export interface CanaItem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setURI(
+    setBaseURI(
+      baseURI: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setDaysBetweenGenesisMint(
+      _days: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setDaysBetweenOrdinaryMint(
+      _days: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxNumGenesisMint(
+      _max: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxNumOrdinaryMint(
+      _max: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinLevelRequiredGenesisToMint(
+      _min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinLevelRequiredOrdinaryToMint(
+      _min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setURI(string)"(
       newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setURI(uint256,string)"(
+      tokenId: BigNumberish,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -475,6 +738,8 @@ export interface CanaItem extends BaseContract {
       _interfaceID: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    totalGenesis(overrides?: CallOverrides): Promise<[number]>;
 
     totalSupply(
       id: BigNumberish,
@@ -495,7 +760,7 @@ export interface CanaItem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
   };
 
   addApprovalWhitelist(
@@ -504,6 +769,14 @@ export interface CanaItem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   approvalWhitelists(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+  autoIdCreate(
+    _to: string,
+    _uri: string,
+    amount: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   balanceOf(
     account: string,
@@ -553,13 +826,34 @@ export interface CanaItem extends BaseContract {
 
   exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
+  getDaysBetweenGenesisMint(overrides?: CallOverrides): Promise<number>;
+
+  getDaysBetweenOrdinaryMint(overrides?: CallOverrides): Promise<number>;
+
+  getMaxNumGenesisMint(overrides?: CallOverrides): Promise<number>;
+
+  getMaxNumOrdinaryMint(overrides?: CallOverrides): Promise<number>;
+
+  getMinLevelRequiredGenesisToMint(overrides?: CallOverrides): Promise<number>;
+
+  getMinLevelRequiredOrdinaryToMint(overrides?: CallOverrides): Promise<number>;
+
   isApprovedForAll(
     _owner: string,
     _operator: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  isGenesis(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
   isLocked(tokenId: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
+  lastMintTime(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  levels(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
   lock(
     tokenId: BigNumberish,
@@ -588,6 +882,12 @@ export interface CanaItem extends BaseContract {
     data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  nature(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
+
+  nextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
+  numOfMint(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -630,8 +930,49 @@ export interface CanaItem extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setURI(
+  setBaseURI(
+    baseURI: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setDaysBetweenGenesisMint(
+    _days: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setDaysBetweenOrdinaryMint(
+    _days: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxNumGenesisMint(
+    _max: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxNumOrdinaryMint(
+    _max: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinLevelRequiredGenesisToMint(
+    _min: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinLevelRequiredOrdinaryToMint(
+    _min: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setURI(string)"(
     newuri: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setURI(uint256,string)"(
+    tokenId: BigNumberish,
+    _tokenURI: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -639,6 +980,8 @@ export interface CanaItem extends BaseContract {
     _interfaceID: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  totalGenesis(overrides?: CallOverrides): Promise<number>;
 
   totalSupply(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -656,7 +999,7 @@ export interface CanaItem extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     addApprovalWhitelist(
@@ -668,6 +1011,14 @@ export interface CanaItem extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    autoIdCreate(
+      _to: string,
+      _uri: string,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     balanceOf(
       account: string,
@@ -717,16 +1068,41 @@ export interface CanaItem extends BaseContract {
 
     exists(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
+    getDaysBetweenGenesisMint(overrides?: CallOverrides): Promise<number>;
+
+    getDaysBetweenOrdinaryMint(overrides?: CallOverrides): Promise<number>;
+
+    getMaxNumGenesisMint(overrides?: CallOverrides): Promise<number>;
+
+    getMaxNumOrdinaryMint(overrides?: CallOverrides): Promise<number>;
+
+    getMinLevelRequiredGenesisToMint(
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    getMinLevelRequiredOrdinaryToMint(
+      overrides?: CallOverrides
+    ): Promise<number>;
+
     isApprovedForAll(
       _owner: string,
       _operator: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    isGenesis(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
     isLocked(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    lastMintTime(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    levels(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
     lock(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -752,6 +1128,12 @@ export interface CanaItem extends BaseContract {
     ): Promise<void>;
 
     multicall(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+
+    nature(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
+
+    nextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    numOfMint(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -790,12 +1172,52 @@ export interface CanaItem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setURI(newuri: string, overrides?: CallOverrides): Promise<void>;
+    setBaseURI(baseURI: string, overrides?: CallOverrides): Promise<void>;
+
+    setDaysBetweenGenesisMint(
+      _days: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setDaysBetweenOrdinaryMint(
+      _days: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxNumGenesisMint(
+      _max: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxNumOrdinaryMint(
+      _max: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinLevelRequiredGenesisToMint(
+      _min: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinLevelRequiredOrdinaryToMint(
+      _min: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setURI(string)"(newuri: string, overrides?: CallOverrides): Promise<void>;
+
+    "setURI(uint256,string)"(
+      tokenId: BigNumberish,
+      _tokenURI: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     supportsInterface(
       _interfaceID: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    totalGenesis(overrides?: CallOverrides): Promise<number>;
 
     totalSupply(
       id: BigNumberish,
@@ -811,7 +1233,7 @@ export interface CanaItem extends BaseContract {
 
     unpause(overrides?: CallOverrides): Promise<void>;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -825,6 +1247,19 @@ export interface CanaItem extends BaseContract {
       operator?: string | null,
       approved?: null
     ): ApprovalForAllEventFilter;
+
+    "Created(address,address,uint256,string)"(
+      creator?: string | null,
+      to?: string | null,
+      tokenId?: null,
+      tokenURI?: null
+    ): CreatedEventFilter;
+    Created(
+      creator?: string | null,
+      to?: string | null,
+      tokenId?: null,
+      tokenURI?: null
+    ): CreatedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -889,6 +1324,14 @@ export interface CanaItem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    autoIdCreate(
+      _to: string,
+      _uri: string,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -937,9 +1380,30 @@ export interface CanaItem extends BaseContract {
 
     exists(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
+    getDaysBetweenGenesisMint(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getDaysBetweenOrdinaryMint(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMaxNumGenesisMint(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMaxNumOrdinaryMint(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMinLevelRequiredGenesisToMint(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMinLevelRequiredOrdinaryToMint(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       _owner: string,
       _operator: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isGenesis(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -947,6 +1411,13 @@ export interface CanaItem extends BaseContract {
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    lastMintTime(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    levels(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     lock(
       tokenId: BigNumberish,
@@ -977,6 +1448,15 @@ export interface CanaItem extends BaseContract {
     multicall(
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    nature(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    nextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    numOfMint(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1020,8 +1500,49 @@ export interface CanaItem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setURI(
+    setBaseURI(
+      baseURI: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setDaysBetweenGenesisMint(
+      _days: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setDaysBetweenOrdinaryMint(
+      _days: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMaxNumGenesisMint(
+      _max: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMaxNumOrdinaryMint(
+      _max: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMinLevelRequiredGenesisToMint(
+      _min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMinLevelRequiredOrdinaryToMint(
+      _min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setURI(string)"(
       newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setURI(uint256,string)"(
+      tokenId: BigNumberish,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1029,6 +1550,8 @@ export interface CanaItem extends BaseContract {
       _interfaceID: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalGenesis(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(
       id: BigNumberish,
@@ -1049,7 +1572,7 @@ export interface CanaItem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1061,6 +1584,14 @@ export interface CanaItem extends BaseContract {
     approvalWhitelists(
       arg0: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    autoIdCreate(
+      _to: string,
+      _uri: string,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     balanceOf(
@@ -1114,14 +1645,53 @@ export interface CanaItem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getDaysBetweenGenesisMint(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getDaysBetweenOrdinaryMint(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMaxNumGenesisMint(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMaxNumOrdinaryMint(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMinLevelRequiredGenesisToMint(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMinLevelRequiredOrdinaryToMint(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isApprovedForAll(
       _owner: string,
       _operator: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    isGenesis(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isLocked(
       tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lastMintTime(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    levels(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1154,6 +1724,18 @@ export interface CanaItem extends BaseContract {
     multicall(
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    nature(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    nextTokenId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    numOfMint(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1197,8 +1779,49 @@ export interface CanaItem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setURI(
+    setBaseURI(
+      baseURI: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setDaysBetweenGenesisMint(
+      _days: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setDaysBetweenOrdinaryMint(
+      _days: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxNumGenesisMint(
+      _max: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxNumOrdinaryMint(
+      _max: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinLevelRequiredGenesisToMint(
+      _min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinLevelRequiredOrdinaryToMint(
+      _min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setURI(string)"(
       newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setURI(uint256,string)"(
+      tokenId: BigNumberish,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1206,6 +1829,8 @@ export interface CanaItem extends BaseContract {
       _interfaceID: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalGenesis(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(
       id: BigNumberish,
@@ -1227,7 +1852,7 @@ export interface CanaItem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     uri(
-      arg0: BigNumberish,
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

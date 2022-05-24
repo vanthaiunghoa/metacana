@@ -23,6 +23,9 @@ contract Marketplace is Ownable {
     // Address to receive transaction fee
     address public feeToAddress;
     uint256 public transactionFee;
+
+    uint256 public mintFee;
+    uint256 public fusionFee;
     //rounds
     uint16[] public rounds; // rndId --> amount
     uint64[3] public times;
@@ -54,6 +57,14 @@ contract Marketplace is Ownable {
         transactionFee = _transactionFee;
     }
 
+    function setMintFee(uint256 _mintFee) external onlyOwner {
+        mintFee = _mintFee;
+    }
+
+    function setFusionFee(uint256 _fusionFee) external onlyOwner {
+        fusionFee = _fusionFee;
+    }
+
     function setRounds(uint16[] calldata _rounds) external onlyOwner {
         rounds = _rounds;
     }
@@ -62,9 +73,9 @@ contract Marketplace is Ownable {
     function _setPrivate(address recv, uint256 amount) internal onlyOwner {
         require(block.timestamp < times[1] && block.timestamp >= times[0], 'Marketplace#setPrivate:not_in_private_sale');
         require(amount > 0, 'Marketplace#setPrivate:amount_must_be_greater_than_0');
-        require(totalPrivate + amount <= rounds[0], 'Marketplace#setPrivate:round_is_fulfilled');
+        require(totalPrivate.add(amount) <= rounds[0], 'Marketplace#setPrivate:round_is_fulfilled');
         privateSales[recv] = amount;
-        totalPrivate += amount;
+        totalPrivate = totalPrivate.add(amount);
     }
 
     function _removePrivate(address recv) internal onlyOwner {
@@ -83,7 +94,7 @@ contract Marketplace is Ownable {
     function _setWhitelist(address recv, uint256 amount) internal onlyOwner {
         require(block.timestamp >= times[1] && block.timestamp <= times[2], 'Marketplace#not_in_whitelist_sale');
         require(amount > 0, 'Marketplace#setWhitelist:amount_must_be_greater_than_0');
-        require(totalWhitelist + amount <= rounds[1], 'Marketplace#setWhitelist:round_is_fulfilled');
+        require(totalWhitelist.add(amount) <= rounds[1], 'Marketplace#setWhitelist:round_is_fulfilled');
         whitelistSales[recv] = amount;
     }
 
@@ -103,7 +114,7 @@ contract Marketplace is Ownable {
         require(recvs.length == amounts.length, 'Marketplace#setPrivateBatch:length_mismatched');
         uint256 _amounts = amounts[0];
         for(uint256 i = 1; i < recvs.length; i++){
-            _amounts += amounts[i];
+            _amounts = _amounts.add(amounts[i]);
         }
         require(totalPrivate + _amounts <= rounds[1], 'Marketplace#setPrivateBatch:round_is_fulfilled');
         for(uint256 i = 0; i < recvs.length; i++){
@@ -156,7 +167,7 @@ contract Marketplace is Ownable {
     ) external {
         bytes32 criteriaMessageHash = getMessageHash(
             addresses[0],  
-            _msgSender(),          
+            values[0] != 1 && values[0] != 0?address(0):_msgSender(),          
             addresses[1],
             values[0],
             values[1],
@@ -175,6 +186,38 @@ contract Marketplace is Ownable {
         );
 
         usedSignatures[signature] = SELL_MAX + uint16(1);
+    }
+
+    /**
+     * @dev Function mint transaction with user signatures
+     * values: island1. island2, signature, nonce
+     * addresses: islandContractAddress, chestContractAddress, paymentContract
+     */
+    function mintTransaction(
+        address[3] calldata addresses,
+        uint256[6] calldata values,
+        bytes calldata signature
+    ) external returns (bool) {
+        //Check last minting
+        //Check total mint
+        //check genesis
+        //check level coresponding...
+        //Generate rchest
+        //unpack the generated rchest
+        return true;
+    }
+
+    /**
+     * @dev Function fusion transaction with user signatures
+     * values: island1. island2, signature, nonce
+     * addresses: islandContractAddress, paymentContract
+     */
+    function fusionTransaction(
+        address[3] calldata addresses,
+        uint256[6] calldata values,
+        bytes calldata signature
+    ) external returns (bool) {
+        return true;
     }
 
     /**
@@ -207,7 +250,7 @@ contract Marketplace is Ownable {
         );
 
         require(
-            usedSignatures[signature] == 0 || usedSignatures[signature] + values[3] <= values[4],
+            usedSignatures[signature] == 0 || (usedSignatures[signature] <= SELL_MAX && usedSignatures[signature].add(values[3]) <= values[4]),
             "Marketplace: signature used or out of seller's assets"
         );        
 

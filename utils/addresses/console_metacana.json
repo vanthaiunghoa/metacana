@@ -1,6 +1,6 @@
 {
   "bsc_testnet": {
-    "metacana": "0x13f95858206bE93587aF5947bcb32A581fB37308"
+    "metacana": "0xE472B09650ed83467ac140802e638Bee118aaeb1"
   },
   "hardhat": {
     "metacana": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
@@ -10,5 +10,8 @@
   },
   "ganache": {
     "metacana": "0xc70B47CD6a8519BDf4E0f029e3D0e502389948A2"
+  },
+  "avax_testnet": {
+    "metacana": "0x86FF164f26F41fE0202fC914dd9CE40AB4153A56"
   }
 }

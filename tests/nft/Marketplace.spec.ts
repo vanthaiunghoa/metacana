@@ -18,7 +18,7 @@ import { ADDRESS_ZERO } from '../../scripts/lib/testValuesCommon'
 /* Contracts in this test */
 import {   
   Metacana,
-  CanaItem,
+  ERC1155,
   Marketplace,
   CanaItemLootBox,
   CanaItemFactory
@@ -53,7 +53,7 @@ const wbnbAddress='0x5b3e2bc1da86ff6235d9ead4504d598cae77dbcb'
 describe("Maketplace", () => {
   let signers: any;
   let metacana: Metacana;
-  let canaItem: CanaItem;
+  let canaItem: ERC1155;
   let marketplace: Marketplace;
   let canaItemLootBox: CanaItemLootBox;
   let canaItemFactory: CanaItemFactory
@@ -77,9 +77,9 @@ describe("Maketplace", () => {
     await marketplace.connect(owner).deployed();
         
     const _canaItemFactory: ContractFactory = await ethers.getContractFactory(
-      "CanaItem"
+      "ERC1155"
     )
-    canaItem = (await _canaItemFactory.connect(owner).deploy()) as CanaItem;
+    canaItem = (await _canaItemFactory.connect(owner).deploy()) as ERC1155;
     await canaItem.connect(owner).deployed();
 
     const Metacana_Factory: ContractFactory = await ethers.getContractFactory("Metacana");

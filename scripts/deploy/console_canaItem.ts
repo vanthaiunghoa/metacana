@@ -15,10 +15,10 @@ async function main(): Promise<void> {
   const networkName: string = hre.network.name;    
   let apAddress = apAddresses[networkName as keyof typeof apAddresses];
 
-  const CanaItem_Factory: ContractFactory = await ethers.getContractFactory("CanaItem");
-  const canaItem: Contract = await CanaItem_Factory.deploy();
+  const canaItem_Factory: ContractFactory = await ethers.getContractFactory("ERC1155");
+  const canaItem: Contract = await canaItem_Factory.deploy();
 
-  console.log(`Deploying CanaItem: ${canaItem.address} at tx hash: ${canaItem.deployTransaction.hash}`);
+  console.log(`Deploying ERC1155: ${canaItem.address} at tx hash: ${canaItem.deployTransaction.hash}`);
 
   await canaItem.deployed();  
 

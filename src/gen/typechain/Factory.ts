@@ -7,8 +7,6 @@ import {
   BigNumberish,
   BytesLike,
   CallOverrides,
-  ContractTransaction,
-  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -20,21 +18,18 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface FactoryInterface extends utils.Interface {
   contractName: "Factory";
   functions: {
-    "balanceOf(address,uint256)": FunctionFragment;
-    "mint(address,uint256,uint256,bytes)": FunctionFragment;
+    "autoIdCreate(address,uint256,bytes)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "balanceOf",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mint",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
+    functionFragment: "autoIdCreate",
+    values: [string, BigNumberish, BytesLike]
   ): string;
 
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "autoIdCreate",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -67,82 +62,47 @@ export interface Factory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    balanceOf(
-      _owner: string,
-      _optionId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    mint(
+    autoIdCreate(
       _toAddress: string,
-      _optionId: BigNumberish,
       _amount: BigNumberish,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
-  balanceOf(
-    _owner: string,
-    _optionId: BigNumberish,
+  autoIdCreate(
+    _toAddress: string,
+    _amount: BigNumberish,
+    _data: BytesLike,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  mint(
-    _toAddress: string,
-    _optionId: BigNumberish,
-    _amount: BigNumberish,
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
-    balanceOf(
-      _owner: string,
-      _optionId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    mint(
+    autoIdCreate(
       _toAddress: string,
-      _optionId: BigNumberish,
       _amount: BigNumberish,
       _data: BytesLike,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
-    balanceOf(
-      _owner: string,
-      _optionId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    mint(
+    autoIdCreate(
       _toAddress: string,
-      _optionId: BigNumberish,
       _amount: BigNumberish,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    balanceOf(
-      _owner: string,
-      _optionId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    mint(
+    autoIdCreate(
       _toAddress: string,
-      _optionId: BigNumberish,
       _amount: BigNumberish,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

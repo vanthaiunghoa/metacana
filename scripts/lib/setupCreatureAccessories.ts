@@ -20,7 +20,7 @@ export const setupAccessory = async (
     console.log('***Creating accessory token id=',i, 'amount=', values.MINT_INITIAL_SUPPLY[Math.floor(i/8)], 'owner=',owner)
     const id = tokenIndexToId(i);    
     await accessories.create(owner, id, values.MINT_INITIAL_SUPPLY[Math.floor(i/8)], []);    
-
+    await new Promise(f => setTimeout(f, 1500));
   }
   console.log('***Done setupAccessory')
 };
@@ -162,7 +162,9 @@ export const setupAccessoryLootBox = async (lootBox, factory) => {
       //Todo: Need to add optionId param
       console.log('setTokenIdsForClass: i=',i, 'j=',j);
       console.log(ids);
+      //o,c, ids
       await lootBox.setTokenIdsForClass(j, i, ids);
+      await new Promise(f => setTimeout(f, 5000));
     }
   }
   //A,B,C,D,S,SS

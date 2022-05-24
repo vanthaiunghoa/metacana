@@ -1,8 +1,11 @@
 {
   "bsc_testnet": {
-    "canaItemFactory": "0x8d3a323aCC6eF66ec43978D503Bb2DdCF002a59B"
+    "canaItemFactory": "0x8B6e2249F1a7389c47d292Ee625F43249EA8099B"
   },
   "ganache": {
     "canaItemFactory": "0xf936796671B75175a01Df3598a17eFecd37c2ED8"
+  },
+  "avax_testnet": {
+    "canaItemFactory": "0x446655747Fd18805D990D16F03e0B01c45F5Fb5a"
   }
 }

@@ -29,7 +29,7 @@ async function main(): Promise<void> {
   const canaItemAddress = canaItemAddresses[networkName as keyof typeof canaItemAddresses];
   const canaItemFactoryAddress = canaItemFactoryAddresses[networkName as keyof typeof canaItemFactoryAddresses];
 
-  const canaItemFact = await ethers.getContractFactory("CanaItem");
+  const canaItemFact = await ethers.getContractFactory("ERC1155");
   const canaItemContract = await canaItemFact.attach((canaItemAddress as any).canaItem);  
 
   const lootBoxContractFact = await ethers.getContractFactory("CanaItemLootBox",{

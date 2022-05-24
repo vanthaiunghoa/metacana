@@ -29,8 +29,9 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 
 abstract contract Factory {
-    function mint(address _toAddress, uint256 _optionId, uint256 _amount, bytes calldata _data) virtual external;
-    function balanceOf(address _owner, uint256 _optionId) virtual public view returns (uint256);
+    // function mint(address _toAddress, uint256 _optionId, uint256 _amount, bytes calldata _data) virtual external;
+    // function balanceOf(address _owner, uint256 _optionId) virtual public view returns (uint256);
+    function autoIdCreate(address _toAddress, uint256 _amount, bytes calldata _data) virtual public view returns (uint256);
 }
 
 
@@ -58,6 +59,8 @@ library CanaBoxLib {
     bool hasGuaranteedClasses;
     // Number of items you're guaranteed to get, for each class
     uint16[] guarantees;
+    int16[] maxPerClass;
+    uint16[] issuedPerClass;
   }
 
   struct LootBoxRandomnessState {
@@ -166,7 +169,8 @@ library CanaBoxLib {
     uint256 _option,
     uint256 _maxQuantityPerOpen,
     uint16[] memory _classProbabilities,
-    uint16[] memory _guarantees
+    uint16[] memory _guarantees,
+    int16[] memory _maxPerClass    
   ) public {
     require(_option < _state.numOptions, "option_out_of_range");
     // Allow us to skip guarantees and save gas at mint time
@@ -182,7 +186,9 @@ library CanaBoxLib {
       maxQuantityPerOpen: _maxQuantityPerOpen,
       classProbabilities: _classProbabilities,
       hasGuaranteedClasses: hasGuaranteedClasses,
-      guarantees: _guarantees
+      guarantees: _guarantees,
+      maxPerClass: _maxPerClass,
+      issuedPerClass: new uint16[](_maxPerClass.length)
     });
 
     _state.optionToSettings[uint256(_option)] = settings;
@@ -214,11 +220,11 @@ library CanaBoxLib {
   function _mint(
     LootBoxRandomnessState storage _state,
     uint256 _optionId,
-    address _toAddress,
+    //address _toAddress,
     uint256 _amount,
-    bytes memory /* _data */,
-    address _owner
-  ) internal returns (uint256) {
+    bytes memory /* _data */
+    // address _owner
+  ) internal returns (uint256, uint256) {
     require(_optionId < _state.numOptions, "option_out_of_range");
     // Load settings for this box option
     OptionSettings memory settings = _state.optionToSettings[_optionId];
@@ -227,26 +233,29 @@ library CanaBoxLib {
 
     // uint256 totalMinted = 0;
     uint256 lastOpenedToken;
+    uint256 class;
     // Iterate over the quantity of boxes specified
     for (uint256 i = 0; i < _amount; i++) {
       // Iterate over the box's set quantity
       uint256 quantitySent = 0;
-      if (settings.hasGuaranteedClasses) {
-        // Process guaranteed token ids
-        for (uint256 classId = 0; classId < settings.guarantees.length; classId++) {
-          uint256 quantityOfGuaranteed = settings.guarantees[classId];
-          if(quantityOfGuaranteed > 0) {
-            lastOpenedToken = _sendTokenWithClass(_state, classId, _optionId, _toAddress, quantityOfGuaranteed, _owner);
-            quantitySent += quantityOfGuaranteed;
-          }
-        }
-      }
+      //TODO: work around for "Stack too deep" error, assuming that there is no Guarantee, we just comment the below out      
+      // if (settings.hasGuaranteedClasses) {
+      //   // Process guaranteed token ids
+      //   for (uint256 classId = 0; classId < settings.guarantees.length; classId++) {
+      //     uint256 quantityOfGuaranteed = settings.guarantees[classId];
+      //     if(quantityOfGuaranteed > 0) {
+      //       lastOpenedToken = _sendTokenWithClass(_state, _optionId, classId, _toAddress, quantityOfGuaranteed, _owner);
+      //       class = classId;
+      //       quantitySent += quantityOfGuaranteed;
+      //     }
+      //   }
+      // }
 
       // Process non-guaranteed ids
       while (quantitySent < settings.maxQuantityPerOpen) {
         uint256 quantityOfRandomized = 1;
-        uint256 class = _pickRandomClass(_state, settings.classProbabilities);
-        lastOpenedToken = _sendTokenWithClass(_state, _optionId, class, _toAddress, quantityOfRandomized, _owner);
+        class = _pickRandomClass(_state, settings.classProbabilities);
+        lastOpenedToken = _sendTokenWithClass(_state, _optionId, class, /*_toAddress,*/ quantityOfRandomized/*, _owner*/);
         quantitySent += quantityOfRandomized;
       }
 
@@ -255,7 +264,7 @@ library CanaBoxLib {
 
     // Event emissions
     // emit LootBoxOpened(_optionId, _toAddress, _amount, totalMinted);
-    return lastOpenedToken;//totalMinted;
+    return (lastOpenedToken, class);//totalMinted;
   }
 
   /////
@@ -267,17 +276,18 @@ library CanaBoxLib {
     LootBoxRandomnessState storage _state,
     uint256 _optionId,
     uint256 _classId,
-    address _toAddress,
-    uint256 _amount,
-    address _owner
+    // address _toAddress,
+    uint256 _amount
+    // address _owner
   ) internal returns (uint256) {
     require(_classId < _state.numClasses, "_sendTokenWithClass#class_out_of_range");
-    Factory factory = Factory(_state.factoryAddress);
-    uint256 tokenId = _pickRandomAvailableTokenIdForClass(_state,_optionId, _classId, _amount, _owner);
+    // Factory factory = Factory(_state.factoryAddress);
+    uint256 tokenId = _pickRandomAvailableTokenIdForClass(_state,_optionId, _classId, _amount/*, _owner*/);
     // This may mint, create or transfer. We don't handle that here.
     // We use tokenId as an option ID here.
-    factory.mint(_toAddress, tokenId, _amount, "");
-    return tokenId;
+    // Comment the below out due to new change (tokenId is not pre-defined)
+    // factory.mint(_toAddress, tokenId, _amount, "");
+    return tokenId; //att id
   }
 
   function _pickRandomClass(
@@ -303,23 +313,32 @@ library CanaBoxLib {
     LootBoxRandomnessState storage _state,
     uint256 _optionId,
     uint256 _classId,
-    uint256 _minAmount,
-    address _owner
+    uint256 _minAmount
+    // address _owner
   ) internal returns (uint256) {
     require(_classId < _state.numClasses, "_pickRandomAvailableTokenIdForClass#class_out_of_range");
     uint256[] memory tokenIds = _state.classToTokenIds[_optionId][_classId];
     require(tokenIds.length > 0, "No token ids for _classId");
     uint256 randIndex = _random(_state).mod(tokenIds.length);
     // Make sure owner() owns or can mint enough
-    Factory factory = Factory(_state.factoryAddress);
+    // Factory factory = Factory(_state.factoryAddress);
+
+    OptionSettings memory settings = _state.optionToSettings[_optionId];    
+    
     for (uint256 i = randIndex; i < randIndex + tokenIds.length; i++) {
       uint256 tokenId = tokenIds[i % tokenIds.length];
       // We use tokenId as an option id here
-      if (factory.balanceOf(_owner, tokenId) >= _minAmount) {
+      if(settings.maxPerClass[tokenId] == -1){
         return tokenId;
-     }
+      }
+      if (settings.maxPerClass[tokenId] > 0 && 
+        settings.maxPerClass[tokenId] >= int256(_minAmount) &&
+        settings.issuedPerClass[tokenId] < uint16(settings.maxPerClass[tokenId])/*factory.balanceOf(_owner, tokenId) >= _minAmount*/) {
+        _state.optionToSettings[_optionId].issuedPerClass[tokenId] = settings.issuedPerClass[tokenId] + 1;
+        return tokenId;
+      }
     }
-    revert("CanaBoxLib#NOT_ENOUGH_TOKENS_FOR_CLASS");
+    revert("CanaBoxLib#OUT_OF_ATTRIBUTES");
   }
 
   /**

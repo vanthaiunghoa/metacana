@@ -15,7 +15,7 @@ const truffleAssert = require('truffle-assertions')
 
 /* Contracts in this test */
 import {   
-  CanaItem,
+  ERC1155,
   CanaItemFactory,
   CanaItemLootBox
 } from 'src/gen/typechain'
@@ -125,17 +125,17 @@ describe("CanaItemLootBox", () => {
   let userCanaItemLootBox: CanaItemLootBox;
   let canaItemFactory: CanaItemFactory;
   let userCanaItemFactory: CanaItemFactory;
-  let canaItem: CanaItem;
-  let userCanaItem:CanaItem;
+  let canaItem: ERC1155;
+  let userCanaItem:ERC1155;
 
   let ownerAddress: string;
   let userAddress: string;
 
   before(async () => {
     const _canaItemFactory: ContractFactory = await ethers.getContractFactory(
-      "CanaItem"
+      "ERC1155"
     )
-    canaItem = (await _canaItemFactory.deploy()) as CanaItem;
+    canaItem = (await _canaItemFactory.deploy()) as ERC1155;
     await canaItem.deployed();
     userCanaItem = await canaItem.connect(userSigner);
     

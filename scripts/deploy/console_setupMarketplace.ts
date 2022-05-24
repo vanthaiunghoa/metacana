@@ -25,7 +25,7 @@ async function main(): Promise<void> {
   const marketplaceFact = await ethers.getContractFactory("Marketplace");
   const marketplaceContract = await marketplaceFact.attach((apAddress as any).marketplace);
 
-  const canaItemFact = await ethers.getContractFactory("CanaItem");
+  const canaItemFact = await ethers.getContractFactory("ERC1155");
   const canaItemContract = await canaItemFact.attach((canaItemAddress as any).canaItem);  
 
   const lootBoxContractFact = await ethers.getContractFactory("CanaItemLootBox",{

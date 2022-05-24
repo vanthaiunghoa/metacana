@@ -1,8 +1,11 @@
 {
   "bsc_testnet": {
-    "marketplace": "0xbBC6a133D6bC849f337d9D6c5cb34885aB1dE766"
+    "marketplace": "0xAa64Ce8ed12E52724554AC57E0A5E49463423a95"
   },
   "ganache": {
     "marketplace": "0x5bB89eA41c981Faf3C5B9f125DA410557ca9c8a1"
+  },
+  "avax_testnet": {
+    "marketplace": "0x8ac8c5bc94211979b371D14A7A1DDBA6f292457F"
   }
 }

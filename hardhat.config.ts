@@ -36,7 +36,7 @@ const chainIds = {
   polygon: 137,
   mumbai: 80001,
   bsc: 56,
-  bsc_testnet:97
+  bsc_testnet:97,
 };
 
 const MNEMONIC_DEFAULT = "robust minute uncle switch notice hat nation trouble solution venture slot tonight";
@@ -80,7 +80,7 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
     chainId: chainIds[network],
     url: nodeUrl,
     // gas: 2100000,
-    // gasPrice: 2,
+    gasPrice: 225000000000,
     // accounts: [`${testPrivateKey}`],
     accounts: {
       mnemonic: MNEMONIC_TESTNET

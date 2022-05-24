@@ -21,9 +21,13 @@ export interface MarketplaceInterface extends utils.Interface {
   contractName: "Marketplace";
   functions: {
     "feeToAddress()": FunctionFragment;
+    "fusionFee()": FunctionFragment;
+    "fusionTransaction(address[3],uint256[6],bytes)": FunctionFragment;
     "getMessageHash(address,address,address,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "ignoreSignature(address[2],uint256[5],bytes)": FunctionFragment;
     "matchTransaction(address[3],uint256[6],bytes)": FunctionFragment;
+    "mintFee()": FunctionFragment;
+    "mintTransaction(address[3],uint256[6],bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "paymentTokens(address)": FunctionFragment;
     "privateSales(address)": FunctionFragment;
@@ -33,6 +37,8 @@ export interface MarketplaceInterface extends utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "rounds(uint256)": FunctionFragment;
     "setFeeToAddress(address)": FunctionFragment;
+    "setFusionFee(uint256)": FunctionFragment;
+    "setMintFee(uint256)": FunctionFragment;
     "setPaymentTokens(address[])": FunctionFragment;
     "setPrivate(address,uint256)": FunctionFragment;
     "setPrivateBatch(address[],uint256[])": FunctionFragment;
@@ -52,6 +58,11 @@ export interface MarketplaceInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "feeToAddress",
     values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "fusionFee", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "fusionTransaction",
+    values: [[string, string, string], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getMessageHash",
@@ -76,6 +87,11 @@ export interface MarketplaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "matchTransaction",
+    values: [[string, string, string], BigNumberish[], BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "mintFee", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "mintTransaction",
     values: [[string, string, string], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -110,6 +126,14 @@ export interface MarketplaceInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setFeeToAddress",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFusionFee",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMintFee",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setPaymentTokens",
@@ -169,6 +193,11 @@ export interface MarketplaceInterface extends utils.Interface {
     functionFragment: "feeToAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "fusionFee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "fusionTransaction",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getMessageHash",
     data: BytesLike
@@ -179,6 +208,11 @@ export interface MarketplaceInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "matchTransaction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "mintFee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintTransaction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -211,6 +245,11 @@ export interface MarketplaceInterface extends utils.Interface {
     functionFragment: "setFeeToAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFusionFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setMintFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setPaymentTokens",
     data: BytesLike
@@ -333,6 +372,15 @@ export interface Marketplace extends BaseContract {
   functions: {
     feeToAddress(overrides?: CallOverrides): Promise<[string]>;
 
+    fusionFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    fusionTransaction(
+      addresses: [string, string, string],
+      values: BigNumberish[],
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getMessageHash(
       _nftAddress: string,
       _buyerAddress: string,
@@ -359,6 +407,15 @@ export interface Marketplace extends BaseContract {
     ): Promise<ContractTransaction>;
 
     matchTransaction(
+      addresses: [string, string, string],
+      values: BigNumberish[],
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    mintFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    mintTransaction(
       addresses: [string, string, string],
       values: BigNumberish[],
       signature: BytesLike,
@@ -394,6 +451,16 @@ export interface Marketplace extends BaseContract {
 
     setFeeToAddress(
       _feeToAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setFusionFee(
+      _fusionFee: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMintFee(
+      _mintFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -461,6 +528,15 @@ export interface Marketplace extends BaseContract {
 
   feeToAddress(overrides?: CallOverrides): Promise<string>;
 
+  fusionFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  fusionTransaction(
+    addresses: [string, string, string],
+    values: BigNumberish[],
+    signature: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   getMessageHash(
     _nftAddress: string,
     _buyerAddress: string,
@@ -487,6 +563,15 @@ export interface Marketplace extends BaseContract {
   ): Promise<ContractTransaction>;
 
   matchTransaction(
+    addresses: [string, string, string],
+    values: BigNumberish[],
+    signature: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  mintFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  mintTransaction(
     addresses: [string, string, string],
     values: BigNumberish[],
     signature: BytesLike,
@@ -522,6 +607,16 @@ export interface Marketplace extends BaseContract {
 
   setFeeToAddress(
     _feeToAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setFusionFee(
+    _fusionFee: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMintFee(
+    _mintFee: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -586,6 +681,15 @@ export interface Marketplace extends BaseContract {
   callStatic: {
     feeToAddress(overrides?: CallOverrides): Promise<string>;
 
+    fusionFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    fusionTransaction(
+      addresses: [string, string, string],
+      values: BigNumberish[],
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     getMessageHash(
       _nftAddress: string,
       _buyerAddress: string,
@@ -618,6 +722,15 @@ export interface Marketplace extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    mintFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mintTransaction(
+      addresses: [string, string, string],
+      values: BigNumberish[],
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     paymentTokens(arg0: string, overrides?: CallOverrides): Promise<boolean>;
@@ -639,6 +752,16 @@ export interface Marketplace extends BaseContract {
 
     setFeeToAddress(
       _feeToAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setFusionFee(
+      _fusionFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMintFee(
+      _mintFee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -740,6 +863,15 @@ export interface Marketplace extends BaseContract {
   estimateGas: {
     feeToAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
+    fusionFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    fusionTransaction(
+      addresses: [string, string, string],
+      values: BigNumberish[],
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getMessageHash(
       _nftAddress: string,
       _buyerAddress: string,
@@ -766,6 +898,15 @@ export interface Marketplace extends BaseContract {
     ): Promise<BigNumber>;
 
     matchTransaction(
+      addresses: [string, string, string],
+      values: BigNumberish[],
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    mintFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mintTransaction(
       addresses: [string, string, string],
       values: BigNumberish[],
       signature: BytesLike,
@@ -801,6 +942,16 @@ export interface Marketplace extends BaseContract {
 
     setFeeToAddress(
       _feeToAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setFusionFee(
+      _fusionFee: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMintFee(
+      _mintFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -866,6 +1017,15 @@ export interface Marketplace extends BaseContract {
   populateTransaction: {
     feeToAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    fusionFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    fusionTransaction(
+      addresses: [string, string, string],
+      values: BigNumberish[],
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     getMessageHash(
       _nftAddress: string,
       _buyerAddress: string,
@@ -892,6 +1052,15 @@ export interface Marketplace extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     matchTransaction(
+      addresses: [string, string, string],
+      values: BigNumberish[],
+      signature: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    mintFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mintTransaction(
       addresses: [string, string, string],
       values: BigNumberish[],
       signature: BytesLike,
@@ -936,6 +1105,16 @@ export interface Marketplace extends BaseContract {
 
     setFeeToAddress(
       _feeToAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setFusionFee(
+      _fusionFee: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMintFee(
+      _mintFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

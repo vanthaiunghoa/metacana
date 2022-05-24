@@ -22,6 +22,7 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
   functions: {
     "addApprovalWhitelist(address)": FunctionFragment;
     "approvalWhitelists(address)": FunctionFragment;
+    "autoIdCreate(address,string,uint256,bytes)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "burn(uint256,uint256)": FunctionFragment;
@@ -29,12 +30,10 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
     "create(address,uint256,uint256,bytes)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "isLocked(uint256)": FunctionFragment;
-    "lock(uint256)": FunctionFragment;
-    "lockedTokens(uint256)": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
     "mintBatch(address,uint256[],uint256[],bytes)": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
+    "nextTokenId()": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
@@ -43,14 +42,14 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
-    "setOptionSettings(uint256,uint256,uint16[],uint16[])": FunctionFragment;
+    "setBaseURI(string)": FunctionFragment;
+    "setOptionSettings(uint256,uint256,uint16[],uint16[],int16[])": FunctionFragment;
     "setState(address,uint256,uint256,uint256)": FunctionFragment;
     "setTokenIdsForClass(uint256,uint256,uint256[])": FunctionFragment;
     "setURI(string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "unlock(uint256)": FunctionFragment;
     "unpack(uint256,address,uint256)": FunctionFragment;
     "unpause()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
@@ -63,6 +62,10 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "approvalWhitelists",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "autoIdCreate",
+    values: [string, string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
@@ -93,15 +96,6 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
     values: [string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "isLocked",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "lock", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "lockedTokens",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "mint",
     values: [string, BigNumberish, BigNumberish, BytesLike]
   ): string;
@@ -112,6 +106,10 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "multicall",
     values: [BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nextTokenId",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -136,9 +134,16 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
   ): string;
+  encodeFunctionData(functionFragment: "setBaseURI", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setOptionSettings",
-    values: [BigNumberish, BigNumberish, BigNumberish[], BigNumberish[]]
+    values: [
+      BigNumberish,
+      BigNumberish,
+      BigNumberish[],
+      BigNumberish[],
+      BigNumberish[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "setState",
@@ -162,10 +167,6 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "unlock",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "unpack",
     values: [BigNumberish, string, BigNumberish]
   ): string;
@@ -178,6 +179,10 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "approvalWhitelists",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "autoIdCreate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -193,15 +198,13 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "isLocked", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "lock", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "lockedTokens",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "nextTokenId",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -225,6 +228,7 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setBaseURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setOptionSettings",
     data: BytesLike
@@ -247,14 +251,14 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unlock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpack", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "LootBoxOpened(uint256,address,uint256,uint256)": EventFragment;
+    "Created(address,address,uint256,string)": EventFragment;
+    "LootBoxOpened(uint256,address,uint256,uint256,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
@@ -264,6 +268,7 @@ export interface CanaItemLootBoxInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Created"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LootBoxOpened"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
@@ -280,13 +285,22 @@ export type ApprovalForAllEvent = TypedEvent<
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
+export type CreatedEvent = TypedEvent<
+  [string, string, BigNumber, string],
+  { creator: string; to: string; tokenId: BigNumber; tokenURI: string }
+>;
+
+export type CreatedEventFilter = TypedEventFilter<CreatedEvent>;
+
 export type LootBoxOpenedEvent = TypedEvent<
-  [BigNumber, string, BigNumber, BigNumber],
+  [BigNumber, string, BigNumber, BigNumber, BigNumber, BigNumber],
   {
     optionId: BigNumber;
     buyer: string;
     boxesPurchased: BigNumber;
-    lastOpenedTokenId: BigNumber;
+    tokenId: BigNumber;
+    classId: BigNumber;
+    attId: BigNumber;
   }
 >;
 
@@ -379,6 +393,14 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    autoIdCreate(
+      _to: string,
+      _uri: string,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -433,21 +455,6 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { isOperator: boolean }>;
 
-    isLocked(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    lock(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    lockedTokens(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     mint(
       _to: string,
       _optionId: BigNumberish,
@@ -468,6 +475,8 @@ export interface CanaItemLootBox extends BaseContract {
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    nextTokenId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -510,11 +519,17 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setBaseURI(
+      baseURI: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setOptionSettings(
       _option: BigNumberish,
       _maxQuantityPerOpen: BigNumberish,
       _classProbabilities: BigNumberish[],
       _guarantees: BigNumberish[],
+      _maxPerClass: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -533,8 +548,14 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setURI(
+    "setURI(string)"(
       newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setURI(uint256,string)"(
+      tokenId: BigNumberish,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -553,11 +574,6 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    unlock(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     unpack(
       _optionId: BigNumberish,
       _toAddress: string,
@@ -569,7 +585,7 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
   };
 
   addApprovalWhitelist(
@@ -578,6 +594,14 @@ export interface CanaItemLootBox extends BaseContract {
   ): Promise<ContractTransaction>;
 
   approvalWhitelists(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+  autoIdCreate(
+    _to: string,
+    _uri: string,
+    amount: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   balanceOf(
     account: string,
@@ -633,15 +657,6 @@ export interface CanaItemLootBox extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isLocked(tokenId: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-  lock(
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  lockedTokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
   mint(
     _to: string,
     _optionId: BigNumberish,
@@ -662,6 +677,8 @@ export interface CanaItemLootBox extends BaseContract {
     data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  nextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -704,11 +721,17 @@ export interface CanaItemLootBox extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setBaseURI(
+    baseURI: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setOptionSettings(
     _option: BigNumberish,
     _maxQuantityPerOpen: BigNumberish,
     _classProbabilities: BigNumberish[],
     _guarantees: BigNumberish[],
+    _maxPerClass: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -727,8 +750,14 @@ export interface CanaItemLootBox extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setURI(
+  "setURI(string)"(
     newuri: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setURI(uint256,string)"(
+    tokenId: BigNumberish,
+    _tokenURI: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -744,11 +773,6 @@ export interface CanaItemLootBox extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  unlock(
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   unpack(
     _optionId: BigNumberish,
     _toAddress: string,
@@ -760,7 +784,7 @@ export interface CanaItemLootBox extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     addApprovalWhitelist(
@@ -772,6 +796,14 @@ export interface CanaItemLootBox extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    autoIdCreate(
+      _to: string,
+      _uri: string,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     balanceOf(
       account: string,
@@ -827,18 +859,6 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isLocked(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    lock(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    lockedTokens(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     mint(
       _to: string,
       _optionId: BigNumberish,
@@ -856,6 +876,8 @@ export interface CanaItemLootBox extends BaseContract {
     ): Promise<void>;
 
     multicall(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+
+    nextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -894,11 +916,14 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setBaseURI(baseURI: string, overrides?: CallOverrides): Promise<void>;
+
     setOptionSettings(
       _option: BigNumberish,
       _maxQuantityPerOpen: BigNumberish,
       _classProbabilities: BigNumberish[],
       _guarantees: BigNumberish[],
+      _maxPerClass: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -917,7 +942,13 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setURI(newuri: string, overrides?: CallOverrides): Promise<void>;
+    "setURI(string)"(newuri: string, overrides?: CallOverrides): Promise<void>;
+
+    "setURI(uint256,string)"(
+      tokenId: BigNumberish,
+      _tokenURI: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     supportsInterface(
       _interfaceID: BytesLike,
@@ -934,8 +965,6 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    unlock(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
     unpack(
       _optionId: BigNumberish,
       _toAddress: string,
@@ -945,7 +974,7 @@ export interface CanaItemLootBox extends BaseContract {
 
     unpause(overrides?: CallOverrides): Promise<void>;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -960,17 +989,34 @@ export interface CanaItemLootBox extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "LootBoxOpened(uint256,address,uint256,uint256)"(
+    "Created(address,address,uint256,string)"(
+      creator?: string | null,
+      to?: string | null,
+      tokenId?: null,
+      tokenURI?: null
+    ): CreatedEventFilter;
+    Created(
+      creator?: string | null,
+      to?: string | null,
+      tokenId?: null,
+      tokenURI?: null
+    ): CreatedEventFilter;
+
+    "LootBoxOpened(uint256,address,uint256,uint256,uint256,uint256)"(
       optionId?: BigNumberish | null,
       buyer?: string | null,
       boxesPurchased?: null,
-      lastOpenedTokenId?: null
+      tokenId?: null,
+      classId?: null,
+      attId?: null
     ): LootBoxOpenedEventFilter;
     LootBoxOpened(
       optionId?: BigNumberish | null,
       buyer?: string | null,
       boxesPurchased?: null,
-      lastOpenedTokenId?: null
+      tokenId?: null,
+      classId?: null,
+      attId?: null
     ): LootBoxOpenedEventFilter;
 
     "OwnershipTransferred(address,address)"(
@@ -1036,6 +1082,14 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    autoIdCreate(
+      _to: string,
+      _uri: string,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -1090,21 +1144,6 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isLocked(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    lock(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    lockedTokens(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     mint(
       _to: string,
       _optionId: BigNumberish,
@@ -1125,6 +1164,8 @@ export interface CanaItemLootBox extends BaseContract {
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    nextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1167,11 +1208,17 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setBaseURI(
+      baseURI: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setOptionSettings(
       _option: BigNumberish,
       _maxQuantityPerOpen: BigNumberish,
       _classProbabilities: BigNumberish[],
       _guarantees: BigNumberish[],
+      _maxPerClass: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1190,8 +1237,14 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setURI(
+    "setURI(string)"(
       newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setURI(uint256,string)"(
+      tokenId: BigNumberish,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1210,11 +1263,6 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    unlock(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     unpack(
       _optionId: BigNumberish,
       _toAddress: string,
@@ -1226,7 +1274,7 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1238,6 +1286,14 @@ export interface CanaItemLootBox extends BaseContract {
     approvalWhitelists(
       arg0: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    autoIdCreate(
+      _to: string,
+      _uri: string,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     balanceOf(
@@ -1297,21 +1353,6 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isLocked(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    lock(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    lockedTokens(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     mint(
       _to: string,
       _optionId: BigNumberish,
@@ -1332,6 +1373,8 @@ export interface CanaItemLootBox extends BaseContract {
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    nextTokenId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1374,11 +1417,17 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setBaseURI(
+      baseURI: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setOptionSettings(
       _option: BigNumberish,
       _maxQuantityPerOpen: BigNumberish,
       _classProbabilities: BigNumberish[],
       _guarantees: BigNumberish[],
+      _maxPerClass: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1397,8 +1446,14 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setURI(
+    "setURI(string)"(
       newuri: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setURI(uint256,string)"(
+      tokenId: BigNumberish,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1417,11 +1472,6 @@ export interface CanaItemLootBox extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    unlock(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     unpack(
       _optionId: BigNumberish,
       _toAddress: string,
@@ -1434,7 +1484,7 @@ export interface CanaItemLootBox extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     uri(
-      arg0: BigNumberish,
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

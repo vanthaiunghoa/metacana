@@ -1,0 +1,31 @@
+pip install slither-analyzer
+Get price feed: https://docs.chain.link/docs/avalanche-price-feeds/
+============update=======
+- Handling public sale (round1, round2): need to handle this in Marketplace.sol that round1 (id%8 < 4), round2 (id % 8 >=4)
+- Mint: match -> get rchest & U->chest (2~6)->U->island
+- Fusion: match -> get chest (7~22) & U & burn -> Ordinary island (48 ~ 95)
+- Genesis island (NFT token id): 0~47
+- Ordinary island (NFT token id): 48 ~ 95
+- Rchest: 0~21
+- Chest: 0~1 & 2~6 & 7 ~ 22
+=====================update========================
+Island attributes:
+{
+  rarity (class): class,
+  type: (ordinary or genesis),
+  nature: nature,
+  level: level,
+  num_of_mint: mint,
+  max_mint: max_mint
+  num_of_pieces: num_of_pieces
+}
+====================================================
+U->(class, chestId)->(genesis or ordinary)
+====================================================
+** U island return:
+1. rarity id (0~6)
+2. nature id (0~7)
+3. island type (0~1)
+** rchest:
+=====================================================
+chest: 0~7
